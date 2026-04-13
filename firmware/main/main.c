@@ -330,9 +330,9 @@ static void app_protocol_task(void *arg)
                 true,
                 now_ms);
 
-            if (status == AODV_EN_ERR_NO_ROUTE)
+            if (status == AODV_EN_QUEUED)
             {
-                ESP_LOGI(TAG, "DATA triggered route discovery");
+                ESP_LOGI(TAG, "DATA queued while route discovery is in progress");
             }
             else if (status != AODV_EN_OK)
             {

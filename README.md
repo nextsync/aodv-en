@@ -11,6 +11,10 @@ Este repositorio concentra a pesquisa, especificacao e implementacao do `AODV-EN
 - [docs/aodv-en-estruturas-dados.md](docs/aodv-en-estruturas-dados.md)
 - [docs/plano-desenvolvimento-completo.md](docs/plano-desenvolvimento-completo.md)
 
+## Features implementadas
+
+- [docs/features/enfilaremento-dos-dados.md](docs/features/enfilaremento-dos-dados.md)
+
 ## Base de firmware
 
 Os primeiros tipos do protocolo foram materializados em:
