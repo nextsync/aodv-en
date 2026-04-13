@@ -15,6 +15,10 @@ Este repositorio concentra a pesquisa, especificacao e implementacao do `AODV-EN
 
 - [docs/features/enfilaremento-dos-dados.md](docs/features/enfilaremento-dos-dados.md)
 
+## Features planejadas (nao implementadas)
+
+- [docs/features/articulation-point-planejado.md](docs/features/articulation-point-planejado.md)
+
 ## Base de firmware
 
 Os primeiros tipos do protocolo foram materializados em:
