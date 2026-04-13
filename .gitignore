@@ -1,0 +1,42 @@
+# macOS
+.DS_Store
+
+# Editors and IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Generic local logs and temp files
+*.log
+*.tmp
+*.temp
+
+# Generic C/C++/CMake artifacts
+**/CMakeFiles/
+**/CMakeCache.txt
+**/cmake_install.cmake
+**/build.ninja
+**/.ninja_deps
+**/.ninja_log
+**/compile_commands.json
+**/*.o
+**/*.obj
+**/*.d
+**/*.elf
+**/*.map
+
+# ESP-IDF generated artifacts
+/firmware/build/
+/firmware/sdkconfig
+/firmware/sdkconfig.old
+/firmware/managed_components/
+/firmware/.component_hash
+
+# ESP-IDF flashing helper outputs
+/firmware/flasher_args.json
+/firmware/flash_args
+
+# Local simulation outputs
+/sim/*.out
