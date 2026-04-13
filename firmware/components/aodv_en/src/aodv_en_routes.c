@@ -1,0 +1,240 @@
+#include "aodv_en_routes.h"
+
+#include <string.h>
+
+#include "aodv_en_mac.h"
+
+static void aodv_en_route_remove_at(aodv_en_route_table_t *table, uint16_t index)
+{
+    if (table == NULL || index >= table->count)
+    {
+        return;
+    }
+
+    if ((index + 1u) < table->count)
+    {
+        memmove(&table->entries[index],
+                &table->entries[index + 1u],
+                (size_t)(table->count - index - 1u) * sizeof(table->entries[0]));
+    }
+
+    memset(&table->entries[table->count - 1u], 0, sizeof(table->entries[0]));
+    table->count--;
+}
+
+void aodv_en_route_table_init(aodv_en_route_table_t *table)
+{
+    if (table == NULL)
+    {
+        return;
+    }
+
+    memset(table, 0, sizeof(*table));
+}
+
+aodv_en_route_entry_t *aodv_en_route_find(
+    aodv_en_route_table_t *table,
+    const uint8_t destination[AODV_EN_MAC_ADDR_LEN])
+{
+    uint16_t index;
+
+    if (table == NULL || aodv_en_mac_is_zero(destination))
+    {
+        return NULL;
+    }
+
+    for (index = 0; index < table->count; index++)
+    {
+        if (aodv_en_mac_equal(table->entries[index].destination, destination))
+        {
+            return &table->entries[index];
+        }
+    }
+
+    return NULL;
+}
+
+const aodv_en_route_entry_t *aodv_en_route_find_const(
+    const aodv_en_route_table_t *table,
+    const uint8_t destination[AODV_EN_MAC_ADDR_LEN])
+{
+    return aodv_en_route_find((aodv_en_route_table_t *)table, destination);
+}
+
+aodv_en_route_entry_t *aodv_en_route_find_valid(
+    aodv_en_route_table_t *table,
+    const uint8_t destination[AODV_EN_MAC_ADDR_LEN])
+{
+    aodv_en_route_entry_t *route = aodv_en_route_find(table, destination);
+
+    if (route == NULL || route->state != AODV_EN_ROUTE_VALID)
+    {
+        return NULL;
+    }
+
+    return route;
+}
+
+bool aodv_en_route_should_replace(
+    const aodv_en_route_entry_t *existing,
+    const aodv_en_route_entry_t *candidate)
+{
+    if (candidate == NULL)
+    {
+        return false;
+    }
+
+    if (existing == NULL)
+    {
+        return true;
+    }
+
+    if (existing->state == AODV_EN_ROUTE_INVALID && candidate->state != AODV_EN_ROUTE_INVALID)
+    {
+        return true;
+    }
+
+    if (candidate->state == AODV_EN_ROUTE_VALID && existing->state != AODV_EN_ROUTE_VALID)
+    {
+        return true;
+    }
+
+    if (candidate->dest_seq_num > existing->dest_seq_num)
+    {
+        return true;
+    }
+
+    if (candidate->dest_seq_num < existing->dest_seq_num)
+    {
+        return false;
+    }
+
+    if (candidate->metric < existing->metric)
+    {
+        return true;
+    }
+
+    if (candidate->metric > existing->metric)
+    {
+        return false;
+    }
+
+    if (candidate->hop_count < existing->hop_count)
+    {
+        return true;
+    }
+
+    if (candidate->hop_count > existing->hop_count)
+    {
+        return false;
+    }
+
+    return candidate->expires_at_ms > existing->expires_at_ms;
+}
+
+aodv_en_status_t aodv_en_route_upsert(
+    aodv_en_route_table_t *table,
+    const aodv_en_route_entry_t *candidate)
+{
+    aodv_en_route_entry_t *existing;
+
+    if (table == NULL || candidate == NULL ||
+        aodv_en_mac_is_zero(candidate->destination) ||
+        aodv_en_mac_is_zero(candidate->next_hop))
+    {
+        return AODV_EN_ERR_ARG;
+    }
+
+    existing = aodv_en_route_find(table, candidate->destination);
+    if (existing != NULL)
+    {
+        if (!aodv_en_route_should_replace(existing, candidate))
+        {
+            return AODV_EN_NOOP;
+        }
+
+        *existing = *candidate;
+        return AODV_EN_OK;
+    }
+
+    if (table->count >= AODV_EN_ROUTE_TABLE_SIZE)
+    {
+        return AODV_EN_ERR_FULL;
+    }
+
+    table->entries[table->count++] = *candidate;
+    return AODV_EN_OK;
+}
+
+aodv_en_status_t aodv_en_route_invalidate_destination(
+    aodv_en_route_table_t *table,
+    const uint8_t destination[AODV_EN_MAC_ADDR_LEN],
+    uint32_t now_ms)
+{
+    aodv_en_route_entry_t *route = aodv_en_route_find(table, destination);
+
+    if (route == NULL)
+    {
+        return AODV_EN_ERR_NOT_FOUND;
+    }
+
+    route->state = AODV_EN_ROUTE_INVALID;
+    route->metric = AODV_EN_ROUTE_METRIC_INFINITY;
+    route->expires_at_ms = now_ms;
+
+    return AODV_EN_OK;
+}
+
+size_t aodv_en_route_invalidate_by_next_hop(
+    aodv_en_route_table_t *table,
+    const uint8_t next_hop[AODV_EN_MAC_ADDR_LEN],
+    uint32_t now_ms)
+{
+    size_t invalidated = 0;
+    uint16_t index;
+
+    if (table == NULL || aodv_en_mac_is_zero(next_hop))
+    {
+        return 0;
+    }
+
+    for (index = 0; index < table->count; index++)
+    {
+        if (aodv_en_mac_equal(table->entries[index].next_hop, next_hop))
+        {
+            table->entries[index].state = AODV_EN_ROUTE_INVALID;
+            table->entries[index].metric = AODV_EN_ROUTE_METRIC_INFINITY;
+            table->entries[index].expires_at_ms = now_ms;
+            invalidated++;
+        }
+    }
+
+    return invalidated;
+}
+
+size_t aodv_en_route_expire(
+    aodv_en_route_table_t *table,
+    uint32_t now_ms)
+{
+    size_t removed = 0;
+    uint16_t index = 0;
+
+    if (table == NULL)
+    {
+        return 0;
+    }
+
+    while (index < table->count)
+    {
+        if (table->entries[index].expires_at_ms <= now_ms)
+        {
+            aodv_en_route_remove_at(table, index);
+            removed++;
+            continue;
+        }
+
+        index++;
+    }
+
+    return removed;
+}
