@@ -1,0 +1,11 @@
+idf_component_register(
+    SRCS
+        "src/aodv_en_node.c"
+        "src/aodv_en_mac.c"
+        "src/aodv_en_neighbors.c"
+        "src/aodv_en_routes.c"
+        "src/aodv_en_rreq_cache.c"
+        "src/aodv_en_peers.c"
+    INCLUDE_DIRS
+        "include"
+)
