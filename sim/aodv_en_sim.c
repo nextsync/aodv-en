@@ -22,6 +22,7 @@ struct sim_network
 {
     uint32_t now_ms;
     bool links[SIM_NODE_COUNT][SIM_NODE_COUNT];
+    bool drop_next_ack_to_a;
     uint8_t macs[SIM_NODE_COUNT][AODV_EN_MAC_ADDR_LEN];
     const char *names[SIM_NODE_COUNT];
     aodv_en_node_t nodes[SIM_NODE_COUNT];
@@ -125,6 +126,16 @@ static aodv_en_status_t sim_emit_frame(
     }
 
     printf("unicast -> %s\n", network->names[dest_index]);
+
+    if (header->message_type == AODV_EN_MSG_ACK &&
+        dest_index == 0u &&
+        network->drop_next_ack_to_a)
+    {
+        network->drop_next_ack_to_a = false;
+        printf("        -> ACK intentionally dropped before A\n");
+        return AODV_EN_OK;
+    }
+
     network->now_ms++;
     (void)aodv_en_node_on_recv(
         &network->nodes[dest_index],
@@ -202,12 +213,27 @@ static void sim_init_network(sim_network_t *network)
     }
 }
 
+static void sim_tick_all(sim_network_t *network, uint32_t delta_ms)
+{
+    size_t index;
+
+    network->now_ms += delta_ms;
+    for (index = 0; index < SIM_NODE_COUNT; index++)
+    {
+        aodv_en_node_tick(&network->nodes[index], network->now_ms);
+    }
+}
+
 int main(void)
 {
     static const uint8_t payload[] = "hello over aodv-en";
     sim_network_t network;
     aodv_en_route_entry_t *route_a_to_c;
     aodv_en_route_entry_t *route_b_to_c;
+    uint32_t ack_before;
+    uint32_t delivered_before;
+    uint32_t retries_before;
+    uint32_t loop_guard;
 
     sim_init_network(&network);
 
@@ -238,6 +264,60 @@ int main(void)
 
     assert(network.nodes[2].stats.delivered_frames >= 1u);
     assert(network.nodes[0].stats.ack_received >= 1u);
+
+    printf("\n=== ack retry phase ===\n");
+    network.drop_next_ack_to_a = true;
+    ack_before = network.nodes[0].stats.ack_received;
+    retries_before = network.nodes[0].stats.ack_retry_sent;
+    assert(aodv_en_node_send_data(
+               &network.nodes[0],
+               network.macs[2],
+               payload,
+               (uint16_t)(sizeof(payload) - 1u),
+               true,
+               network.now_ms) == AODV_EN_OK);
+
+    loop_guard = 0u;
+    while (network.nodes[0].stats.ack_received == ack_before && loop_guard < 20u)
+    {
+        sim_tick_all(&network, network.nodes[0].config.ack_timeout_ms);
+        loop_guard++;
+    }
+
+    assert(network.nodes[0].stats.ack_received > ack_before);
+    assert(network.nodes[0].stats.ack_retry_sent > retries_before);
+
+    printf("\n=== late join retry discovery phase ===\n");
+    network.links[1][2] = false;
+    network.links[2][1] = false;
+    (void)aodv_en_route_invalidate_destination(&network.nodes[0].routes, network.macs[2], network.now_ms);
+    (void)aodv_en_route_invalidate_destination(&network.nodes[1].routes, network.macs[2], network.now_ms);
+
+    delivered_before = network.nodes[2].stats.delivered_frames;
+    retries_before = network.nodes[0].stats.route_discovery_retries;
+    assert(aodv_en_node_send_data(
+               &network.nodes[0],
+               network.macs[2],
+               payload,
+               (uint16_t)(sizeof(payload) - 1u),
+               true,
+               network.now_ms) == AODV_EN_QUEUED);
+
+    sim_tick_all(&network, network.nodes[0].config.ack_timeout_ms);
+    sim_tick_all(&network, network.nodes[0].config.ack_timeout_ms);
+    assert(network.nodes[0].stats.route_discovery_retries > retries_before);
+
+    network.links[1][2] = true;
+    network.links[2][1] = true;
+
+    loop_guard = 0u;
+    while (network.nodes[2].stats.delivered_frames == delivered_before && loop_guard < 40u)
+    {
+        sim_tick_all(&network, network.nodes[0].config.ack_timeout_ms);
+        loop_guard++;
+    }
+
+    assert(network.nodes[2].stats.delivered_frames > delivered_before);
 
     printf("\n=== summary ===\n");
     printf("A route discoveries=%u ack_received=%u\n",

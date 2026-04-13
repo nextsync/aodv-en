@@ -34,6 +34,24 @@ Ao receber RREP e instalar rota valida para o destino:
 2. cada item e enviado usando a rota recem instalada
 3. estatistica de flush e incrementada
 
+### Retry de descoberta para pendencias
+
+No tick do no, quando ainda nao existe rota para um destino com pendencia:
+
+- o no reemite RREQ em intervalo controlado
+- as tentativas sao limitadas por rreq_retry_count
+- retries sao contabilizados em route_discovery_retries
+
+Esse comportamento cobre o caso em que o destino entra na rede depois da primeira tentativa.
+
+### ACK timeout e retry de DATA
+
+Quando DATA exige ACK:
+
+- o envio fica rastreado como ACK pendente
+- se ACK nao chega em ack_timeout_ms, ocorre retransmissao do mesmo sequence_number
+- apos esgotar retries, o envio e descartado e contabilizado
+
 ### Expiracao da fila
 
 No tick do no:
@@ -54,6 +72,18 @@ Nova estrutura por item pendente:
 - ack_required
 - used
 - enqueued_at_ms
+- last_rreq_at_ms
+- discovery_attempts
+- payload
+
+Nova estrutura de ACK pendente:
+
+- destination_mac
+- payload_len
+- used
+- retries_left
+- sequence_number
+- last_sent_at_ms
 - payload
 
 Contadores novos em stats:
@@ -61,6 +91,9 @@ Contadores novos em stats:
 - pending_data_queued
 - pending_data_flushed
 - pending_data_dropped
+- route_discovery_retries
+- ack_retry_sent
+- ack_timeout_drops
 
 ## Arquivos impactados
 
@@ -82,18 +115,20 @@ Resultado esperado no fluxo:
 
 - route discovery phase inicia com queued
 - data phase confirma entrega e ack
+- ack retry phase confirma retransmissao apos perda de ACK
+- late join retry discovery phase confirma entrega apos reemissao de RREQ
 - simulation passed
 
 ## Limitacoes atuais
 
-- ainda nao existe mecanismo de ACK timeout e retry
 - nao existe deduplicacao de payload pendente por destino
 - expiracao usa route_lifetime_ms como janela da fila
 - fila tem tamanho fixo e pode retornar AODV_EN_ERR_FULL
+- retries de descoberta e de ACK compartilham rreq_retry_count
 
 ## Proximos passos recomendados
 
-1. implementar ACK timeout e retry automatico
+1. separar configuracao de retry de ACK e retry de descoberta
 2. adicionar telemetria de queue occupancy por destino
 3. avaliar politica FIFO estrita e backpressure
 4. criar cenarios de estresse com fila cheia no simulador
