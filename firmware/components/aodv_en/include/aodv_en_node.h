@@ -29,6 +29,9 @@ extern "C"
         uint32_t pending_data_queued;
         uint32_t pending_data_flushed;
         uint32_t pending_data_dropped;
+        uint32_t route_discovery_retries;
+        uint32_t ack_retry_sent;
+        uint32_t ack_timeout_drops;
     } aodv_en_stats_t;
 
     typedef struct
@@ -38,8 +41,21 @@ extern "C"
         bool ack_required;
         bool used;
         uint32_t enqueued_at_ms;
+        uint32_t last_rreq_at_ms;
+        uint8_t discovery_attempts;
         uint8_t payload[AODV_EN_DATA_PAYLOAD_MAX];
     } aodv_en_pending_data_entry_t;
+
+    typedef struct
+    {
+        uint8_t destination_mac[AODV_EN_MAC_ADDR_LEN];
+        uint16_t payload_len;
+        bool used;
+        uint8_t retries_left;
+        uint32_t sequence_number;
+        uint32_t last_sent_at_ms;
+        uint8_t payload[AODV_EN_DATA_PAYLOAD_MAX];
+    } aodv_en_pending_ack_entry_t;
 
     typedef aodv_en_status_t (*aodv_en_emit_frame_fn)(
         void *user_ctx,
@@ -80,6 +96,8 @@ extern "C"
         aodv_en_peer_cache_t peer_cache;
         aodv_en_pending_data_entry_t pending_data[AODV_EN_PENDING_DATA_QUEUE_SIZE];
         uint16_t pending_data_count;
+        aodv_en_pending_ack_entry_t pending_ack[AODV_EN_PENDING_DATA_QUEUE_SIZE];
+        uint16_t pending_ack_count;
         aodv_en_node_callbacks_t callbacks;
         aodv_en_stats_t stats;
     } aodv_en_node_t;

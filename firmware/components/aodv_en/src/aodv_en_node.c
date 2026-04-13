@@ -6,6 +6,16 @@
 
 static const uint8_t AODV_EN_BROADCAST_MAC[AODV_EN_MAC_ADDR_LEN] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
 
+static aodv_en_status_t aodv_en_node_send_rreq(
+    aodv_en_node_t *node,
+    const uint8_t destination_mac[AODV_EN_MAC_ADDR_LEN],
+    uint32_t now_ms);
+
+static size_t aodv_en_node_flush_pending_data_for_destination(
+    aodv_en_node_t *node,
+    const uint8_t destination_mac[AODV_EN_MAC_ADDR_LEN],
+    uint32_t now_ms);
+
 static bool aodv_en_node_is_self(
     const aodv_en_node_t *node,
     const uint8_t mac[AODV_EN_MAC_ADDR_LEN])
@@ -134,13 +144,14 @@ static aodv_en_pending_data_entry_t *aodv_en_node_pending_find_free(
     return NULL;
 }
 
-static aodv_en_status_t aodv_en_node_send_data_via_route(
+static aodv_en_status_t aodv_en_node_send_data_with_sequence(
     aodv_en_node_t *node,
     const aodv_en_route_entry_t *route,
     const uint8_t destination_mac[AODV_EN_MAC_ADDR_LEN],
     const uint8_t *payload,
     uint16_t payload_len,
     bool ack_required,
+    uint32_t sequence_number,
     uint32_t now_ms)
 {
     uint8_t frame_buffer[sizeof(aodv_en_data_msg_t) + AODV_EN_DATA_PAYLOAD_MAX];
@@ -170,13 +181,210 @@ static aodv_en_status_t aodv_en_node_send_data_via_route(
         0u);
     aodv_en_mac_copy(message->originator_mac, node->self_mac);
     aodv_en_mac_copy(message->destination_mac, destination_mac);
-    message->sequence_number = ++node->next_data_seq;
+    message->sequence_number = sequence_number;
     message->ttl = node->config.ttl_default;
     message->payload_length = payload_len;
     memcpy(message->payload, payload, payload_len);
 
     frame_len = sizeof(aodv_en_data_msg_t) + payload_len;
     return aodv_en_node_emit(node, route->next_hop, frame_buffer, frame_len, false, now_ms);
+}
+
+static void aodv_en_node_pending_ack_clear(
+    aodv_en_pending_ack_entry_t *entry)
+{
+    if (entry == NULL)
+    {
+        return;
+    }
+
+    memset(entry, 0, sizeof(*entry));
+}
+
+static aodv_en_pending_ack_entry_t *aodv_en_node_pending_ack_find_free(
+    aodv_en_node_t *node)
+{
+    uint16_t index;
+
+    if (node == NULL)
+    {
+        return NULL;
+    }
+
+    for (index = 0; index < AODV_EN_PENDING_DATA_QUEUE_SIZE; index++)
+    {
+        if (!node->pending_ack[index].used)
+        {
+            return &node->pending_ack[index];
+        }
+    }
+
+    return NULL;
+}
+
+static aodv_en_pending_ack_entry_t *aodv_en_node_pending_ack_find_oldest(
+    aodv_en_node_t *node)
+{
+    aodv_en_pending_ack_entry_t *oldest = NULL;
+    uint16_t index;
+
+    if (node == NULL)
+    {
+        return NULL;
+    }
+
+    for (index = 0; index < AODV_EN_PENDING_DATA_QUEUE_SIZE; index++)
+    {
+        aodv_en_pending_ack_entry_t *entry = &node->pending_ack[index];
+
+        if (!entry->used)
+        {
+            continue;
+        }
+
+        if (oldest == NULL || entry->last_sent_at_ms < oldest->last_sent_at_ms)
+        {
+            oldest = entry;
+        }
+    }
+
+    return oldest;
+}
+
+static void aodv_en_node_track_pending_ack(
+    aodv_en_node_t *node,
+    const uint8_t destination_mac[AODV_EN_MAC_ADDR_LEN],
+    const uint8_t *payload,
+    uint16_t payload_len,
+    uint32_t sequence_number,
+    uint32_t now_ms)
+{
+    aodv_en_pending_ack_entry_t *entry;
+    bool reusing_slot = false;
+
+    if (node == NULL || payload == NULL || payload_len == 0u ||
+        aodv_en_mac_is_zero(destination_mac))
+    {
+        return;
+    }
+
+    entry = aodv_en_node_pending_ack_find_free(node);
+    if (entry == NULL)
+    {
+        entry = aodv_en_node_pending_ack_find_oldest(node);
+        reusing_slot = true;
+    }
+
+    if (entry == NULL)
+    {
+        return;
+    }
+
+    if (reusing_slot)
+    {
+        node->stats.ack_timeout_drops++;
+    }
+    else
+    {
+        node->pending_ack_count++;
+    }
+
+    memset(entry, 0, sizeof(*entry));
+    aodv_en_mac_copy(entry->destination_mac, destination_mac);
+    entry->payload_len = payload_len;
+    entry->retries_left = node->config.rreq_retry_count;
+    entry->sequence_number = sequence_number;
+    entry->last_sent_at_ms = now_ms;
+    entry->used = true;
+    memcpy(entry->payload, payload, payload_len);
+}
+
+static bool aodv_en_node_pending_ack_consume(
+    aodv_en_node_t *node,
+    const uint8_t ack_sender_mac[AODV_EN_MAC_ADDR_LEN],
+    uint32_t sequence_number)
+{
+    uint16_t index;
+
+    if (node == NULL || aodv_en_mac_is_zero(ack_sender_mac))
+    {
+        return false;
+    }
+
+    for (index = 0; index < AODV_EN_PENDING_DATA_QUEUE_SIZE; index++)
+    {
+        aodv_en_pending_ack_entry_t *entry = &node->pending_ack[index];
+
+        if (!entry->used)
+        {
+            continue;
+        }
+
+        if (!aodv_en_mac_equal(entry->destination_mac, ack_sender_mac) ||
+            entry->sequence_number != sequence_number)
+        {
+            continue;
+        }
+
+        aodv_en_node_pending_ack_clear(entry);
+        if (node->pending_ack_count > 0u)
+        {
+            node->pending_ack_count--;
+        }
+        return true;
+    }
+
+    return false;
+}
+
+static aodv_en_status_t aodv_en_node_send_data_via_route(
+    aodv_en_node_t *node,
+    const aodv_en_route_entry_t *route,
+    const uint8_t destination_mac[AODV_EN_MAC_ADDR_LEN],
+    const uint8_t *payload,
+    uint16_t payload_len,
+    bool ack_required,
+    uint32_t now_ms)
+{
+    uint32_t sequence_number;
+    aodv_en_status_t status;
+
+    if (node == NULL)
+    {
+        return AODV_EN_ERR_ARG;
+    }
+
+    sequence_number = ++node->next_data_seq;
+    if (ack_required)
+    {
+        aodv_en_node_track_pending_ack(
+            node,
+            destination_mac,
+            payload,
+            payload_len,
+            sequence_number,
+            now_ms);
+    }
+
+    status = aodv_en_node_send_data_with_sequence(
+        node,
+        route,
+        destination_mac,
+        payload,
+        payload_len,
+        ack_required,
+        sequence_number,
+        now_ms);
+    if (status != AODV_EN_OK)
+    {
+        if (ack_required)
+        {
+            (void)aodv_en_node_pending_ack_consume(node, destination_mac, sequence_number);
+        }
+        return status;
+    }
+
+    return AODV_EN_OK;
 }
 
 static aodv_en_status_t aodv_en_node_queue_data(
@@ -210,12 +418,130 @@ static aodv_en_status_t aodv_en_node_queue_data(
     entry->payload_len = payload_len;
     entry->ack_required = ack_required;
     entry->enqueued_at_ms = now_ms;
+    entry->last_rreq_at_ms = 0u;
+    entry->discovery_attempts = 0u;
     entry->used = true;
     memcpy(entry->payload, payload, payload_len);
 
     node->pending_data_count++;
     node->stats.pending_data_queued++;
     return AODV_EN_OK;
+}
+
+static void aodv_en_node_pending_note_rreq_attempt(
+    aodv_en_node_t *node,
+    const uint8_t destination_mac[AODV_EN_MAC_ADDR_LEN],
+    uint32_t now_ms)
+{
+    uint16_t index;
+
+    if (node == NULL || aodv_en_mac_is_zero(destination_mac))
+    {
+        return;
+    }
+
+    for (index = 0; index < AODV_EN_PENDING_DATA_QUEUE_SIZE; index++)
+    {
+        aodv_en_pending_data_entry_t *entry = &node->pending_data[index];
+
+        if (!entry->used || !aodv_en_mac_equal(entry->destination_mac, destination_mac))
+        {
+            continue;
+        }
+
+        if (entry->discovery_attempts < UINT8_MAX)
+        {
+            entry->discovery_attempts++;
+        }
+        entry->last_rreq_at_ms = now_ms;
+    }
+}
+
+static bool aodv_en_node_pending_destination_seen(
+    const aodv_en_node_t *node,
+    uint16_t upto_index,
+    const uint8_t destination_mac[AODV_EN_MAC_ADDR_LEN])
+{
+    uint16_t index;
+
+    if (node == NULL || aodv_en_mac_is_zero(destination_mac))
+    {
+        return false;
+    }
+
+    for (index = 0; index < upto_index; index++)
+    {
+        const aodv_en_pending_data_entry_t *entry = &node->pending_data[index];
+
+        if (entry->used && aodv_en_mac_equal(entry->destination_mac, destination_mac))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+static void aodv_en_node_retry_route_discovery_for_pending(
+    aodv_en_node_t *node,
+    uint32_t now_ms)
+{
+    uint16_t index;
+    uint16_t max_attempts;
+    uint32_t retry_interval_ms;
+
+    if (node == NULL || node->pending_data_count == 0u)
+    {
+        return;
+    }
+
+    max_attempts = (uint16_t)node->config.rreq_retry_count + 1u;
+    retry_interval_ms = (node->config.ack_timeout_ms == 0u) ? 1u : node->config.ack_timeout_ms;
+
+    for (index = 0; index < AODV_EN_PENDING_DATA_QUEUE_SIZE; index++)
+    {
+        aodv_en_pending_data_entry_t *entry = &node->pending_data[index];
+        uint8_t previous_attempts;
+
+        if (!entry->used)
+        {
+            continue;
+        }
+
+        if (aodv_en_node_pending_destination_seen(node, index, entry->destination_mac))
+        {
+            continue;
+        }
+
+        if (aodv_en_node_find_usable_route(node, entry->destination_mac, now_ms) != NULL)
+        {
+            (void)aodv_en_node_flush_pending_data_for_destination(node, entry->destination_mac, now_ms);
+            continue;
+        }
+
+        if ((uint16_t)entry->discovery_attempts >= max_attempts)
+        {
+            continue;
+        }
+
+        if (entry->discovery_attempts > 0u &&
+            (uint32_t)(now_ms - entry->last_rreq_at_ms) < retry_interval_ms)
+        {
+            continue;
+        }
+
+        previous_attempts = entry->discovery_attempts;
+        if (aodv_en_node_send_rreq(node, entry->destination_mac, now_ms) != AODV_EN_OK)
+        {
+            continue;
+        }
+
+        aodv_en_node_pending_note_rreq_attempt(node, entry->destination_mac, now_ms);
+        if (previous_attempts > 0u)
+        {
+            node->stats.route_discovery_retries++;
+        }
+    }
 }
 
 static size_t aodv_en_node_flush_pending_data_for_destination(
@@ -302,6 +628,83 @@ static void aodv_en_node_expire_pending_data(
             node->pending_data_count--;
         }
         node->stats.pending_data_dropped++;
+    }
+}
+
+static void aodv_en_node_process_pending_ack_retries(
+    aodv_en_node_t *node,
+    uint32_t now_ms)
+{
+    uint16_t index;
+    uint32_t timeout_ms;
+
+    if (node == NULL || node->pending_ack_count == 0u)
+    {
+        return;
+    }
+
+    timeout_ms = (node->config.ack_timeout_ms == 0u) ? 1u : node->config.ack_timeout_ms;
+
+    for (index = 0; index < AODV_EN_PENDING_DATA_QUEUE_SIZE; index++)
+    {
+        aodv_en_pending_ack_entry_t *entry = &node->pending_ack[index];
+        aodv_en_route_entry_t *route;
+        aodv_en_status_t status;
+
+        if (!entry->used)
+        {
+            continue;
+        }
+
+        if ((uint32_t)(now_ms - entry->last_sent_at_ms) < timeout_ms)
+        {
+            continue;
+        }
+
+        if (entry->retries_left == 0u)
+        {
+            aodv_en_node_pending_ack_clear(entry);
+            if (node->pending_ack_count > 0u)
+            {
+                node->pending_ack_count--;
+            }
+            node->stats.ack_timeout_drops++;
+            continue;
+        }
+
+        route = aodv_en_node_find_usable_route(node, entry->destination_mac, now_ms);
+        if (route == NULL)
+        {
+            (void)aodv_en_node_send_rreq(node, entry->destination_mac, now_ms);
+            entry->last_sent_at_ms = now_ms;
+            entry->retries_left--;
+            continue;
+        }
+
+        status = aodv_en_node_send_data_with_sequence(
+            node,
+            route,
+            entry->destination_mac,
+            entry->payload,
+            entry->payload_len,
+            true,
+            entry->sequence_number,
+            now_ms);
+        if (status == AODV_EN_OK)
+        {
+            entry->last_sent_at_ms = now_ms;
+            entry->retries_left--;
+            node->stats.ack_retry_sent++;
+            continue;
+        }
+
+        if (status == AODV_EN_ERR_NO_ROUTE)
+        {
+            (void)aodv_en_node_send_rreq(node, entry->destination_mac, now_ms);
+        }
+
+        entry->last_sent_at_ms = now_ms;
+        entry->retries_left--;
     }
 }
 
@@ -585,6 +988,7 @@ static aodv_en_status_t aodv_en_node_handle_ack(
 
     if (aodv_en_node_is_self(node, message->destination_mac))
     {
+        (void)aodv_en_node_pending_ack_consume(node, message->originator_mac, message->ack_for_sequence);
         node->stats.ack_received++;
         if (node->callbacks.ack_received != NULL)
         {
@@ -772,6 +1176,8 @@ void aodv_en_node_tick(
     (void)aodv_en_neighbor_expire(&node->neighbors, now_ms, node->config.neighbor_timeout_ms);
     (void)aodv_en_route_expire(&node->routes, now_ms);
     (void)aodv_en_rreq_cache_expire(&node->rreq_cache, now_ms, node->config.rreq_cache_timeout_ms);
+    aodv_en_node_retry_route_discovery_for_pending(node, now_ms);
+    aodv_en_node_process_pending_ack_retries(node, now_ms);
     aodv_en_node_expire_pending_data(node, now_ms);
 }
 
@@ -836,6 +1242,8 @@ aodv_en_status_t aodv_en_node_send_data(
         {
             return status;
         }
+
+        aodv_en_node_pending_note_rreq_attempt(node, destination_mac, now_ms);
 
         return AODV_EN_QUEUED;
     }
