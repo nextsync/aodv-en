@@ -1,0 +1,45 @@
+menu "AODV-EN App"
+
+config AODV_EN_APP_NODE_NAME
+    string "Node name"
+    default "NODE_A"
+
+config AODV_EN_APP_NETWORK_ID
+    hex "Network ID"
+    default 0xA0DE0001
+
+config AODV_EN_APP_WIFI_CHANNEL
+    int "Wi-Fi channel"
+    range 1 13
+    default 6
+
+config AODV_EN_APP_HELLO_INTERVAL_MS
+    int "HELLO interval (ms)"
+    range 1000 60000
+    default 5000
+
+config AODV_EN_APP_SEND_INTERVAL_MS
+    int "DATA send interval (ms)"
+    range 1000 60000
+    default 7000
+
+config AODV_EN_APP_PRINT_INTERVAL_MS
+    int "Stats print interval (ms)"
+    range 1000 60000
+    default 10000
+
+config AODV_EN_APP_ENABLE_DATA
+    bool "Enable periodic DATA send"
+    default n
+
+config AODV_EN_APP_TARGET_MAC
+    string "Target MAC for DATA"
+    default ""
+    depends on AODV_EN_APP_ENABLE_DATA
+
+config AODV_EN_APP_PAYLOAD_TEXT
+    string "Payload text"
+    default "hello from aodv-en"
+    depends on AODV_EN_APP_ENABLE_DATA
+
+endmenu
