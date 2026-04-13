@@ -9,6 +9,7 @@ extern "C"
     {
         AODV_EN_OK = 0,
         AODV_EN_NOOP = 1,
+        AODV_EN_QUEUED = 2,
         AODV_EN_ERR_ARG = -1,
         AODV_EN_ERR_FULL = -2,
         AODV_EN_ERR_NOT_FOUND = -3,
