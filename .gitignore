@@ -13,6 +13,11 @@
 *.tmp
 *.temp
 
+# Python cache artifacts
+**/__pycache__/
+*.pyc
+*.pyo
+
 # Generic C/C++/CMake artifacts
 **/CMakeFiles/
 **/CMakeCache.txt
@@ -37,6 +42,10 @@
 # ESP-IDF flashing helper outputs
 /firmware/flasher_args.json
 /firmware/flash_args
+
+# AODV-EN generated monitor/analysis artifacts
+/firmware/logs/
+/firmware/tests/tc002/logs/
 
 # Local simulation outputs
 /sim/*.out

@@ -912,6 +912,7 @@ static aodv_en_status_t aodv_en_node_send_rrep(
     aodv_en_node_t *node,
     const uint8_t originator_mac[AODV_EN_MAC_ADDR_LEN],
     const uint8_t destination_mac[AODV_EN_MAC_ADDR_LEN],
+    uint32_t rreq_dest_seq_num,
     uint32_t now_ms)
 {
     aodv_en_route_entry_t *reverse_route;
@@ -923,10 +924,20 @@ static aodv_en_status_t aodv_en_node_send_rrep(
         return AODV_EN_ERR_NO_ROUTE;
     }
 
+    /* RFC 3561 Section 6.6.1: Update self sequence number based on RREQ's destination sequence number */
+    if (rreq_dest_seq_num > node->self_seq_num)
+    {
+        node->self_seq_num = rreq_dest_seq_num;
+    }
+    else if (rreq_dest_seq_num == node->self_seq_num)
+    {
+        node->self_seq_num++;
+    }
+
     aodv_en_fill_header(node, &message.header, AODV_EN_MSG_RREP, AODV_EN_MSG_FLAG_NONE, 0u);
     aodv_en_mac_copy(message.originator_mac, originator_mac);
     aodv_en_mac_copy(message.destination_mac, destination_mac);
-    message.destination_seq_num = ++node->self_seq_num;
+    message.destination_seq_num = node->self_seq_num;
     message.lifetime_ms = node->config.route_lifetime_ms;
 
     return aodv_en_node_emit(node, reverse_route->next_hop, (const uint8_t *)&message, sizeof(message), false, now_ms);
@@ -934,6 +945,7 @@ static aodv_en_status_t aodv_en_node_send_rrep(
 
 static aodv_en_status_t aodv_en_node_send_rerr(
     aodv_en_node_t *node,
+    const uint8_t target_mac[AODV_EN_MAC_ADDR_LEN],
     const uint8_t unreachable_destination_mac[AODV_EN_MAC_ADDR_LEN],
     uint32_t unreachable_dest_seq_num,
     uint32_t now_ms)
@@ -945,12 +957,46 @@ static aodv_en_status_t aodv_en_node_send_rerr(
         return AODV_EN_ERR_ARG;
     }
 
-    aodv_en_fill_header(node, &message.header, AODV_EN_MSG_RERR, AODV_EN_MSG_FLAG_ROUTE_REPAIR, 0u);
+    aodv_en_fill_header(node, &message.header, AODV_EN_MSG_RERR, AODV_EN_MSG_FLAG_NONE, 0u);
     aodv_en_mac_copy(message.unreachable_destination_mac, unreachable_destination_mac);
     message.unreachable_dest_seq_num = unreachable_dest_seq_num;
 
     node->stats.route_repairs++;
-    return aodv_en_node_emit(node, AODV_EN_BROADCAST_MAC, (const uint8_t *)&message, sizeof(message), true, now_ms);
+    return aodv_en_node_emit(node, target_mac, (const uint8_t *)&message, sizeof(message), aodv_en_mac_is_broadcast(target_mac), now_ms);
+}
+
+static void aodv_en_node_notify_precursors_of_break(
+    aodv_en_node_t *node,
+    const uint8_t broken_next_hop[AODV_EN_MAC_ADDR_LEN],
+    const uint8_t unreachable_mac[AODV_EN_MAC_ADDR_LEN],
+    uint32_t unreachable_seq,
+    uint32_t now_ms)
+{
+    aodv_en_route_entry_t *route = aodv_en_route_find(&node->routes, unreachable_mac);
+
+    if (route == NULL)
+    {
+        return;
+    }
+
+    if (route->precursor_count == 0u)
+    {
+        /* RFC 3561: If no precursors are tracked, we can broadcast to ensure reachable nodes are notified. */
+        (void)aodv_en_node_send_rerr(node, AODV_EN_BROADCAST_MAC, unreachable_mac, unreachable_seq, now_ms);
+    }
+    else
+    {
+        for (uint8_t index = 0; index < route->precursor_count; index++)
+        {
+            /* Never send RERR back to the node that is the broken next hop */
+            if (aodv_en_mac_equal(route->precursors[index], broken_next_hop))
+            {
+                continue;
+            }
+
+            (void)aodv_en_node_send_rerr(node, route->precursors[index], unreachable_mac, unreachable_seq, now_ms);
+        }
+    }
 }
 
 static aodv_en_status_t aodv_en_node_send_ack(
@@ -1017,6 +1063,7 @@ static aodv_en_status_t aodv_en_node_forward_rrep(
 
 static aodv_en_status_t aodv_en_node_forward_data(
     aodv_en_node_t *node,
+    const uint8_t link_src_mac[AODV_EN_MAC_ADDR_LEN],
     const aodv_en_data_msg_t *incoming,
     size_t frame_len,
     uint32_t now_ms)
@@ -1027,16 +1074,19 @@ static aodv_en_status_t aodv_en_node_forward_data(
 
     if (incoming->ttl <= 1u)
     {
-        (void)aodv_en_node_send_rerr(node, incoming->destination_mac, 0u, now_ms);
+        (void)aodv_en_node_send_rerr(node, AODV_EN_BROADCAST_MAC, incoming->destination_mac, 0u, now_ms);
         return AODV_EN_ERR_NO_ROUTE;
     }
 
     route = aodv_en_route_find_valid(&node->routes, incoming->destination_mac);
     if (route == NULL || !aodv_en_route_is_usable(route, now_ms))
     {
-        (void)aodv_en_node_send_rerr(node, incoming->destination_mac, 0u, now_ms);
+        (void)aodv_en_node_send_rerr(node, AODV_EN_BROADCAST_MAC, incoming->destination_mac, 0u, now_ms);
         return AODV_EN_ERR_NO_ROUTE;
     }
+
+    /* RFC 3561: The node from which we received the packet is a precursor for the destination */
+    (void)aodv_en_route_add_precursor(route, link_src_mac);
 
     memcpy(frame_buffer, incoming, frame_len);
     message->header.hop_count++;
@@ -1100,7 +1150,12 @@ static aodv_en_status_t aodv_en_node_handle_rreq(
 
     if (aodv_en_node_is_self(node, message->destination_mac))
     {
-        return aodv_en_node_send_rrep(node, message->originator_mac, node->self_mac, now_ms);
+        return aodv_en_node_send_rrep(
+            node,
+            message->originator_mac,
+            node->self_mac,
+            message->destination_seq_num,
+            now_ms);
     }
 
     return aodv_en_node_forward_rreq(node, message, now_ms);
@@ -1108,11 +1163,13 @@ static aodv_en_status_t aodv_en_node_handle_rreq(
 
 static aodv_en_status_t aodv_en_node_handle_rrep(
     aodv_en_node_t *node,
-    const aodv_en_rrep_msg_t *message,
     const uint8_t link_src_mac[AODV_EN_MAC_ADDR_LEN],
+    const aodv_en_rrep_msg_t *message,
     uint32_t now_ms)
 {
     aodv_en_route_entry_t route;
+    aodv_en_route_entry_t *dest_route_ptr;
+    aodv_en_route_entry_t *reverse_route_ptr;
 
     memset(&route, 0, sizeof(route));
     aodv_en_mac_copy(route.destination, message->destination_mac);
@@ -1125,6 +1182,25 @@ static aodv_en_status_t aodv_en_node_handle_rrep(
     (void)aodv_en_route_upsert(&node->routes, &route);
     (void)aodv_en_node_flush_pending_data_for_destination(node, message->destination_mac, now_ms);
 
+    /* RFC 3561 Section 6.6.2: Precursor maintenance */
+    dest_route_ptr = aodv_en_route_find_valid(&node->routes, message->destination_mac);
+    reverse_route_ptr = aodv_en_node_find_usable_route(node, message->originator_mac, now_ms);
+
+    if (dest_route_ptr != NULL)
+    {
+        /* Neighbor from which we received RREP is a precursor for Destination */
+        (void)aodv_en_route_add_precursor(dest_route_ptr, link_src_mac);
+
+        if (reverse_route_ptr != NULL)
+        {
+            /* Neighbor to which we forward RREP is a precursor for Destination */
+            (void)aodv_en_route_add_precursor(dest_route_ptr, reverse_route_ptr->next_hop);
+
+            /* Neighbor from which we received RREP is a precursor for Originator */
+            (void)aodv_en_route_add_precursor(reverse_route_ptr, link_src_mac);
+        }
+    }
+
     if (aodv_en_node_is_self(node, message->originator_mac))
     {
         return AODV_EN_OK;
@@ -1136,15 +1212,30 @@ static aodv_en_status_t aodv_en_node_handle_rrep(
 
 static aodv_en_status_t aodv_en_node_handle_rerr(
     aodv_en_node_t *node,
+    const uint8_t link_src_mac[AODV_EN_MAC_ADDR_LEN],
     const aodv_en_rerr_msg_t *message,
     uint32_t now_ms)
 {
-    return (aodv_en_route_invalidate_destination(
-                &node->routes,
-                message->unreachable_destination_mac,
-                now_ms) == AODV_EN_OK)
-               ? AODV_EN_OK
-               : AODV_EN_NOOP;
+    aodv_en_status_t status;
+
+    status = aodv_en_route_invalidate_destination(
+        &node->routes,
+        message->unreachable_destination_mac,
+        now_ms);
+
+    if (status == AODV_EN_OK)
+    {
+        /* RFC 3561: Propagate RERR to precursors of the now-invalidated route, excluding the sender */
+        aodv_en_node_notify_precursors_of_break(
+            node,
+            link_src_mac,
+            message->unreachable_destination_mac,
+            message->unreachable_dest_seq_num,
+            now_ms);
+        return AODV_EN_OK;
+    }
+
+    return AODV_EN_NOOP;
 }
 
 static aodv_en_status_t aodv_en_node_handle_ack(
@@ -1183,6 +1274,7 @@ static aodv_en_status_t aodv_en_node_handle_ack(
 
 static aodv_en_status_t aodv_en_node_handle_data(
     aodv_en_node_t *node,
+    const uint8_t link_src_mac[AODV_EN_MAC_ADDR_LEN],
     const aodv_en_data_msg_t *message,
     size_t frame_len,
     uint32_t now_ms)
@@ -1214,7 +1306,7 @@ static aodv_en_status_t aodv_en_node_handle_data(
         return AODV_EN_OK;
     }
 
-    return aodv_en_node_forward_data(node, message, frame_len, now_ms);
+    return aodv_en_node_forward_data(node, link_src_mac, message, frame_len, now_ms);
 }
 
 static bool aodv_en_validate_header(
@@ -1416,7 +1508,19 @@ aodv_en_status_t aodv_en_node_on_link_tx_result(
 
     if (invalidated > 0u)
     {
+        uint16_t index;
         node->stats.route_invalidations_link_fail += (uint32_t)invalidated;
+
+        /* RFC 3561: Notify precursors of all routes that were using this broken next_hop */
+        for (index = 0; index < node->routes.count; index++)
+        {
+            aodv_en_route_entry_t *entry = &node->routes.entries[index];
+            if (entry->state == AODV_EN_ROUTE_INVALID && aodv_en_mac_equal(entry->next_hop, next_hop))
+            {
+                aodv_en_node_notify_precursors_of_break(node, next_hop, entry->destination, entry->dest_seq_num, now_ms);
+            }
+        }
+
         aodv_en_node_trigger_discovery_for_pending_destinations(node, now_ms);
         if (invalidated_routes != NULL)
         {
@@ -1441,7 +1545,7 @@ aodv_en_status_t aodv_en_node_send_hello(
 
     aodv_en_fill_header(node, &message.header, AODV_EN_MSG_HELLO, AODV_EN_MSG_FLAG_NONE, 0u);
     aodv_en_mac_copy(message.node_mac, node->self_mac);
-    message.node_seq_num = ++node->self_seq_num;
+    message.node_seq_num = node->self_seq_num;
     message.timestamp_ms = now_ms;
 
     return aodv_en_node_emit(node, AODV_EN_BROADCAST_MAC, (const uint8_t *)&message, sizeof(message), true, now_ms);
@@ -1541,11 +1645,11 @@ aodv_en_status_t aodv_en_node_on_recv(
     case AODV_EN_MSG_RREQ:
         return aodv_en_node_handle_rreq(node, (const aodv_en_rreq_msg_t *)frame, link_src_mac, now_ms);
     case AODV_EN_MSG_RREP:
-        return aodv_en_node_handle_rrep(node, (const aodv_en_rrep_msg_t *)frame, link_src_mac, now_ms);
+        return aodv_en_node_handle_rrep(node, link_src_mac, (const aodv_en_rrep_msg_t *)frame, now_ms);
     case AODV_EN_MSG_RERR:
-        return aodv_en_node_handle_rerr(node, (const aodv_en_rerr_msg_t *)frame, now_ms);
+        return aodv_en_node_handle_rerr(node, link_src_mac, (const aodv_en_rerr_msg_t *)frame, now_ms);
     case AODV_EN_MSG_DATA:
-        return aodv_en_node_handle_data(node, (const aodv_en_data_msg_t *)frame, frame_len, now_ms);
+        return aodv_en_node_handle_data(node, link_src_mac, (const aodv_en_data_msg_t *)frame, frame_len, now_ms);
     case AODV_EN_MSG_ACK:
         return aodv_en_node_handle_ack(node, (const aodv_en_ack_msg_t *)frame, now_ms);
     default:

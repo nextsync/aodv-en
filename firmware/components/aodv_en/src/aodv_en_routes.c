@@ -221,7 +221,23 @@ aodv_en_status_t aodv_en_route_upsert(
             return AODV_EN_NOOP;
         }
 
-        *existing = *candidate;
+        /* Preserve precursors if the next hop is the same (route refresh) */
+        if (aodv_en_mac_equal(existing->next_hop, candidate->next_hop))
+        {
+            uint8_t saved_precursor_count = existing->precursor_count;
+            uint8_t saved_precursors[AODV_EN_MAX_PRECURSORS][AODV_EN_MAC_ADDR_LEN];
+            memcpy(saved_precursors, existing->precursors, sizeof(saved_precursors));
+
+            *existing = *candidate;
+
+            existing->precursor_count = saved_precursor_count;
+            memcpy(existing->precursors, saved_precursors, sizeof(saved_precursors));
+        }
+        else
+        {
+            /* New next hop, reset precursors */
+            *existing = *candidate;
+        }
         return AODV_EN_OK;
     }
 
@@ -232,6 +248,34 @@ aodv_en_status_t aodv_en_route_upsert(
 
     table->entries[table->count++] = *candidate;
     return AODV_EN_OK;
+}
+
+aodv_en_status_t aodv_en_route_add_precursor(
+    aodv_en_route_entry_t *route,
+    const uint8_t precursor[AODV_EN_MAC_ADDR_LEN])
+{
+    uint8_t index;
+
+    if (route == NULL || aodv_en_mac_is_zero(precursor))
+    {
+        return AODV_EN_ERR_ARG;
+    }
+
+    for (index = 0; index < route->precursor_count; index++)
+    {
+        if (aodv_en_mac_equal(route->precursors[index], precursor))
+        {
+            return AODV_EN_OK;
+        }
+    }
+
+    if (route->precursor_count < AODV_EN_MAX_PRECURSORS)
+    {
+        aodv_en_mac_copy(route->precursors[route->precursor_count++], precursor);
+        return AODV_EN_OK;
+    }
+
+    return AODV_EN_ERR_FULL;
 }
 
 aodv_en_status_t aodv_en_route_invalidate_destination(
