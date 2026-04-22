@@ -144,6 +144,65 @@ static aodv_en_pending_data_entry_t *aodv_en_node_pending_find_free(
     return NULL;
 }
 
+static aodv_en_pending_data_entry_t *aodv_en_node_pending_find_oldest(
+    aodv_en_node_t *node)
+{
+    aodv_en_pending_data_entry_t *oldest = NULL;
+    uint16_t index;
+
+    if (node == NULL)
+    {
+        return NULL;
+    }
+
+    for (index = 0; index < AODV_EN_PENDING_DATA_QUEUE_SIZE; index++)
+    {
+        aodv_en_pending_data_entry_t *entry = &node->pending_data[index];
+
+        if (!entry->used)
+        {
+            continue;
+        }
+
+        if (oldest == NULL || entry->enqueued_at_ms < oldest->enqueued_at_ms)
+        {
+            oldest = entry;
+        }
+    }
+
+    return oldest;
+}
+
+static aodv_en_pending_data_entry_t *aodv_en_node_pending_find_oldest_for_destination(
+    aodv_en_node_t *node,
+    const uint8_t destination_mac[AODV_EN_MAC_ADDR_LEN])
+{
+    aodv_en_pending_data_entry_t *oldest = NULL;
+    uint16_t index;
+
+    if (node == NULL || aodv_en_mac_is_zero(destination_mac))
+    {
+        return NULL;
+    }
+
+    for (index = 0; index < AODV_EN_PENDING_DATA_QUEUE_SIZE; index++)
+    {
+        aodv_en_pending_data_entry_t *entry = &node->pending_data[index];
+
+        if (!entry->used || !aodv_en_mac_equal(entry->destination_mac, destination_mac))
+        {
+            continue;
+        }
+
+        if (oldest == NULL || entry->enqueued_at_ms < oldest->enqueued_at_ms)
+        {
+            oldest = entry;
+        }
+    }
+
+    return oldest;
+}
+
 static aodv_en_status_t aodv_en_node_send_data_with_sequence(
     aodv_en_node_t *node,
     const aodv_en_route_entry_t *route,
@@ -396,6 +455,9 @@ static aodv_en_status_t aodv_en_node_queue_data(
     uint32_t now_ms)
 {
     aodv_en_pending_data_entry_t *entry;
+    uint8_t preserved_attempts = 0u;
+    uint32_t preserved_last_rreq_at_ms = 0u;
+    bool preserve_discovery_state = false;
 
     if (node == NULL || aodv_en_mac_is_zero(destination_mac) || payload == NULL || payload_len == 0u)
     {
@@ -404,13 +466,37 @@ static aodv_en_status_t aodv_en_node_queue_data(
 
     if (node->pending_data_count >= AODV_EN_PENDING_DATA_QUEUE_SIZE)
     {
-        return AODV_EN_ERR_FULL;
-    }
+        /*
+         * Backpressure strategy: recycle oldest pending entry when the queue is full.
+         * Prefer replacing the oldest entry of the same destination to preserve fairness
+         * across destinations and avoid permanent AODV_EN_ERR_FULL under long blackouts.
+         */
+        entry = aodv_en_node_pending_find_oldest_for_destination(node, destination_mac);
+        if (entry != NULL)
+        {
+            preserve_discovery_state = true;
+            preserved_attempts = entry->discovery_attempts;
+            preserved_last_rreq_at_ms = entry->last_rreq_at_ms;
+        }
+        else
+        {
+            entry = aodv_en_node_pending_find_oldest(node);
+        }
 
-    entry = aodv_en_node_pending_find_free(node);
-    if (entry == NULL)
+        if (entry == NULL)
+        {
+            return AODV_EN_ERR_FULL;
+        }
+
+        node->stats.pending_data_dropped++;
+    }
+    else
     {
-        return AODV_EN_ERR_FULL;
+        entry = aodv_en_node_pending_find_free(node);
+        if (entry == NULL)
+        {
+            return AODV_EN_ERR_FULL;
+        }
     }
 
     memset(entry, 0, sizeof(*entry));
@@ -418,12 +504,15 @@ static aodv_en_status_t aodv_en_node_queue_data(
     entry->payload_len = payload_len;
     entry->ack_required = ack_required;
     entry->enqueued_at_ms = now_ms;
-    entry->last_rreq_at_ms = 0u;
-    entry->discovery_attempts = 0u;
+    entry->last_rreq_at_ms = preserve_discovery_state ? preserved_last_rreq_at_ms : 0u;
+    entry->discovery_attempts = preserve_discovery_state ? preserved_attempts : 0u;
     entry->used = true;
     memcpy(entry->payload, payload, payload_len);
 
-    node->pending_data_count++;
+    if (node->pending_data_count < AODV_EN_PENDING_DATA_QUEUE_SIZE)
+    {
+        node->pending_data_count++;
+    }
     node->stats.pending_data_queued++;
     return AODV_EN_OK;
 }
@@ -482,21 +571,58 @@ static bool aodv_en_node_pending_destination_seen(
     return false;
 }
 
-static void aodv_en_node_retry_route_discovery_for_pending(
+static uint32_t aodv_en_node_discovery_retry_interval_ms(
+    const aodv_en_node_t *node,
+    uint8_t discovery_attempts)
+{
+    const uint32_t max_retry_interval_ms = 10000u;
+    uint32_t interval_ms;
+    uint8_t attempt_step;
+
+    if (node == NULL)
+    {
+        return 1000u;
+    }
+
+    interval_ms = node->config.ack_timeout_ms;
+    if (interval_ms < 200u)
+    {
+        interval_ms = 200u;
+    }
+
+    if (discovery_attempts <= 1u)
+    {
+        return interval_ms;
+    }
+
+    for (attempt_step = 1u; attempt_step < discovery_attempts; attempt_step++)
+    {
+        if (interval_ms >= max_retry_interval_ms)
+        {
+            break;
+        }
+
+        interval_ms *= 2u;
+        if (interval_ms > max_retry_interval_ms)
+        {
+            interval_ms = max_retry_interval_ms;
+            break;
+        }
+    }
+
+    return interval_ms;
+}
+
+static void aodv_en_node_trigger_discovery_for_pending_destinations(
     aodv_en_node_t *node,
     uint32_t now_ms)
 {
     uint16_t index;
-    uint16_t max_attempts;
-    uint32_t retry_interval_ms;
 
     if (node == NULL || node->pending_data_count == 0u)
     {
         return;
     }
-
-    max_attempts = (uint16_t)node->config.rreq_retry_count + 1u;
-    retry_interval_ms = (node->config.ack_timeout_ms == 0u) ? 1u : node->config.ack_timeout_ms;
 
     for (index = 0; index < AODV_EN_PENDING_DATA_QUEUE_SIZE; index++)
     {
@@ -519,11 +645,54 @@ static void aodv_en_node_retry_route_discovery_for_pending(
             continue;
         }
 
-        if ((uint16_t)entry->discovery_attempts >= max_attempts)
+        previous_attempts = entry->discovery_attempts;
+        if (aodv_en_node_send_rreq(node, entry->destination_mac, now_ms) != AODV_EN_OK)
         {
             continue;
         }
 
+        aodv_en_node_pending_note_rreq_attempt(node, entry->destination_mac, now_ms);
+        if (previous_attempts > 0u)
+        {
+            node->stats.route_discovery_retries++;
+        }
+    }
+}
+
+static void aodv_en_node_retry_route_discovery_for_pending(
+    aodv_en_node_t *node,
+    uint32_t now_ms)
+{
+    uint16_t index;
+
+    if (node == NULL || node->pending_data_count == 0u)
+    {
+        return;
+    }
+
+    for (index = 0; index < AODV_EN_PENDING_DATA_QUEUE_SIZE; index++)
+    {
+        aodv_en_pending_data_entry_t *entry = &node->pending_data[index];
+        uint8_t previous_attempts;
+        uint32_t retry_interval_ms;
+
+        if (!entry->used)
+        {
+            continue;
+        }
+
+        if (aodv_en_node_pending_destination_seen(node, index, entry->destination_mac))
+        {
+            continue;
+        }
+
+        if (aodv_en_node_find_usable_route(node, entry->destination_mac, now_ms) != NULL)
+        {
+            (void)aodv_en_node_flush_pending_data_for_destination(node, entry->destination_mac, now_ms);
+            continue;
+        }
+
+        retry_interval_ms = aodv_en_node_discovery_retry_interval_ms(node, entry->discovery_attempts);
         if (entry->discovery_attempts > 0u &&
             (uint32_t)(now_ms - entry->last_rreq_at_ms) < retry_interval_ms)
         {
@@ -1115,6 +1284,7 @@ void aodv_en_config_set_defaults(aodv_en_config_t *config)
     config->max_hops = AODV_EN_MAX_HOPS_DEFAULT;
     config->ttl_default = AODV_EN_TTL_DEFAULT;
     config->rreq_retry_count = AODV_EN_RREQ_RETRY_COUNT_DEFAULT;
+    config->link_fail_threshold = AODV_EN_LINK_FAIL_THRESHOLD_DEFAULT;
 }
 
 aodv_en_status_t aodv_en_node_init(
@@ -1179,6 +1349,83 @@ void aodv_en_node_tick(
     aodv_en_node_retry_route_discovery_for_pending(node, now_ms);
     aodv_en_node_process_pending_ack_retries(node, now_ms);
     aodv_en_node_expire_pending_data(node, now_ms);
+}
+
+aodv_en_status_t aodv_en_node_on_link_tx_result(
+    aodv_en_node_t *node,
+    const uint8_t next_hop[AODV_EN_MAC_ADDR_LEN],
+    bool success,
+    uint32_t now_ms,
+    size_t *invalidated_routes)
+{
+    aodv_en_neighbor_entry_t *neighbor;
+    size_t invalidated = 0u;
+    uint8_t fail_threshold;
+
+    if (invalidated_routes != NULL)
+    {
+        *invalidated_routes = 0u;
+    }
+
+    if (node == NULL || aodv_en_mac_is_zero(next_hop))
+    {
+        return AODV_EN_ERR_ARG;
+    }
+
+    fail_threshold = node->config.link_fail_threshold;
+    if (fail_threshold == 0u)
+    {
+        fail_threshold = AODV_EN_LINK_FAIL_THRESHOLD_DEFAULT;
+    }
+
+    neighbor = aodv_en_neighbor_find(&node->neighbors, next_hop);
+
+    if (success)
+    {
+        if (neighbor != NULL)
+        {
+            neighbor->link_fail_count = 0u;
+            neighbor->state = AODV_EN_NEIGHBOR_ACTIVE;
+            neighbor->last_used_ms = now_ms;
+        }
+        return AODV_EN_OK;
+    }
+
+    node->stats.link_fail_events++;
+
+    if (neighbor != NULL)
+    {
+        (void)aodv_en_neighbor_note_link_failure(
+            &node->neighbors,
+            next_hop,
+            fail_threshold);
+
+        if (neighbor->state == AODV_EN_NEIGHBOR_INACTIVE)
+        {
+            invalidated = aodv_en_route_invalidate_by_next_hop(&node->routes, next_hop, now_ms);
+        }
+    }
+    else
+    {
+        /*
+         * If there is no neighbor record, fail safe by invalidating routes that use this next hop.
+         * This prevents stale routes from persisting after repeated unicast transmission failures.
+         */
+        invalidated = aodv_en_route_invalidate_by_next_hop(&node->routes, next_hop, now_ms);
+    }
+
+    if (invalidated > 0u)
+    {
+        node->stats.route_invalidations_link_fail += (uint32_t)invalidated;
+        aodv_en_node_trigger_discovery_for_pending_destinations(node, now_ms);
+        if (invalidated_routes != NULL)
+        {
+            *invalidated_routes = invalidated;
+        }
+        return AODV_EN_OK;
+    }
+
+    return AODV_EN_NOOP;
 }
 
 aodv_en_status_t aodv_en_node_send_hello(

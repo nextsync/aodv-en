@@ -1,5 +1,6 @@
 idf_component_register(
     SRCS
+        "src/aodv_en.c"
         "src/aodv_en_node.c"
         "src/aodv_en_mac.c"
         "src/aodv_en_neighbors.c"

@@ -32,6 +32,8 @@ extern "C"
         uint32_t route_discovery_retries;
         uint32_t ack_retry_sent;
         uint32_t ack_timeout_drops;
+        uint32_t link_fail_events;
+        uint32_t route_invalidations_link_fail;
     } aodv_en_stats_t;
 
     typedef struct
@@ -136,6 +138,13 @@ extern "C"
         size_t frame_len,
         int8_t rssi,
         uint32_t now_ms);
+
+    aodv_en_status_t aodv_en_node_on_link_tx_result(
+        aodv_en_node_t *node,
+        const uint8_t next_hop[AODV_EN_MAC_ADDR_LEN],
+        bool success,
+        uint32_t now_ms,
+        size_t *invalidated_routes);
 
 #ifdef __cplusplus
 }
