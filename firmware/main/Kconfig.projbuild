@@ -1,5 +1,17 @@
 menu "AODV-EN App"
 
+choice AODV_EN_APP_EXAMPLE_MODE
+    prompt "Application example mode"
+    default AODV_EN_APP_USE_APP_DEMO
+
+config AODV_EN_APP_USE_APP_DEMO
+    bool "Use app_demo (legacy periodic data example)"
+
+config AODV_EN_APP_USE_PROTO_EXAMPLE
+    bool "Use app_proto_example (health/text/command example)"
+
+endchoice
+
 config AODV_EN_APP_NODE_NAME
     string "Node name"
     default "NODE_A"
@@ -41,5 +53,47 @@ config AODV_EN_APP_PAYLOAD_TEXT
     string "Payload text"
     default "hello from aodv-en"
     depends on AODV_EN_APP_ENABLE_DATA
+
+config AODV_EN_APP_PROTO_HEALTH_INTERVAL_MS
+    int "PROTO health interval (ms)"
+    range 1000 60000
+    default 10000
+    depends on AODV_EN_APP_USE_PROTO_EXAMPLE
+
+config AODV_EN_APP_PROTO_UNICAST_INTERVAL_MS
+    int "PROTO unicast interval (ms)"
+    range 1000 60000
+    default 15000
+    depends on AODV_EN_APP_USE_PROTO_EXAMPLE
+
+config AODV_EN_APP_PROTO_ENABLE_UNICAST
+    bool "PROTO enable periodic unicast text/cmd"
+    default n
+    depends on AODV_EN_APP_USE_PROTO_EXAMPLE
+
+config AODV_EN_APP_PROTO_ENABLE_CLI
+    bool "PROTO enable serial CLI commands"
+    default y
+    depends on AODV_EN_APP_USE_PROTO_EXAMPLE
+
+config AODV_EN_APP_PROTO_TARGET_MAC
+    string "PROTO target MAC (unicast)"
+    default ""
+    depends on AODV_EN_APP_PROTO_ENABLE_UNICAST
+
+config AODV_EN_APP_PROTO_TEXT
+    string "PROTO text payload"
+    default "oi from app proto"
+    depends on AODV_EN_APP_PROTO_ENABLE_UNICAST
+
+config AODV_EN_APP_PROTO_COMMAND
+    string "PROTO command name"
+    default "ping"
+    depends on AODV_EN_APP_PROTO_ENABLE_UNICAST
+
+config AODV_EN_APP_PROTO_COMMAND_ARGS
+    string "PROTO command args"
+    default ""
+    depends on AODV_EN_APP_PROTO_ENABLE_UNICAST
 
 endmenu

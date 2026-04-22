@@ -1,5 +1,7 @@
 idf_component_register(
     SRCS
+        "aodv_en_app_proto.c"
+        "app_proto_example.c"
         "main.c"
         "app_demo.c"
     INCLUDE_DIRS "."

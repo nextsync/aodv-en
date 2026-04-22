@@ -1,6 +1,9 @@
+
 #include "app_demo.h"
+#include "app_proto_example.h"
 
 void app_main(void)
 {
-    app_demo_run();
+
+    app_proto_example_run();
 }
