@@ -34,6 +34,10 @@ extern "C"
         aodv_en_route_table_t *table,
         const aodv_en_route_entry_t *candidate);
 
+    aodv_en_status_t aodv_en_route_add_precursor(
+        aodv_en_route_entry_t *route,
+        const uint8_t precursor[AODV_EN_MAC_ADDR_LEN]);
+
     aodv_en_status_t aodv_en_route_invalidate_destination(
         aodv_en_route_table_t *table,
         const uint8_t destination[AODV_EN_MAC_ADDR_LEN],

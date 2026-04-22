@@ -66,6 +66,8 @@ extern "C"
         uint16_t metric;
         uint8_t hop_count;
         uint8_t state;
+        uint8_t precursor_count;
+        uint8_t precursors[AODV_EN_MAX_PRECURSORS][AODV_EN_MAC_ADDR_LEN];
     } aodv_en_route_entry_t;
 
     typedef struct

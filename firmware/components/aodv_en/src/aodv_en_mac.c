@@ -25,6 +25,18 @@ bool aodv_en_mac_is_zero(const uint8_t mac[AODV_EN_MAC_ADDR_LEN])
     return memcmp(mac, zero_mac, AODV_EN_MAC_ADDR_LEN) == 0;
 }
 
+bool aodv_en_mac_is_broadcast(const uint8_t mac[AODV_EN_MAC_ADDR_LEN])
+{
+    uint8_t broadcast_mac[AODV_EN_MAC_ADDR_LEN] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+
+    if (mac == NULL)
+    {
+        return false;
+    }
+
+    return memcmp(mac, broadcast_mac, AODV_EN_MAC_ADDR_LEN) == 0;
+}
+
 void aodv_en_mac_copy(uint8_t dst[AODV_EN_MAC_ADDR_LEN],
                       const uint8_t src[AODV_EN_MAC_ADDR_LEN])
 {

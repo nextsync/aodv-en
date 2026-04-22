@@ -13,6 +13,7 @@ extern "C"
     bool aodv_en_mac_equal(const uint8_t lhs[AODV_EN_MAC_ADDR_LEN],
                            const uint8_t rhs[AODV_EN_MAC_ADDR_LEN]);
     bool aodv_en_mac_is_zero(const uint8_t mac[AODV_EN_MAC_ADDR_LEN]);
+    bool aodv_en_mac_is_broadcast(const uint8_t mac[AODV_EN_MAC_ADDR_LEN]);
     void aodv_en_mac_copy(uint8_t dst[AODV_EN_MAC_ADDR_LEN],
                           const uint8_t src[AODV_EN_MAC_ADDR_LEN]);
     void aodv_en_mac_clear(uint8_t mac[AODV_EN_MAC_ADDR_LEN]);
