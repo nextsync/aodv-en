@@ -102,6 +102,7 @@ extern "C"
         uint8_t max_hops;
         uint8_t ttl_default;
         uint8_t rreq_retry_count;
+        uint8_t link_fail_threshold;
     } aodv_en_config_t;
 
 #ifdef __cplusplus

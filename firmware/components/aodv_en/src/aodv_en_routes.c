@@ -22,6 +22,65 @@ static void aodv_en_route_remove_at(aodv_en_route_table_t *table, uint16_t index
     table->count--;
 }
 
+static bool aodv_en_route_next_hop_changed(
+    const aodv_en_route_entry_t *existing,
+    const aodv_en_route_entry_t *candidate)
+{
+    if (existing == NULL || candidate == NULL)
+    {
+        return false;
+    }
+
+    return !aodv_en_mac_equal(existing->next_hop, candidate->next_hop);
+}
+
+static bool aodv_en_route_candidate_is_strongly_better(
+    const aodv_en_route_entry_t *existing,
+    const aodv_en_route_entry_t *candidate)
+{
+    uint32_t seq_gain = 0u;
+    uint32_t metric_limit;
+    uint32_t hop_limit;
+    uint32_t lifetime_gain = 0u;
+
+    if (existing == NULL || candidate == NULL)
+    {
+        return false;
+    }
+
+    if (candidate->dest_seq_num > existing->dest_seq_num)
+    {
+        seq_gain = candidate->dest_seq_num - existing->dest_seq_num;
+        if (seq_gain >= (uint32_t)AODV_EN_ROUTE_SWITCH_MIN_SEQ_GAIN)
+        {
+            return true;
+        }
+    }
+
+    metric_limit = (uint32_t)candidate->metric + (uint32_t)AODV_EN_ROUTE_SWITCH_MIN_METRIC_GAIN;
+    if (metric_limit < (uint32_t)existing->metric)
+    {
+        return true;
+    }
+
+    hop_limit = (uint32_t)candidate->hop_count + (uint32_t)AODV_EN_ROUTE_SWITCH_MIN_HOP_GAIN;
+    if (hop_limit < (uint32_t)existing->hop_count)
+    {
+        return true;
+    }
+
+    if (candidate->expires_at_ms > existing->expires_at_ms)
+    {
+        lifetime_gain = candidate->expires_at_ms - existing->expires_at_ms;
+        if (lifetime_gain >= (uint32_t)AODV_EN_ROUTE_SWITCH_MIN_LIFETIME_GAIN_MS)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 void aodv_en_route_table_init(aodv_en_route_table_t *table)
 {
     if (table == NULL)
@@ -97,6 +156,15 @@ bool aodv_en_route_should_replace(
     if (candidate->state == AODV_EN_ROUTE_VALID && existing->state != AODV_EN_ROUTE_VALID)
     {
         return true;
+    }
+
+    /* Hysteresis: avoid flapping between next hops unless the candidate is clearly better. */
+    if (candidate->state == AODV_EN_ROUTE_VALID &&
+        existing->state == AODV_EN_ROUTE_VALID &&
+        aodv_en_route_next_hop_changed(existing, candidate) &&
+        !aodv_en_route_candidate_is_strongly_better(existing, candidate))
+    {
+        return false;
     }
 
     if (candidate->dest_seq_num > existing->dest_seq_num)
