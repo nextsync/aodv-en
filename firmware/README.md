@@ -88,6 +88,9 @@ Menu:
 
 Campos principais:
 
+- modo de exemplo da aplicacao:
+  - `app_demo` (legado)
+  - `app_proto_example` (health/text/command)
 - nome do no
 - `network_id`
 - canal Wi-Fi
@@ -95,3 +98,58 @@ Campos principais:
 - habilitacao de `DATA`
 - MAC alvo
 - texto do payload
+
+Se selecionar `app_proto_example`, ficam disponiveis campos extras:
+
+- `PROTO health interval (ms)`
+- `PROTO unicast interval (ms)`
+- `PROTO enable periodic unicast text/cmd`
+- `PROTO enable serial CLI commands`
+- `PROTO target MAC (unicast)`
+- `PROTO text payload`
+- `PROTO command name`
+- `PROTO command args`
+
+Com esse exemplo novo:
+
+- cada no responde automaticamente `HEALTH_REQ` com `HEALTH_RSP`;
+- e possivel enviar `TEXT` para um alvo unicast configurado;
+- e possivel enviar `CMD_REQ` para outro no, com handlers de exemplo:
+  - `ping`
+  - `echo`
+  - `info`
+
+Se `PROTO enable serial CLI commands` estiver habilitado, voce tambem pode digitar no monitor:
+
+- `help`
+- `health all`
+- `health <AA:BB:CC:DD:EE:FF>`
+- `text <AA:BB:CC:DD:EE:FF> <mensagem>`
+- `cmd <AA:BB:CC:DD:EE:FF> <comando> [args]`
+- `routes`
+
+## Desenho da topologia (a partir dos logs)
+
+Depois de extrair os metrics de um log com `extract_monitor_metrics.py`, voce pode gerar um desenho da topologia:
+
+```bash
+python3 firmware/tools/draw_topology.py \
+  firmware/logs/analysis/node_a_tc004_soak_v2_20260421-183532 \
+  --mode latest
+```
+
+Saidas:
+
+- `topology/topology.mmd` (Mermaid)
+- `topology/topology.dot` (Graphviz DOT)
+- `topology/topology.svg` (quando `dot` estiver instalado)
+- `topology/topology.json` (resumo estruturado)
+
+Para incluir todos os links observados durante a execucao (nao so o ultimo snapshot), use:
+
+```bash
+python3 firmware/tools/draw_topology.py \
+  firmware/logs/analysis/node_a_tc004_soak_v2_20260421-183532 \
+  --mode observed \
+  --name topology_observed
+```

@@ -16,6 +16,26 @@ Exemplo de pasta:
 - Os graficos sao derivados dos CSV em `firmware/logs/analysis/<run>/`.
 - O mapeamento oficial dos arquivos gerados fica em `plots/manifest.json`.
 
+## Desenho da topologia (Mermaid/DOT)
+
+Para gerar um desenho da topologia observada nos logs analisados:
+
+```bash
+python3 firmware/tools/draw_topology.py <analysis_dir> --mode latest
+```
+
+Arquivos gerados em `<analysis_dir>/topology/`:
+
+- `topology.mmd` (Mermaid)
+- `topology.dot` (Graphviz DOT)
+- `topology.svg` (quando o comando `dot` estiver instalado)
+- `topology.json` (resumo estruturado de nos, enlaces e snapshot usado)
+
+Modos:
+
+- `--mode latest`: desenha apenas o ultimo snapshot (estado final).
+- `--mode observed`: desenha a uniao dos enlaces vistos ao longo da execucao.
+
 ## 01 - ACK vs Fail por Minuto
 
 Arquivo:
