@@ -1433,6 +1433,10 @@ void app_proto_example_run(void)
     node_config.ack_timeout_ms = AODV_EN_ACK_TIMEOUT_MS_DEFAULT;
     node_config.rreq_flood_mode = APP_RREQ_FLOOD_MODE;
     node_config.link_fail_threshold = AODV_EN_LINK_FAIL_THRESHOLD;
+    node_config.route_metric_hop_weight = (uint8_t)CONFIG_AODV_EN_APP_ROUTE_METRIC_HOP_WEIGHT;
+    node_config.route_metric_rssi_weight = (uint8_t)CONFIG_AODV_EN_APP_ROUTE_METRIC_RSSI_WEIGHT;
+    node_config.route_metric_rssi_best_dbm = (int8_t)CONFIG_AODV_EN_APP_ROUTE_RSSI_BEST_DBM;
+    node_config.route_metric_rssi_worst_dbm = (int8_t)CONFIG_AODV_EN_APP_ROUTE_RSSI_WORST_DBM;
 
     memset(&adapter, 0, sizeof(adapter));
     adapter.user_ctx = &g_app;
@@ -1499,6 +1503,11 @@ void app_proto_example_run(void)
              node_config.network_id,
              APP_RREQ_FLOOD_MODE_TEXT,
              APP_DRIVER_MAX_PEERS);
+    ESP_LOGI(TAG, "route_metric hop_w=%u rssi_w=%u best=%d worst=%d",
+             (unsigned int)node_config.route_metric_hop_weight,
+             (unsigned int)node_config.route_metric_rssi_weight,
+             (int)node_config.route_metric_rssi_best_dbm,
+             (int)node_config.route_metric_rssi_worst_dbm);
     ESP_LOGI(TAG, "app proto example enabled: health_interval=%" PRIu32 "ms",
              g_app.health_interval_ms);
 
