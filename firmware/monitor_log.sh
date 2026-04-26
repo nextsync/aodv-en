@@ -100,5 +100,8 @@ echo "gravando monitor em: $LOG_FILE"
 echo "interrompa com Ctrl-]"
 echo
 
-idf.py -B "$BUILD_DIR" -p "$PORT" monitor 2>&1 | tee "$LOG_FILE"
+# Guarantee file exists even if monitor exits early.
+: > "$LOG_FILE"
 
+# Capture monitor output to file while keeping interactive terminal behavior.
+idf.py -B "$BUILD_DIR" -p "$PORT" monitor 2>&1 | tee -a "$LOG_FILE"
