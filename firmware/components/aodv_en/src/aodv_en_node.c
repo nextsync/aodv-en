@@ -11,6 +11,13 @@ static aodv_en_status_t aodv_en_node_send_rreq(
     const uint8_t destination_mac[AODV_EN_MAC_ADDR_LEN],
     uint32_t now_ms);
 
+static aodv_en_status_t aodv_en_node_flood_control_frame(
+    aodv_en_node_t *node,
+    const uint8_t *frame,
+    size_t frame_len,
+    const uint8_t exclude_neighbor_mac[AODV_EN_MAC_ADDR_LEN],
+    uint32_t now_ms);
+
 static size_t aodv_en_node_flush_pending_data_for_destination(
     aodv_en_node_t *node,
     const uint8_t destination_mac[AODV_EN_MAC_ADDR_LEN],
@@ -21,6 +28,17 @@ static bool aodv_en_node_is_self(
     const uint8_t mac[AODV_EN_MAC_ADDR_LEN])
 {
     return node != NULL && aodv_en_mac_equal(node->self_mac, mac);
+}
+
+static bool aodv_en_node_use_unicast_rreq_flood(
+    const aodv_en_node_t *node)
+{
+    if (node == NULL)
+    {
+        return false;
+    }
+
+    return node->config.rreq_flood_mode == AODV_EN_RREQ_FLOOD_UNICAST_SEQUENTIAL;
 }
 
 static bool aodv_en_route_is_usable(
@@ -94,6 +112,65 @@ static aodv_en_status_t aodv_en_node_emit(
     }
 
     return status;
+}
+
+static aodv_en_status_t aodv_en_node_flood_control_frame(
+    aodv_en_node_t *node,
+    const uint8_t *frame,
+    size_t frame_len,
+    const uint8_t exclude_neighbor_mac[AODV_EN_MAC_ADDR_LEN],
+    uint32_t now_ms)
+{
+    uint16_t index;
+    size_t sent_count = 0u;
+    aodv_en_status_t first_error = AODV_EN_NOOP;
+    bool use_unicast;
+
+    if (node == NULL || frame == NULL || frame_len == 0u)
+    {
+        return AODV_EN_ERR_ARG;
+    }
+
+    use_unicast = aodv_en_node_use_unicast_rreq_flood(node);
+    if (!use_unicast)
+    {
+        return aodv_en_node_emit(node, AODV_EN_BROADCAST_MAC, frame, frame_len, true, now_ms);
+    }
+
+    for (index = 0; index < node->neighbors.count; index++)
+    {
+        const aodv_en_neighbor_entry_t *neighbor = &node->neighbors.entries[index];
+        aodv_en_status_t status;
+
+        if (neighbor->state != AODV_EN_NEIGHBOR_ACTIVE || aodv_en_mac_is_zero(neighbor->mac))
+        {
+            continue;
+        }
+
+        if (exclude_neighbor_mac != NULL && aodv_en_mac_equal(neighbor->mac, exclude_neighbor_mac))
+        {
+            continue;
+        }
+
+        status = aodv_en_node_emit(node, neighbor->mac, frame, frame_len, false, now_ms);
+        if (status == AODV_EN_OK)
+        {
+            sent_count++;
+            continue;
+        }
+
+        if (first_error == AODV_EN_NOOP)
+        {
+            first_error = status;
+        }
+    }
+
+    if (sent_count > 0u)
+    {
+        return AODV_EN_OK;
+    }
+
+    return first_error;
 }
 
 static void aodv_en_fill_header(
@@ -905,7 +982,12 @@ static aodv_en_status_t aodv_en_node_send_rreq(
         0u,
         now_ms);
 
-    return aodv_en_node_emit(node, AODV_EN_BROADCAST_MAC, (const uint8_t *)&message, sizeof(message), true, now_ms);
+    return aodv_en_node_flood_control_frame(
+        node,
+        (const uint8_t *)&message,
+        sizeof(message),
+        NULL,
+        now_ms);
 }
 
 static aodv_en_status_t aodv_en_node_send_rrep(
@@ -1025,6 +1107,7 @@ static aodv_en_status_t aodv_en_node_send_ack(
 static aodv_en_status_t aodv_en_node_forward_rreq(
     aodv_en_node_t *node,
     const aodv_en_rreq_msg_t *incoming,
+    const uint8_t link_src_mac[AODV_EN_MAC_ADDR_LEN],
     uint32_t now_ms)
 {
     aodv_en_rreq_msg_t message = *incoming;
@@ -1038,7 +1121,12 @@ static aodv_en_status_t aodv_en_node_forward_rreq(
     message.ttl--;
     aodv_en_mac_copy(message.header.sender_mac, node->self_mac);
 
-    return aodv_en_node_emit(node, AODV_EN_BROADCAST_MAC, (const uint8_t *)&message, sizeof(message), true, now_ms);
+    return aodv_en_node_flood_control_frame(
+        node,
+        (const uint8_t *)&message,
+        sizeof(message),
+        link_src_mac,
+        now_ms);
 }
 
 static aodv_en_status_t aodv_en_node_forward_rrep(
@@ -1158,7 +1246,7 @@ static aodv_en_status_t aodv_en_node_handle_rreq(
             now_ms);
     }
 
-    return aodv_en_node_forward_rreq(node, message, now_ms);
+    return aodv_en_node_forward_rreq(node, message, link_src_mac, now_ms);
 }
 
 static aodv_en_status_t aodv_en_node_handle_rrep(
@@ -1376,6 +1464,7 @@ void aodv_en_config_set_defaults(aodv_en_config_t *config)
     config->max_hops = AODV_EN_MAX_HOPS_DEFAULT;
     config->ttl_default = AODV_EN_TTL_DEFAULT;
     config->rreq_retry_count = AODV_EN_RREQ_RETRY_COUNT_DEFAULT;
+    config->rreq_flood_mode = AODV_EN_RREQ_FLOOD_MODE_DEFAULT;
     config->link_fail_threshold = AODV_EN_LINK_FAIL_THRESHOLD_DEFAULT;
 }
 

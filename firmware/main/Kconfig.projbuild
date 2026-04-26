@@ -40,6 +40,23 @@ config AODV_EN_APP_PRINT_INTERVAL_MS
     range 1000 60000
     default 10000
 
+choice AODV_EN_APP_RREQ_FLOOD_MODE
+    prompt "RREQ flooding mode"
+    default AODV_EN_APP_RREQ_FLOOD_BROADCAST
+
+config AODV_EN_APP_RREQ_FLOOD_BROADCAST
+    bool "Broadcast (RFC 3561-style)"
+
+config AODV_EN_APP_RREQ_FLOOD_UNICAST_SEQ
+    bool "Unicast sequential for active neighbors (AODV-EN adaptation)"
+
+endchoice
+
+config AODV_EN_APP_DRIVER_MAX_PEERS
+    int "Max dynamic ESP-NOW peers in adapter (LRU managed)"
+    range 2 20
+    default 20
+
 config AODV_EN_APP_ENABLE_DATA
     bool "Enable periodic DATA send"
     default n

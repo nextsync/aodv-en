@@ -40,14 +40,17 @@ Hoje o projeto ja tem:
 - primeiro motor logico do no
 - uma simulacao executavel validando descoberta de rota e entrega fim a fim
 - um primeiro app ESP-IDF buildavel com integracao inicial a ESP-NOW
+- fila pendente de `DATA` com descoberta continua e retentativa com backoff
+- tratamento de falha de enlace por feedback de TX e reconvergencia
+- modo de flooding de `RREQ` configuravel (`broadcast` ou `unicast_seq`)
+- gerenciamento dinamico de peers ESP-NOW com LRU no adapter do app
 
 Hoje o projeto ainda nao tem:
 
-- validacao do protocolo em ESP32 real
-- fila pendente de dados apos descoberta
+- validacao completa em hardware com captura sincronizada de todos os nos em todos os cenarios
 - baseline de flooding
-- experimentos de bancada
-- resultados do TCC
+- campanha experimental completa com repeticoes por cenario
+- consolidacao final das metricas do TCC (`PDR`, latencia E2E, `NRL`, energia estimada)
 
 ## Roadmap macro
 
@@ -64,6 +67,40 @@ Hoje o projeto ainda nao tem:
 | 8. Experimentos e metricas | PENDENTE | Coletar dados para o trabalho | tabelas, logs e resultados |
 | 9. Escrita do TCC | PENDENTE | Transformar implementacao e resultados em texto academico | monografia |
 | 10. Defesa e demonstracao | PENDENTE | Preparar apresentacao final | slides e demo |
+
+## Alinhamento com base de conhecimento (AODV + TCC)
+
+### Referencias canonicas usadas
+
+- protocolo AODV (normativo): `/home/dioguin/Documentos/base_conhecimento/wiki/domains/networking/sources/rfc-3561-aodv-routing.md`
+- comparacao oficial RFC vs implementacao: `/home/dioguin/Documentos/base_conhecimento/wiki/domains/networking/comparisons/rfc-3561-vs-aodv-en.md`
+- proposta do TCC (metas do artefato): `/home/dioguin/Documentos/base_conhecimento/wiki/domains/networking/sources/tcc-aodv-en-proposal.md`
+- sintese de adaptacao do projeto: `/home/dioguin/Documentos/base_conhecimento/wiki/domains/networking/synthesis/aodv-en-adaptation-synthesis.md`
+
+### O que esta certo hoje
+
+- fluxo reativo do AODV esta preservado (`RREQ`, `RREP`, `RERR`, descoberta sob demanda)
+- supressao de duplicata de `RREQ` e controle por `sequence number` seguem o desenho base
+- existe `RREQ` em broadcast (estilo RFC) e ele permanece como default
+- existe modo adaptado `unicast_seq` para flooding de `RREQ`, alinhado a proposta do TCC para ESP-NOW
+- o adapter agora remove/adiciona peers com politica LRU, alinhando com a restricao de peers do ESP-NOW
+
+### O que ainda esta em aberto para fechar com o TCC
+
+- metrica hibrida de rota (hop count + RSSI) ainda nao esta ativa no core de selecao de rota
+- baseline de flooding comparavel (`TTL` + supressao de duplicata) ainda nao esta implementado como modulo de experimento
+- pipeline final de resultados (comparativo AODV-EN vs flooding com repeticoes e consolidacao estatistica) ainda esta pendente
+
+### Planos consolidados (A-F)
+
+| Plano | Status | Escopo | Entregavel |
+|---|---|---|---|
+| A | CONCLUIDO | Modo de flooding `RREQ` configuravel (`broadcast`/`unicast_seq`) | Core com chave de modo e propagacao por vizinhos ativos |
+| B | CONCLUIDO | LRU real para peers ESP-NOW no adapter | Adicao/eviccao dinamica de peers com peer broadcast fixo |
+| C | PENDENTE | Metrica hibrida de roteamento (`hop + RSSI`) | Selecao de rota e criterio de substituicao com custo hibrido |
+| D | PENDENTE | Baseline flooding para comparacao justa | Modulo baseline com interface equivalente de envio/medicao |
+| E | PENDENTE | Campanha experimental TCC | Execucao por cenarios, repeticoes, tabelas e graficos finais |
+| F | PENDENTE | Pacote de escrita e defesa | Capitulo de resultados/discussao e narrativa de ganhos/limites |
 
 ## Fase 0. Fundacao conceitual
 
@@ -111,8 +148,6 @@ Status: `EM_ANDAMENTO`
 
 ### O que ainda falta nesta fase
 
-- fila de pacotes de dados aguardando descoberta de rota
-- timeout e retentativa de `ACK`
 - politica mais completa de numeros de sequencia
 - regras mais refinadas de `RERR`
 - melhor separacao entre rota reversa, rota valida e rota expirada
@@ -125,14 +160,17 @@ Status: `EM_ANDAMENTO`
 
 ## Fase 3. Endurecimento do nucleo
 
-Status: `PENDENTE`
+Status: `EM_ANDAMENTO`
 
-### Tarefas
+### Tarefas concluidas nesta fase
 
 - implementar fila pendente de `DATA` quando `RREQ` e disparado
 - implementar controle de retransmissao e timeout de `ACK`
-- consolidar politica de `sequence number` para origem e destino
 - revisar semantica de `RERR` e invalidacao em cascata por `next_hop`
+
+### Tarefas pendentes nesta fase
+
+- consolidar politica de `sequence number` para origem e destino
 - adicionar helpers de serializacao e validacao de frame
 - centralizar checagem de TTL, `hop_count` e tamanhos maximos
 - criar cenarios de simulacao adicionais:
@@ -163,16 +201,18 @@ Status: `EM_ANDAMENTO`
 - callback de emissao do no conectado ao `esp_now_send`
 - registro inicial de peer broadcast
 - processamento de frames fora do callback do Wi-Fi por fila local
+- configuracao de modo de flooding de `RREQ` via `Kconfig`
+- integracao de gerenciamento de peers no driver com LRU e limite configuravel
+- log de boot com visibilidade de modo de flooding e limite de peers
 
 ### Tarefas
 
 - extrair a camada de transporte do `main.c` para um adapter dedicado
 - encapsular `esp_wifi_start`, `esp_now_init`, peers e callbacks
-- integrar cache de peers ao driver
 - definir configuracao de canal e interface
 - adicionar logs estruturados por no
 - tratar melhor falhas de `esp_now_send`
-- decidir politica de manutencao e remocao de peers no driver
+- fechar testes de estresse da politica LRU em topologias maiores
 
 ### Entregavel
 
@@ -395,12 +435,11 @@ Se quisermos manter foco, o caminho critico do projeto e:
 
 Os proximos passos mais importantes agora sao:
 
-1. implementar fila pendente de `DATA` apos descoberta de rota
-2. melhorar timeout e retentativa de `ACK`
-3. flashar o firmware atual em 1 ESP32 e validar boot/logs
-4. subir 2 nos e observar `HELLO` em hardware
-5. adicionar mais cenarios de simulacao
-6. extrair o adapter ESP-NOW do `main.c`
+1. implementar o Plano C (metrica hibrida `hop + RSSI`) com rastreio no log
+2. implementar o Plano D (baseline flooding comparavel ao AODV-EN)
+3. executar campanha do Plano E com repeticoes por cenario e coleta padronizada
+4. consolidar analise final do ganho (PDR, latencia, NRL e energia estimada)
+5. fechar Plano F com capitulo de resultados, discussao e narrativa de defesa
 
 ## Definicao de pronto do projeto
 
