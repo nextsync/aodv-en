@@ -31,6 +31,11 @@
 #define APP_CLI_TEXT_MAX 120
 #define APP_CLI_COMMAND_MAX 16
 #define APP_CLI_ARGS_MAX 96
+#define APP_DRIVER_MAX_PEERS CONFIG_AODV_EN_APP_DRIVER_MAX_PEERS
+
+#if APP_DRIVER_MAX_PEERS < 2 || APP_DRIVER_MAX_PEERS > ESP_NOW_MAX_TOTAL_PEER_NUM
+#error "CONFIG_AODV_EN_APP_DRIVER_MAX_PEERS must be in [2, ESP_NOW_MAX_TOTAL_PEER_NUM]"
+#endif
 
 #ifndef CONFIG_AODV_EN_APP_PROTO_HEALTH_INTERVAL_MS
 #define CONFIG_AODV_EN_APP_PROTO_HEALTH_INTERVAL_MS 10000
@@ -60,6 +65,14 @@
 #define APP_PROTO_ENABLE_CLI 0
 #endif
 
+#ifdef CONFIG_AODV_EN_APP_RREQ_FLOOD_UNICAST_SEQ
+#define APP_RREQ_FLOOD_MODE AODV_EN_RREQ_FLOOD_UNICAST_SEQUENTIAL
+#define APP_RREQ_FLOOD_MODE_TEXT "unicast_seq"
+#else
+#define APP_RREQ_FLOOD_MODE AODV_EN_RREQ_FLOOD_BROADCAST
+#define APP_RREQ_FLOOD_MODE_TEXT "broadcast"
+#endif
+
 typedef struct
 {
     uint8_t src_mac[AODV_EN_MAC_ADDR_LEN];
@@ -73,6 +86,14 @@ typedef struct
     uint8_t dest_mac[AODV_EN_MAC_ADDR_LEN];
     bool success;
 } app_tx_result_event_t;
+
+typedef struct
+{
+    uint8_t mac[AODV_EN_MAC_ADDR_LEN];
+    uint32_t last_used_ms;
+    bool used;
+    bool pinned;
+} app_driver_peer_entry_t;
 
 typedef enum
 {
@@ -115,6 +136,7 @@ typedef struct
     uint32_t next_print_at_ms;
     uint32_t next_health_at_ms;
     uint32_t next_unicast_at_ms;
+    app_driver_peer_entry_t driver_peers[APP_DRIVER_MAX_PEERS];
 } app_context_t;
 
 static const char *TAG = "aodv_en_proto";
@@ -197,6 +219,143 @@ static bool app_parse_mac(const char *text, uint8_t mac[AODV_EN_MAC_ADDR_LEN])
 static bool app_mac_is_broadcast(const uint8_t mac[AODV_EN_MAC_ADDR_LEN])
 {
     return memcmp(mac, BROADCAST_MAC, AODV_EN_MAC_ADDR_LEN) == 0;
+}
+
+static int app_driver_peer_find_index(
+    const app_context_t *app,
+    const uint8_t mac[AODV_EN_MAC_ADDR_LEN])
+{
+    size_t index;
+
+    if (app == NULL || mac == NULL)
+    {
+        return -1;
+    }
+
+    for (index = 0; index < APP_DRIVER_MAX_PEERS; index++)
+    {
+        if (app->driver_peers[index].used &&
+            memcmp(app->driver_peers[index].mac, mac, AODV_EN_MAC_ADDR_LEN) == 0)
+        {
+            return (int)index;
+        }
+    }
+
+    return -1;
+}
+
+static size_t app_driver_peer_count(
+    const app_context_t *app)
+{
+    size_t index;
+    size_t count = 0u;
+
+    if (app == NULL)
+    {
+        return 0u;
+    }
+
+    for (index = 0; index < APP_DRIVER_MAX_PEERS; index++)
+    {
+        if (app->driver_peers[index].used)
+        {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+static int app_driver_peer_find_lru_evictable(
+    const app_context_t *app)
+{
+    size_t index;
+    int best_index = -1;
+
+    if (app == NULL)
+    {
+        return -1;
+    }
+
+    for (index = 0; index < APP_DRIVER_MAX_PEERS; index++)
+    {
+        const app_driver_peer_entry_t *entry = &app->driver_peers[index];
+        if (!entry->used || entry->pinned)
+        {
+            continue;
+        }
+
+        if (best_index < 0 ||
+            entry->last_used_ms < app->driver_peers[(size_t)best_index].last_used_ms)
+        {
+            best_index = (int)index;
+        }
+    }
+
+    return best_index;
+}
+
+static void app_driver_peer_touch(
+    app_context_t *app,
+    const uint8_t mac[AODV_EN_MAC_ADDR_LEN],
+    bool pinned)
+{
+    int index;
+    uint32_t now_ms;
+    size_t free_index;
+
+    if (app == NULL || mac == NULL)
+    {
+        return;
+    }
+
+    now_ms = app_now_ms();
+    index = app_driver_peer_find_index(app, mac);
+    if (index >= 0)
+    {
+        app->driver_peers[(size_t)index].last_used_ms = now_ms;
+        if (pinned)
+        {
+            app->driver_peers[(size_t)index].pinned = true;
+        }
+        return;
+    }
+
+    for (free_index = 0; free_index < APP_DRIVER_MAX_PEERS; free_index++)
+    {
+        app_driver_peer_entry_t *entry = &app->driver_peers[free_index];
+        if (entry->used)
+        {
+            continue;
+        }
+
+        memset(entry, 0, sizeof(*entry));
+        memcpy(entry->mac, mac, AODV_EN_MAC_ADDR_LEN);
+        entry->last_used_ms = now_ms;
+        entry->used = true;
+        entry->pinned = pinned;
+        return;
+    }
+}
+
+static void app_driver_peer_forget(
+    app_context_t *app,
+    const uint8_t mac[AODV_EN_MAC_ADDR_LEN])
+{
+    int index;
+
+    if (app == NULL || mac == NULL)
+    {
+        return;
+    }
+
+    index = app_driver_peer_find_index(app, mac);
+    if (index < 0)
+    {
+        return;
+    }
+
+    memset(&app->driver_peers[(size_t)index], 0, sizeof(app->driver_peers[0]));
 }
 
 static char *app_skip_spaces(char *text)
@@ -400,13 +559,47 @@ static bool app_cli_parse_line(
     return false;
 }
 
-static esp_err_t app_ensure_peer(const uint8_t mac[AODV_EN_MAC_ADDR_LEN], uint8_t channel)
+static esp_err_t app_ensure_peer(
+    app_context_t *app,
+    const uint8_t mac[AODV_EN_MAC_ADDR_LEN],
+    uint8_t channel,
+    bool pinned)
 {
     esp_now_peer_info_t peer;
+    esp_err_t err;
+
+    if (app == NULL || mac == NULL)
+    {
+        return ESP_ERR_INVALID_ARG;
+    }
 
     if (esp_now_is_peer_exist(mac))
     {
+        app_driver_peer_touch(app, mac, pinned);
         return ESP_OK;
+    }
+
+    while (app_driver_peer_count(app) >= APP_DRIVER_MAX_PEERS)
+    {
+        int evict_index = app_driver_peer_find_lru_evictable(app);
+        uint8_t evict_mac[AODV_EN_MAC_ADDR_LEN];
+        char evict_text[18];
+
+        if (evict_index < 0)
+        {
+            return ESP_ERR_ESPNOW_FULL;
+        }
+
+        memcpy(evict_mac, app->driver_peers[(size_t)evict_index].mac, AODV_EN_MAC_ADDR_LEN);
+        err = esp_now_del_peer(evict_mac);
+        if (err != ESP_OK && err != ESP_ERR_ESPNOW_NOT_FOUND)
+        {
+            return err;
+        }
+
+        app_format_mac(evict_mac, evict_text, sizeof(evict_text));
+        ESP_LOGW(TAG, "evicted ESP-NOW peer via LRU: %s", evict_text);
+        app_driver_peer_forget(app, evict_mac);
     }
 
     memset(&peer, 0, sizeof(peer));
@@ -415,7 +608,52 @@ static esp_err_t app_ensure_peer(const uint8_t mac[AODV_EN_MAC_ADDR_LEN], uint8_
     peer.ifidx = WIFI_IF_STA;
     peer.encrypt = false;
 
-    return esp_now_add_peer(&peer);
+    err = esp_now_add_peer(&peer);
+    if (err == ESP_OK || err == ESP_ERR_ESPNOW_EXIST)
+    {
+        app_driver_peer_touch(app, mac, pinned);
+        return ESP_OK;
+    }
+
+    if (err != ESP_ERR_ESPNOW_FULL)
+    {
+        return err;
+    }
+
+    while (true)
+    {
+        int evict_index = app_driver_peer_find_lru_evictable(app);
+        uint8_t evict_mac[AODV_EN_MAC_ADDR_LEN];
+        char evict_text[18];
+
+        if (evict_index < 0)
+        {
+            return err;
+        }
+
+        memcpy(evict_mac, app->driver_peers[(size_t)evict_index].mac, AODV_EN_MAC_ADDR_LEN);
+        err = esp_now_del_peer(evict_mac);
+        if (err != ESP_OK && err != ESP_ERR_ESPNOW_NOT_FOUND)
+        {
+            return err;
+        }
+
+        app_format_mac(evict_mac, evict_text, sizeof(evict_text));
+        ESP_LOGW(TAG, "evicted ESP-NOW peer after full table: %s", evict_text);
+        app_driver_peer_forget(app, evict_mac);
+
+        err = esp_now_add_peer(&peer);
+        if (err == ESP_OK || err == ESP_ERR_ESPNOW_EXIST)
+        {
+            app_driver_peer_touch(app, mac, pinned);
+            return ESP_OK;
+        }
+
+        if (err != ESP_ERR_ESPNOW_FULL)
+        {
+            return err;
+        }
+    }
 }
 
 static aodv_en_status_t app_emit_frame(
@@ -436,8 +674,8 @@ static aodv_en_status_t app_emit_frame(
         return AODV_EN_ERR_SIZE;
     }
 
-    err = app_ensure_peer(dest_mac, app->wifi_channel);
-    if (err != ESP_OK && err != ESP_ERR_ESPNOW_EXIST)
+    err = app_ensure_peer(app, dest_mac, app->wifi_channel, broadcast);
+    if (err != ESP_OK)
     {
         ESP_LOGE(TAG, "failed to add peer: %s", esp_err_to_name(err));
         return AODV_EN_ERR_STATE;
@@ -1158,7 +1396,7 @@ static void app_init_espnow(uint8_t channel)
     ESP_ERROR_CHECK(esp_now_init());
     ESP_ERROR_CHECK(esp_now_register_send_cb(app_send_cb));
     ESP_ERROR_CHECK(esp_now_register_recv_cb(app_recv_cb));
-    ESP_ERROR_CHECK(app_ensure_peer(BROADCAST_MAC, channel));
+    ESP_ERROR_CHECK(app_ensure_peer(&g_app, BROADCAST_MAC, channel, true));
     ESP_ERROR_CHECK(esp_now_get_version(&version));
     ESP_LOGI(TAG, "ESP-NOW version=%" PRIu32, version);
 }
@@ -1193,6 +1431,7 @@ void app_proto_example_run(void)
     node_config.network_id = CONFIG_AODV_EN_APP_NETWORK_ID;
     node_config.wifi_channel = g_app.wifi_channel;
     node_config.ack_timeout_ms = AODV_EN_ACK_TIMEOUT_MS_DEFAULT;
+    node_config.rreq_flood_mode = APP_RREQ_FLOOD_MODE;
     node_config.link_fail_threshold = AODV_EN_LINK_FAIL_THRESHOLD;
 
     memset(&adapter, 0, sizeof(adapter));
@@ -1253,11 +1492,13 @@ void app_proto_example_run(void)
     g_app.next_unicast_at_ms = app_now_ms() + 6000u;
 
     app_format_mac(g_app.self_mac, self_mac_text, sizeof(self_mac_text));
-    ESP_LOGI(TAG, "node=%s self_mac=%s channel=%u network_id=0x%08" PRIX32,
+    ESP_LOGI(TAG, "node=%s self_mac=%s channel=%u network_id=0x%08" PRIX32 " rreq_flood=%s max_driver_peers=%d",
              g_app.node_name,
              self_mac_text,
              g_app.wifi_channel,
-             node_config.network_id);
+             node_config.network_id,
+             APP_RREQ_FLOOD_MODE_TEXT,
+             APP_DRIVER_MAX_PEERS);
     ESP_LOGI(TAG, "app proto example enabled: health_interval=%" PRIu32 "ms",
              g_app.health_interval_ms);
 

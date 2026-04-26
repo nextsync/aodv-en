@@ -41,6 +41,12 @@ extern "C"
         AODV_EN_PEER_FLAG_REGISTERED = 0x02,
     } aodv_en_peer_flags_t;
 
+    typedef enum
+    {
+        AODV_EN_RREQ_FLOOD_BROADCAST = AODV_EN_RREQ_FLOOD_MODE_BROADCAST,
+        AODV_EN_RREQ_FLOOD_UNICAST_SEQUENTIAL = AODV_EN_RREQ_FLOOD_MODE_UNICAST_SEQUENTIAL,
+    } aodv_en_rreq_flood_mode_t;
+
     typedef struct
     {
         uint8_t bytes[AODV_EN_MAC_ADDR_LEN];
@@ -104,6 +110,7 @@ extern "C"
         uint8_t max_hops;
         uint8_t ttl_default;
         uint8_t rreq_retry_count;
+        uint8_t rreq_flood_mode;
         uint8_t link_fail_threshold;
     } aodv_en_config_t;
 
