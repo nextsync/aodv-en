@@ -112,6 +112,10 @@ extern "C"
         uint8_t rreq_retry_count;
         uint8_t rreq_flood_mode;
         uint8_t link_fail_threshold;
+        uint8_t route_metric_hop_weight;
+        uint8_t route_metric_rssi_weight;
+        int8_t route_metric_rssi_best_dbm;
+        int8_t route_metric_rssi_worst_dbm;
     } aodv_en_config_t;
 
 #ifdef __cplusplus

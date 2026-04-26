@@ -87,7 +87,7 @@ Hoje o projeto ainda nao tem:
 
 ### O que ainda esta em aberto para fechar com o TCC
 
-- metrica hibrida de rota (hop count + RSSI) ainda nao esta ativa no core de selecao de rota
+- metrica hibrida de rota (hop count + RSSI) foi iniciada no core e ainda precisa de calibracao experimental dos pesos/limiares
 - baseline de flooding comparavel (`TTL` + supressao de duplicata) ainda nao esta implementado como modulo de experimento
 - pipeline final de resultados (comparativo AODV-EN vs flooding com repeticoes e consolidacao estatistica) ainda esta pendente
 
@@ -97,7 +97,7 @@ Hoje o projeto ainda nao tem:
 |---|---|---|---|
 | A | CONCLUIDO | Modo de flooding `RREQ` configuravel (`broadcast`/`unicast_seq`) | Core com chave de modo e propagacao por vizinhos ativos |
 | B | CONCLUIDO | LRU real para peers ESP-NOW no adapter | Adicao/eviccao dinamica de peers com peer broadcast fixo |
-| C | PENDENTE | Metrica hibrida de roteamento (`hop + RSSI`) | Selecao de rota e criterio de substituicao com custo hibrido |
+| C | EM_ANDAMENTO | Metrica hibrida de roteamento (`hop + RSSI`) | Selecao de rota e criterio de substituicao com custo hibrido |
 | D | PENDENTE | Baseline flooding para comparacao justa | Modulo baseline com interface equivalente de envio/medicao |
 | E | PENDENTE | Campanha experimental TCC | Execucao por cenarios, repeticoes, tabelas e graficos finais |
 | F | PENDENTE | Pacote de escrita e defesa | Capitulo de resultados/discussao e narrativa de ganhos/limites |
