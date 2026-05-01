@@ -49,3 +49,5 @@
 
 # Local simulation outputs
 /sim/*.out
+
+.claude/
