@@ -6,6 +6,7 @@ Este repositorio concentra a pesquisa, especificacao e implementacao do `AODV-EN
 
 ## Documentos base
 
+- [docs/aodv-en-completo.pdf](docs/aodv-en-completo.pdf) - **toda a documentacao em um PDF unico** (~148 paginas, ordem top-down). Regerar com `python3 docs/build_pdf.py`.
 - [docs/aodv-en-spec-v1.md](docs/aodv-en-spec-v1.md) - especificacao funcional fechada (`v1`, ativa)
 - [docs/aodv-en-funcionamento.md](docs/aodv-en-funcionamento.md) - guia didatico do funcionamento, com layout de bytes, traces e worked examples
 - [docs/aodv-en-mapa-do-codigo.md](docs/aodv-en-mapa-do-codigo.md) - guia de estudo do codigo: onde cada feature esta implementada, mapa por arquivo
