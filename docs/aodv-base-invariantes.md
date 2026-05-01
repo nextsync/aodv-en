@@ -1,5 +1,10 @@
 # AODV Base Invariantes
 
+## Estado
+
+- alinhado com [aodv-en-spec-v1.md](aodv-en-spec-v1.md)
+- ultima revisao: 2026-05-01
+
 ## Objetivo
 
 Este documento define o nucleo conceitual do AODV que o projeto `aodv-en` deve preservar.
@@ -125,6 +130,31 @@ O `aodv-en` deve ser entendido como:
 - com numeros de sequencia
 - com supressao de duplicatas
 - com invalidacao temporal ou explicita de rotas
+- com precursores por rota para emissao direcionada de `RERR`
+- com fila local de `DATA` pendente durante descoberta
+
+## Compatibilidade com extensoes da v1
+
+A v1 do `AODV-EN` adiciona dois mecanismos que precisam ser revisados contra os invariantes acima:
+
+### Fila de `DATA` pendente
+
+A fila armazena um pacote da aplicacao enquanto o `RREQ`/`RREP` correspondente esta em curso. Ela:
+
+- nao substitui a descoberta reativa (o `RREQ` continua sendo emitido)
+- nao mantem topologia global, apenas pacotes pendentes do proprio no
+- nao introduz mecanismo de roteamento alternativo
+
+Por isso, e compativel com os invariantes 1 (reativo), 2 (descoberta por `RREQ`/`RREP`) e 8 (sem loop).
+
+### Precursores por rota
+
+A v1 mantem, em cada rota direta valida, ate `MAX_PRECURSORS` MACs vizinhos que a usam. Esse conjunto e usado para:
+
+- direcionar `RERR` apenas a quem precisa saber
+- preservar a propriedade de `RERR` propagar de forma controlada para tras na arvore de descoberta
+
+Precursores fazem parte da semantica original da RFC 3561 (secao 6.2). Adopta-los aproxima o `AODV-EN` do AODV padrao em vez de afasta-lo, e nao introduz nem descoberta proativa nem topologia global.
 
 ## Checklist de validacao
 

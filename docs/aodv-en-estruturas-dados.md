@@ -1,199 +1,316 @@
 # AODV-EN Estruturas de Dados
 
+## Estado
+
+- alinhado com [aodv-en-spec-v1.md](aodv-en-spec-v1.md)
+- ultima revisao: 2026-05-01
+- fonte da verdade: cabecalhos em [firmware/components/aodv_en/include](../firmware/components/aodv_en/include)
+
 ## Objetivo
 
-Este documento detalha as estruturas de dados que sustentam a implementacao inicial do `AODV-EN`.
+Detalhar as estruturas de dados que sustentam a implementacao do `AODV-EN v1`. Este documento traduz a spec funcional para o layout concreto dos cabecalhos C, sem repetir as regras semanticas ja descritas na spec.
 
-Ele complementa a especificacao v0 e traduz a arquitetura conceitual do protocolo para um modelo de firmware mais concreto, com foco em tabelas locais, cabecalhos de mensagem e limites iniciais de memoria.
+Quando houver duvida entre este documento e a spec v1, a spec define o comportamento e este documento define o layout.
 
 ## Visao geral
 
-O `AODV-EN` mantera quatro estruturas principais em cada no:
+Cada no `AODV-EN` mantem seis estruturas residentes:
 
-- tabela de vizinhos
-- tabela de rotas
-- cache de duplicatas de `RREQ`
-- cache de peers ativos do ESP-NOW
+1. tabela de vizinhos
+2. tabela de rotas (com precursores por rota)
+3. cache de duplicatas de `RREQ`
+4. cache de peers ESP-NOW
+5. fila de `DATA` pendente
+6. fila de `ACK` pendente
 
-Essas estruturas sao independentes entre si, embora cooperem durante descoberta de rota, encaminhamento e recuperacao de falhas.
+Mais a configuracao do no e o bloco de estatisticas. Todas sao alocadas estaticamente dentro de `aodv_en_node_t`, sem heap no caminho critico.
 
 ## 1. Tabela de vizinhos
 
 ### Papel
 
-Representa os nos de um salto observados diretamente pelo radio.
+Representa nos de 1 salto observados pelo radio.
 
-### Informacao mantida
+### Entrada
 
-- `mac`
-- `avg_rssi`
-- `last_rssi`
-- `link_fail_count`
-- `state`
-- `last_seen_ms`
-- `last_used_ms`
+Definida em `aodv_en_neighbor_entry_t` ([aodv_en_types.h](../firmware/components/aodv_en/include/aodv_en_types.h)):
 
-### Uso no protocolo
+- `mac[6]`
+- `avg_rssi` (int8)
+- `last_rssi` (int8)
+- `link_fail_count` (uint8)
+- `state` (uint8): `INACTIVE` ou `ACTIVE`
+- `last_seen_ms` (uint32)
+- `last_used_ms` (uint32)
 
-- alimenta flooding controlado
-- ajuda a decidir para quem reenviar `RREQ`
-- fornece qualidade de enlace local
-- apoia o cache de peers do ESP-NOW
+### Tabela
+
+`aodv_en_neighbor_table_t`:
+
+- `count` (uint16)
+- `entries[AODV_EN_NEIGHBOR_TABLE_SIZE]`
+
+### Operacoes
+
+API em [aodv_en_neighbors.h](../firmware/components/aodv_en/include/aodv_en_neighbors.h):
+
+- `aodv_en_neighbor_table_init`
+- `aodv_en_neighbor_find` / `_const`
+- `aodv_en_neighbor_touch` (passivo: cada `on_recv` valido toca o vizinho)
+- `aodv_en_neighbor_mark_used` (apos uso de unicast)
+- `aodv_en_neighbor_note_link_failure` (incrementa `link_fail_count`; promove a `INACTIVE` ao atingir threshold)
+- `aodv_en_neighbor_expire`
+- `aodv_en_neighbor_count_active`
 
 ## 2. Tabela de rotas
 
 ### Papel
 
-Representa caminhos conhecidos do tipo:
+Representa caminhos `destination -> next_hop`. Cada entrada tambem mantem precursores para emissao direcionada de `RERR`.
 
-- `destination -> next_hop`
+### Entrada
 
-### Informacao mantida
+`aodv_en_route_entry_t`:
 
-- `destination`
-- `next_hop`
-- `dest_seq_num`
-- `expires_at_ms`
-- `metric`
-- `hop_count`
-- `state`
+- `destination[6]`
+- `next_hop[6]`
+- `dest_seq_num` (uint32)
+- `expires_at_ms` (uint32)
+- `metric` (uint16) — em v1, igual a `hop_count`; valor `AODV_EN_ROUTE_METRIC_INFINITY` (`0xFFFF`) marca invalidada
+- `hop_count` (uint8)
+- `state` (uint8): `INVALID`, `REVERSE`, `VALID`
+- `precursor_count` (uint8)
+- `precursors[AODV_EN_MAX_PRECURSORS][6]`
 
-### Estados previstos
+### Tabela
 
-- `INVALID`
-- `REVERSE`
-- `VALID`
+`aodv_en_route_table_t`:
 
-### Uso no protocolo
+- `count` (uint16)
+- `entries[AODV_EN_ROUTE_TABLE_SIZE]`
 
-- roteamento hop-by-hop
-- instalacao de rota reversa durante `RREQ`
-- instalacao de rota direta durante `RREP`
-- invalidacao por timeout ou erro
+### Operacoes
+
+API em [aodv_en_routes.h](../firmware/components/aodv_en/include/aodv_en_routes.h):
+
+- `aodv_en_route_table_init`
+- `aodv_en_route_find` / `_const` / `_find_valid`
+- `aodv_en_route_should_replace` — implementa a regra de selecao com histerese descrita na spec v1, secao "Selecao e substituicao de rotas"
+- `aodv_en_route_upsert` — preserva precursores quando o `next_hop` nao muda; reseta quando muda
+- `aodv_en_route_add_precursor`
+- `aodv_en_route_invalidate_destination`
+- `aodv_en_route_invalidate_by_next_hop` — usado quando um vizinho cai
+- `aodv_en_route_expire`
 
 ## 3. Cache de duplicatas de RREQ
 
 ### Papel
 
-Evita processamento repetido de inundacoes de descoberta.
+Suprimir reprocessamento de `RREQ` repetidos em janela curta.
 
-### Informacao mantida
+### Entrada
 
-- `originator`
-- `rreq_id`
-- `created_at_ms`
-- `hop_count`
-- `used`
+`aodv_en_rreq_cache_entry_t`:
 
-### Uso no protocolo
+- `originator[6]`
+- `rreq_id` (uint32)
+- `created_at_ms` (uint32)
+- `hop_count` (uint8)
+- `used` (uint8)
 
-- detectar `RREQ` ja visto
-- limitar retransmissao redundante
-- reduzir sobrecarga na malha
+### Tabela
+
+`aodv_en_rreq_cache_t`:
+
+- `count` (uint16)
+- `entries[AODV_EN_RREQ_CACHE_SIZE]`
+
+### Operacoes
+
+API em [aodv_en_rreq_cache.h](../firmware/components/aodv_en/include/aodv_en_rreq_cache.h):
+
+- `aodv_en_rreq_cache_init`
+- `aodv_en_rreq_cache_contains`
+- `aodv_en_rreq_cache_remember`
+- `aodv_en_rreq_cache_expire` (governado por `rreq_cache_timeout_ms`)
 
 ## 4. Cache de peers ESP-NOW
 
 ### Papel
 
-Mantem um subconjunto pequeno dos vizinhos registrado no driver do ESP-NOW, respeitando o limite de peers ativos.
+Limitar quantos peers ficam registrados no driver ESP-NOW de uma vez. Independente da tabela de vizinhos, mas alinhado a ela.
 
-### Informacao mantida
+### Entrada
 
-- `mac`
-- `last_used_ms`
-- `flags`
+`aodv_en_peer_cache_entry_t`:
 
-### Politica inicial
+- `mac[6]`
+- `last_used_ms` (uint32)
+- `flags` (uint8): `NONE`, `PINNED`, `REGISTERED`
+- `reserved` (uint8)
 
-- LRU simples
-- adicao sob demanda
-- remocao do menos recentemente usado
+### Tabela
 
-## Estruturas do protocolo
+`aodv_en_peer_cache_t`:
 
-## Cabecalho comum
+- `count` (uint16)
+- `entries[AODV_EN_PEER_CACHE_SIZE]`
 
-Todos os pacotes do `AODV-EN` compartilham um cabecalho base:
+### Operacoes
 
-- `protocol_version`
-- `message_type`
-- `flags`
-- `hop_count`
-- `network_id`
-- `sender_mac`
+API em [aodv_en_peers.h](../firmware/components/aodv_en/include/aodv_en_peers.h):
 
-Esse cabecalho permite:
+- `aodv_en_peer_cache_init`
+- `aodv_en_peer_find` / `_const`
+- `aodv_en_peer_touch` (LRU)
+- `aodv_en_peer_set_registered`
+- `aodv_en_peer_set_pinned`
+- `aodv_en_peer_remove`
 
-- identificar a versao do protocolo
-- diferenciar mensagens
-- transportar estado minimo comum
+## 5. Fila de DATA pendente
 
-## Mensagens derivadas
+### Papel
 
-Sobre o cabecalho comum, o protocolo define:
+Buffer temporario de `DATA` enquanto a descoberta de rota nao chega ao destino. Comportamento descrito em [features/enfilaremento-dos-dados.md](features/enfilaremento-dos-dados.md) e na spec v1, secao "Fila de DATA pendente".
 
-- `HELLO`
-- `RREQ`
-- `RREP`
-- `RERR`
-- `ACK`
-- `DATA`
+### Entrada
 
-Cada mensagem possui apenas os campos necessarios para sua funcao.
+`aodv_en_pending_data_entry_t` ([aodv_en_node.h](../firmware/components/aodv_en/include/aodv_en_node.h)):
+
+- `destination_mac[6]`
+- `payload_len` (uint16)
+- `ack_required` (bool)
+- `used` (bool)
+- `enqueued_at_ms` (uint32)
+- `last_rreq_at_ms` (uint32)
+- `discovery_attempts` (uint8)
+- `payload[AODV_EN_DATA_PAYLOAD_MAX]`
+
+### Operacoes
+
+Encapsuladas dentro de `aodv_en_node_t` (nao expostas como API publica em v1):
+
+- enfileirar com backpressure por reciclagem do mais antigo (preferencia pelo mesmo destino)
+- drenar quando uma rota valida e instalada para o destino
+- reemitir `RREQ` no tick com backoff exponencial sobre `ack_timeout_ms` ate `10000 ms`
+- expirar quando `now - enqueued_at_ms >= route_lifetime_ms`
+
+## 6. Fila de ACK pendente
+
+### Papel
+
+Rastreia `DATA` enviados com `ACK_REQUIRED` para suportar retransmissao quando o `ACK` nao chega.
+
+### Entrada
+
+`aodv_en_pending_ack_entry_t`:
+
+- `destination_mac[6]`
+- `payload_len` (uint16)
+- `used` (bool)
+- `retries_left` (uint8)
+- `sequence_number` (uint32)
+- `last_sent_at_ms` (uint32)
+- `payload[AODV_EN_DATA_PAYLOAD_MAX]`
+
+### Operacoes
+
+- alocar entrada ao enviar `DATA` com `ACK_REQUIRED`, herdando `retries_left = rreq_retry_count`
+- consumir entrada ao receber `ACK` correspondente por `(destination, sequence_number)`
+- no tick, retransmitir entradas cujo `now - last_sent_at_ms >= ack_timeout_ms`
+- ao esgotar `retries_left`, descartar e contabilizar `ack_timeout_drops`
+- se na hora do retry a rota for invalida, disparar `RREQ` antes da proxima tentativa
+
+## Cabecalho comum das mensagens
+
+`aodv_en_header_t` ([aodv_en_messages.h](../firmware/components/aodv_en/include/aodv_en_messages.h)):
+
+- `protocol_version` (uint8)
+- `message_type` (uint8)
+- `flags` (uint8)
+- `hop_count` (uint8)
+- `network_id` (uint32)
+- `sender_mac[6]`
+
+Todas as mensagens sao `__attribute__((packed))` para garantir layout determinista entre nos.
+
+## Mensagens
+
+| Tipo | Struct |
+|---|---|
+| `HELLO` | `aodv_en_hello_msg_t` |
+| `RREQ` | `aodv_en_rreq_msg_t` |
+| `RREP` | `aodv_en_rrep_msg_t` |
+| `RERR` | `aodv_en_rerr_msg_t` |
+| `ACK` | `aodv_en_ack_msg_t` |
+| `DATA` | `aodv_en_data_msg_t` (header + metadados + `payload[]` flexivel) |
+
+Os campos de cada uma estao detalhados na spec v1, secao "Mensagens", e materializados em [aodv_en_messages.h](../firmware/components/aodv_en/include/aodv_en_messages.h).
+
+## Configuracao do no
+
+`aodv_en_config_t`:
+
+- `network_id` (uint32)
+- `neighbor_timeout_ms` (uint32)
+- `route_lifetime_ms` (uint32)
+- `rreq_cache_timeout_ms` (uint32)
+- `ack_timeout_ms` (uint32)
+- `neighbor_table_size`, `route_table_size`, `rreq_cache_size`, `peer_cache_size` (uint16)
+- `control_payload_max`, `data_payload_max` (uint16)
+- `wifi_channel`, `max_hops`, `ttl_default`, `rreq_retry_count`, `link_fail_threshold` (uint8)
+
+`aodv_en_config_set_defaults` carrega os valores documentados em [aodv_en_limits.h](../firmware/components/aodv_en/include/aodv_en_limits.h).
+
+## Estatisticas
+
+`aodv_en_stack_stats_t` ([aodv_en.h](../firmware/components/aodv_en/include/aodv_en.h)):
+
+- `rx_frames`, `tx_frames`, `forwarded_frames`, `delivered_frames`
+- `ack_received`
+- `route_discoveries`, `route_repairs`
+- `duplicate_rreq_drops`
+- `pending_data_queued`, `pending_data_flushed`, `pending_data_dropped`
+- `route_discovery_retries`
+- `ack_retry_sent`, `ack_timeout_drops`
+- `link_fail_events`, `route_invalidations_link_fail`
+
+Esses contadores sao acumulativos e formam a base para os experimentos da Fase 8 do [plano](plano-desenvolvimento-completo.md).
 
 ## Limites iniciais
 
-Os limites abaixo servem como base do firmware:
+Todos definidos em [aodv_en_limits.h](../firmware/components/aodv_en/include/aodv_en_limits.h):
 
-- `neighbor_table_size = 16`
-- `route_table_size = 32`
-- `rreq_cache_size = 64`
-- `peer_cache_size = 8`
-- `control_payload_max = 128`
-- `data_payload_max = 1024`
+| Limite | Default |
+|---|---|
+| `NEIGHBOR_TABLE_SIZE` | `16` |
+| `ROUTE_TABLE_SIZE` | `32` |
+| `RREQ_CACHE_SIZE` | `64` |
+| `PEER_CACHE_SIZE` | `8` |
+| `PENDING_DATA_QUEUE_SIZE` | `4` |
+| `MAX_PRECURSORS` | `4` |
+| `CONTROL_PAYLOAD_MAX` | `128` |
+| `DATA_PAYLOAD_MAX` | `1024` |
+| `MAX_HOPS` / `TTL` | `16` |
 
 ## Estimativa de memoria
 
-As estruturas propostas sao leves.
+Com os defaults, o consumo agregado das tabelas e filas residentes em RAM por no e:
 
-Estimativa aproximada:
+- vizinhos: 16 entradas x ~24 B = ~384 B
+- rotas (com precursores e demais campos): 32 entradas x ~52 B = ~1.7 KB
+- cache de `RREQ`: 64 entradas x ~16 B = ~1 KB
+- cache de peers: 8 entradas x ~16 B = ~128 B
+- `pending_data`: 4 entradas x (~24 B + 1024 B payload) = ~4.1 KB
+- `pending_ack`: 4 entradas x (~24 B + 1024 B payload) = ~4.1 KB
 
-- vizinho: ~20 a 24 bytes por entrada
-- rota: ~24 a 32 bytes por entrada
-- duplicata de `RREQ`: ~16 bytes por entrada
-- peer cache: ~12 a 16 bytes por entrada
-
-Com os tamanhos iniciais:
-
-- vizinhos: ~320 a 384 bytes
-- rotas: ~768 a 1024 bytes
-- `RREQ` cache: ~1024 bytes
-- peers: ~96 a 128 bytes
-
-Ou seja, o consumo total da base de tabelas permanece em poucos kilobytes, o que e adequado ao ESP32 e deixa a maior parte do custo no radio, na fila de mensagens e nos buffers do Wi-Fi.
+Total residente da camada `AODV-EN`: ~11.5 KB por no, dominado pelos buffers de payload das filas pendentes. E confortavel para um ESP32, mas e o item de memoria a observar caso `DATA_PAYLOAD_MAX` ou `PENDING_DATA_QUEUE_SIZE` sejam aumentados em experimentos futuros.
 
 ## Principios de projeto
 
-- manter tabelas pequenas, previsiveis e explicitas
-- evitar alocacao dinamica desnecessaria no caminho critico
-- separar claramente vizinhanca de roteamento
-- tratar `RREQ` duplicado como estrutura de primeira classe
-- desacoplar cache de peers do modelo de vizinhos
-
-## Arquivos relacionados
-
-Os tipos iniciais dessas estruturas foram materializados em:
-
-- `firmware/components/aodv_en/include/aodv_en_limits.h`
-- `firmware/components/aodv_en/include/aodv_en_types.h`
-- `firmware/components/aodv_en/include/aodv_en_messages.h`
-- `firmware/components/aodv_en/include/aodv_en_tables.h`
-
-As operacoes basicas sobre essas tabelas foram iniciadas em:
-
-- `firmware/components/aodv_en/include/aodv_en_mac.h`
-- `firmware/components/aodv_en/include/aodv_en_status.h`
-- `firmware/components/aodv_en/include/aodv_en_neighbors.h`
-- `firmware/components/aodv_en/include/aodv_en_routes.h`
-- `firmware/components/aodv_en/include/aodv_en_rreq_cache.h`
-- `firmware/components/aodv_en/include/aodv_en_peers.h`
+- tabelas pequenas, previsiveis e indexaveis sequencialmente
+- nenhuma alocacao dinamica no caminho critico
+- separacao clara entre vizinhos e roteamento
+- precursores como sub-array da rota, nao tabela separada (mantem cohesao)
+- `RREQ` cache como estrutura de primeira classe
+- cache de peers desacoplado da tabela de vizinhos para refletir a politica do driver ESP-NOW
