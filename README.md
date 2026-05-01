@@ -8,6 +8,7 @@ Este repositorio concentra a pesquisa, especificacao e implementacao do `AODV-EN
 
 - [docs/aodv-en-spec-v1.md](docs/aodv-en-spec-v1.md) - especificacao funcional fechada (`v1`, ativa)
 - [docs/aodv-en-funcionamento.md](docs/aodv-en-funcionamento.md) - guia didatico do funcionamento, com layout de bytes, traces e worked examples
+- [docs/aodv-en-mapa-do-codigo.md](docs/aodv-en-mapa-do-codigo.md) - guia de estudo do codigo: onde cada feature esta implementada, mapa por arquivo
 - [docs/runbook-bancada.md](docs/runbook-bancada.md) - passo a passo de bancada: identificar ESPs, build, flash, monitor, analise (cole-e-execute)
 - [docs/aodv-base-invariantes.md](docs/aodv-base-invariantes.md) - invariantes do AODV que o projeto preserva
 - [docs/aodv-en-estruturas-dados.md](docs/aodv-en-estruturas-dados.md) - layout das tabelas, mensagens e configuracao
