@@ -75,7 +75,8 @@ extern "C"
     typedef void (*aodv_en_ack_received_fn)(
         void *user_ctx,
         const uint8_t ack_sender_mac[AODV_EN_MAC_ADDR_LEN],
-        uint32_t sequence_number);
+        uint32_t sequence_number,
+        uint32_t rtt_ms);
 
     typedef struct
     {
