@@ -361,9 +361,16 @@ static void aodv_en_node_track_pending_ack(
 static bool aodv_en_node_pending_ack_consume(
     aodv_en_node_t *node,
     const uint8_t ack_sender_mac[AODV_EN_MAC_ADDR_LEN],
-    uint32_t sequence_number)
+    uint32_t sequence_number,
+    uint32_t now_ms,
+    uint32_t *out_rtt_ms)
 {
     uint16_t index;
+
+    if (out_rtt_ms != NULL)
+    {
+        *out_rtt_ms = AODV_EN_RTT_UNKNOWN;
+    }
 
     if (node == NULL || aodv_en_mac_is_zero(ack_sender_mac))
     {
@@ -383,6 +390,11 @@ static bool aodv_en_node_pending_ack_consume(
             entry->sequence_number != sequence_number)
         {
             continue;
+        }
+
+        if (out_rtt_ms != NULL)
+        {
+            *out_rtt_ms = now_ms - entry->last_sent_at_ms;
         }
 
         aodv_en_node_pending_ack_clear(entry);
@@ -438,7 +450,7 @@ static aodv_en_status_t aodv_en_node_send_data_via_route(
     {
         if (ack_required)
         {
-            (void)aodv_en_node_pending_ack_consume(node, destination_mac, sequence_number);
+            (void)aodv_en_node_pending_ack_consume(node, destination_mac, sequence_number, now_ms, NULL);
         }
         return status;
     }
@@ -1248,14 +1260,17 @@ static aodv_en_status_t aodv_en_node_handle_ack(
 
     if (aodv_en_node_is_self(node, message->destination_mac))
     {
-        (void)aodv_en_node_pending_ack_consume(node, message->originator_mac, message->ack_for_sequence);
+        uint32_t rtt_ms = AODV_EN_RTT_UNKNOWN;
+
+        (void)aodv_en_node_pending_ack_consume(node, message->originator_mac, message->ack_for_sequence, now_ms, &rtt_ms);
         node->stats.ack_received++;
         if (node->callbacks.ack_received != NULL)
         {
             node->callbacks.ack_received(
                 node->callbacks.user_ctx,
                 message->originator_mac,
-                message->ack_for_sequence);
+                message->ack_for_sequence,
+                rtt_ms);
         }
         return AODV_EN_OK;
     }

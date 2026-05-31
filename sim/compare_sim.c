@@ -120,11 +120,13 @@ static void aodv_deliver_data(
 static void aodv_ack_received(
     void *user_ctx,
     const uint8_t ack_sender_mac[AODV_EN_MAC_ADDR_LEN],
-    uint32_t sequence_number)
+    uint32_t sequence_number,
+    uint32_t rtt_ms)
 {
     endpoint_t *endpoint = (endpoint_t *)user_ctx;
     (void)ack_sender_mac;
     (void)sequence_number;
+    (void)rtt_ms;
     endpoint->net->ack_count++;
 }
 

@@ -255,13 +255,18 @@ static void app_deliver_data(
 static void app_ack_received(
     void *user_ctx,
     const uint8_t ack_sender_mac[AODV_EN_MAC_ADDR_LEN],
-    uint32_t sequence_number)
+    uint32_t sequence_number,
+    uint32_t rtt_ms)
 {
     char mac_text[18];
 
     (void)user_ctx;
     app_format_mac(ack_sender_mac, mac_text, sizeof(mac_text));
     ESP_LOGI(TAG, "ACK received from %s for seq=%" PRIu32, mac_text, sequence_number);
+    if (rtt_ms != AODV_EN_RTT_UNKNOWN)
+    {
+        ESP_LOGI(TAG, "LAT seq=%" PRIu32 " rtt_ms=%" PRIu32, sequence_number, rtt_ms);
+    }
 }
 
 static void app_send_cb(const esp_now_send_info_t *tx_info, esp_now_send_status_t status)

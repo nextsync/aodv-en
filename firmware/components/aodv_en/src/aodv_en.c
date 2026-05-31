@@ -104,7 +104,8 @@ static void aodv_en_stack_deliver_data(
 static void aodv_en_stack_ack_received(
     void *user_ctx,
     const uint8_t ack_sender_mac[AODV_EN_MAC_ADDR_LEN],
-    uint32_t sequence_number)
+    uint32_t sequence_number,
+    uint32_t rtt_ms)
 {
     aodv_en_stack_impl_t *impl = (aodv_en_stack_impl_t *)user_ctx;
 
@@ -116,7 +117,8 @@ static void aodv_en_stack_ack_received(
     impl->app_callbacks.on_ack(
         impl->app_callbacks.user_ctx,
         ack_sender_mac,
-        sequence_number);
+        sequence_number,
+        rtt_ms);
 }
 
 static aodv_en_status_t aodv_en_stack_now_ms(
