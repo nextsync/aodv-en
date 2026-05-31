@@ -70,5 +70,41 @@
     },
     "note": "HW seed2, flood unicast, do results/m10-flood-s2-metrics.json (real)",
     "ts": "2026-05-31T14:42:16.876639+00:00"
+  },
+  {
+    "num": 5,
+    "id": "e5",
+    "algo": "aodv-en",
+    "params": {
+      "scenario": "C1-3n",
+      "seed": 3,
+      "hops": 1
+    },
+    "metrics": {
+      "pdr": 100,
+      "latency_ms": 60,
+      "nrl": 0.7844,
+      "energy_j": 12.447
+    },
+    "note": "HW seed3, real",
+    "ts": "2026-05-31T16:41:57.112117+00:00"
+  },
+  {
+    "num": 6,
+    "id": "e6",
+    "algo": "flooding",
+    "params": {
+      "scenario": "C1-3n",
+      "seed": 3,
+      "hops": 1
+    },
+    "metrics": {
+      "pdr": 100,
+      "latency_ms": 100,
+      "nrl": 0,
+      "energy_j": 12.6205
+    },
+    "note": "HW seed3 flood, PDR clampado<=100 (raw teve efeito de borda)",
+    "ts": "2026-05-31T16:47:09.079284+00:00"
   }
 ]
