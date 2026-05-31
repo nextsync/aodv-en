@@ -1,0 +1,42 @@
+===== N1(34:99:34,target) =====
+I (74046) aodv_en_app: routes=2 neighbors=2 tx=116 rx=135 delivered=51
+I (74656) aodv_en_app: DATA deliver from 28:05:A5:33:EB:80: aodv baseline
+I (74756) aodv_en_app: DATA deliver from 28:05:A5:33:D6:1C: aodv baseline
+I (75056) aodv_en_app: routes=2 neighbors=2 tx=119 rx=138 delivered=53
+I (76066) aodv_en_app: routes=2 neighbors=2 tx=120 rx=139 delivered=53
+I (76676) aodv_en_app: DATA deliver from 28:05:A5:33:EB:80: aodv baseline
+I (76776) aodv_en_app: DATA deliver from 28:05:A5:33:D6:1C: aodv baseline
+I (77076) aodv_en_app: routes=2 neighbors=2 tx=123 rx=143 delivered=55
+I (78086) aodv_en_app: routes=2 neighbors=2 tx=124 rx=144 delivered=55
+I (78696) aodv_en_app: DATA deliver from 28:05:A5:33:EB:80: aodv baseline
+I (78796) aodv_en_app: DATA deliver from 28:05:A5:33:D6:1C: aodv baseline
+I (79096) aodv_en_app: routes=2 neighbors=2 tx=127 rx=148 delivered=57
+
+===== N2(33:EB:80,origem) =====
+I (54366) aodv_en_app: ACK received from 28:05:A5:34:99:34 for seq=26
+I (55266) aodv_en_app: routes=2 neighbors=2 tx=80 rx=115 delivered=0
+I (56276) aodv_en_app: routes=2 neighbors=2 tx=82 rx=117 delivered=0
+I (56396) aodv_en_app: ACK received from 28:05:A5:34:99:34 for seq=27
+I (57296) aodv_en_app: routes=2 neighbors=2 tx=83 rx=120 delivered=0
+I (58306) aodv_en_app: routes=2 neighbors=2 tx=85 rx=122 delivered=0
+I (58426) aodv_en_app: ACK received from 28:05:A5:34:99:34 for seq=28
+I (59326) aodv_en_app: routes=2 neighbors=2 tx=86 rx=125 delivered=0
+I (60336) aodv_en_app: routes=2 neighbors=2 tx=88 rx=127 delivered=0
+I (60456) aodv_en_app: ACK received from 28:05:A5:34:99:34 for seq=29
+I (61356) aodv_en_app: routes=2 neighbors=2 tx=89 rx=130 delivered=0
+I (62366) aodv_en_app: routes=2 neighbors=2 tx=91 rx=132 delivered=0
+
+===== N3(33:D6:1C,origem) =====
+I (36166) aodv_en_app: routes=2 neighbors=2 tx=52 rx=85 delivered=0
+I (36286) aodv_en_app: ACK received from 28:05:A5:34:99:34 for seq=17
+I (37186) aodv_en_app: routes=2 neighbors=2 tx=53 rx=88 delivered=0
+I (38196) aodv_en_app: routes=2 neighbors=2 tx=55 rx=90 delivered=0
+I (38316) aodv_en_app: ACK received from 28:05:A5:34:99:34 for seq=18
+I (39216) aodv_en_app: routes=2 neighbors=2 tx=56 rx=93 delivered=0
+I (40226) aodv_en_app: routes=2 neighbors=2 tx=58 rx=95 delivered=0
+I (40346) aodv_en_app: ACK received from 28:05:A5:34:99:34 for seq=19
+I (41246) aodv_en_app: routes=2 neighbors=2 tx=59 rx=98 delivered=0
+I (42256) aodv_en_app: routes=2 neighbors=2 tx=61 rx=100 delivered=0
+I (42376) aodv_en_app: ACK received from 28:05:A5:34:99:34 for seq=20
+I (43276) aodv_en_app: routes=2 neighbors=2 tx=62 rx=103 delivered=0
+
