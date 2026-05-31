@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "aodv_en_messages.h"
 #include "aodv_en_node.h"
 #include "flood_en.h"
 
@@ -13,6 +12,7 @@
 #define DATA_PACKETS 10
 #define PUMP_ROUNDS 40
 #define PUMP_STEP_MS 25u
+#define GRID_NETWORK_ID 0xC0DE0001u
 
 typedef struct grid_net grid_net_t;
 
@@ -62,17 +62,14 @@ static void deliver_frame_to(grid_net_t *net, size_t dest_index, size_t src_inde
     }
 }
 
-static aodv_en_status_t grid_emit_frame(
-    void *user_ctx,
-    const uint8_t next_hop[AODV_EN_MAC_ADDR_LEN],
+static void radio_broadcast_or_unicast(
+    grid_net_t *net,
+    size_t src_index,
+    const uint8_t *next_hop,
     const uint8_t *frame,
     size_t frame_len,
     bool broadcast)
 {
-    endpoint_t *endpoint = (endpoint_t *)user_ctx;
-    grid_net_t *net = endpoint->net;
-    size_t src_index = endpoint->index;
-
     net->tx_count++;
 
     if (broadcast)
@@ -84,19 +81,30 @@ static aodv_en_status_t grid_emit_frame(
                 deliver_frame_to(net, d, src_index, frame, frame_len);
             }
         }
-        return AODV_EN_OK;
+        return;
     }
 
     int dest_index = find_index_by_mac(net, next_hop);
     if (dest_index < 0 || !net->links[src_index][dest_index])
     {
-        return AODV_EN_ERR_NO_ROUTE;
+        return;
     }
     deliver_frame_to(net, (size_t)dest_index, src_index, frame, frame_len);
+}
+
+static aodv_en_status_t aodv_emit_frame(
+    void *user_ctx,
+    const uint8_t next_hop[AODV_EN_MAC_ADDR_LEN],
+    const uint8_t *frame,
+    size_t frame_len,
+    bool broadcast)
+{
+    endpoint_t *endpoint = (endpoint_t *)user_ctx;
+    radio_broadcast_or_unicast(endpoint->net, endpoint->index, next_hop, frame, frame_len, broadcast);
     return AODV_EN_OK;
 }
 
-static void grid_deliver_data(
+static void aodv_deliver_data(
     void *user_ctx,
     const uint8_t originator_mac[AODV_EN_MAC_ADDR_LEN],
     const uint8_t *payload,
@@ -109,9 +117,45 @@ static void grid_deliver_data(
     endpoint->net->delivered_count++;
 }
 
-static void grid_ack_received(
+static void aodv_ack_received(
     void *user_ctx,
     const uint8_t ack_sender_mac[AODV_EN_MAC_ADDR_LEN],
+    uint32_t sequence_number)
+{
+    endpoint_t *endpoint = (endpoint_t *)user_ctx;
+    (void)ack_sender_mac;
+    (void)sequence_number;
+    endpoint->net->ack_count++;
+}
+
+static flood_en_status_t flood_emit_frame(
+    void *user_ctx,
+    const uint8_t next_hop[FLOOD_EN_MAC_ADDR_LEN],
+    const uint8_t *frame,
+    size_t frame_len,
+    bool broadcast)
+{
+    endpoint_t *endpoint = (endpoint_t *)user_ctx;
+    radio_broadcast_or_unicast(endpoint->net, endpoint->index, next_hop, frame, frame_len, broadcast);
+    return FLOOD_EN_OK;
+}
+
+static void flood_deliver_data(
+    void *user_ctx,
+    const uint8_t originator_mac[FLOOD_EN_MAC_ADDR_LEN],
+    const uint8_t *payload,
+    uint16_t payload_len)
+{
+    endpoint_t *endpoint = (endpoint_t *)user_ctx;
+    (void)originator_mac;
+    (void)payload;
+    (void)payload_len;
+    endpoint->net->delivered_count++;
+}
+
+static void flood_ack_received(
+    void *user_ctx,
+    const uint8_t ack_sender_mac[FLOOD_EN_MAC_ADDR_LEN],
     uint32_t sequence_number)
 {
     endpoint_t *endpoint = (endpoint_t *)user_ctx;
@@ -154,7 +198,7 @@ static void grid_build_links(grid_net_t *net, int side)
     }
 }
 
-static void grid_pump(grid_net_t *net, uint32_t ack_timeout_ms)
+static void grid_pump(grid_net_t *net)
 {
     for (size_t i = 0; i < net->node_count; i++)
     {
@@ -167,13 +211,12 @@ static void grid_pump(grid_net_t *net, uint32_t ack_timeout_ms)
             aodv_en_node_tick(&net->aodv_nodes[i], net->now_ms);
         }
     }
-    net->now_ms += ack_timeout_ms;
+    net->now_ms += PUMP_STEP_MS;
 }
 
 static void run_protocol(int side, bool use_flood, const char *label)
 {
     static grid_net_t net;
-    aodv_en_config_t config;
     static const uint8_t payload[] = "compare-payload";
     uint16_t payload_len = (uint16_t)(sizeof(payload) - 1u);
     size_t src, dst;
@@ -183,9 +226,6 @@ static void run_protocol(int side, bool use_flood, const char *label)
     net.use_flood = use_flood;
     grid_build_links(&net, side);
 
-    aodv_en_config_set_defaults(&config);
-    config.network_id = 0xC0DE0001u;
-
     for (size_t i = 0; i < net.node_count; i++)
     {
         net.endpoints[i].net = &net;
@@ -193,21 +233,29 @@ static void run_protocol(int side, bool use_flood, const char *label)
 
         if (use_flood)
         {
-            assert(flood_en_node_init(&net.flood_nodes[i], &config, net.macs[i]) == AODV_EN_OK);
-            aodv_en_node_callbacks_t cb = {0};
-            cb.emit_frame = grid_emit_frame;
-            cb.deliver_data = grid_deliver_data;
-            cb.ack_received = grid_ack_received;
+            flood_en_config_t config;
+            flood_en_config_set_defaults(&config);
+            config.network_id = GRID_NETWORK_ID;
+            assert(flood_en_node_init(&net.flood_nodes[i], &config, net.macs[i]) == FLOOD_EN_OK);
+
+            flood_en_callbacks_t cb = {0};
+            cb.tx_frame = flood_emit_frame;
+            cb.deliver_data = flood_deliver_data;
+            cb.ack_received = flood_ack_received;
             cb.user_ctx = &net.endpoints[i];
             flood_en_node_set_callbacks(&net.flood_nodes[i], &cb);
         }
         else
         {
+            aodv_en_config_t config;
+            aodv_en_config_set_defaults(&config);
+            config.network_id = GRID_NETWORK_ID;
             assert(aodv_en_node_init(&net.aodv_nodes[i], &config, net.macs[i]) == AODV_EN_OK);
+
             aodv_en_node_callbacks_t cb = {0};
-            cb.emit_frame = grid_emit_frame;
-            cb.deliver_data = grid_deliver_data;
-            cb.ack_received = grid_ack_received;
+            cb.emit_frame = aodv_emit_frame;
+            cb.deliver_data = aodv_deliver_data;
+            cb.ack_received = aodv_ack_received;
             cb.user_ctx = &net.endpoints[i];
             aodv_en_node_set_callbacks(&net.aodv_nodes[i], &cb);
         }
@@ -232,7 +280,7 @@ static void run_protocol(int side, bool use_flood, const char *label)
         uint32_t delivered_before = net.delivered_count;
         for (int pump = 0; pump < PUMP_ROUNDS; pump++)
         {
-            grid_pump(&net, PUMP_STEP_MS);
+            grid_pump(&net);
             if (net.delivered_count > delivered_before && net.ack_count >= net.delivered_count)
             {
                 break;

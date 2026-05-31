@@ -41,7 +41,7 @@
 
 typedef struct
 {
-    uint8_t src_mac[AODV_EN_MAC_ADDR_LEN];
+    uint8_t src_mac[FLOOD_EN_MAC_ADDR_LEN];
     int8_t rssi;
     uint16_t data_len;
     uint8_t data[APP_MAX_FRAME_LEN];
@@ -51,8 +51,8 @@ typedef struct
 {
     flood_en_node_t node;
     QueueHandle_t rx_queue;
-    uint8_t self_mac[AODV_EN_MAC_ADDR_LEN];
-    uint8_t target_mac[AODV_EN_MAC_ADDR_LEN];
+    uint8_t self_mac[FLOOD_EN_MAC_ADDR_LEN];
+    uint8_t target_mac[FLOOD_EN_MAC_ADDR_LEN];
     bool has_target;
     uint8_t wifi_channel;
     const char *node_name;
@@ -64,7 +64,7 @@ typedef struct
 } app_context_t;
 
 static const char *TAG = "flood_en_app";
-static const uint8_t BROADCAST_MAC[AODV_EN_MAC_ADDR_LEN] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+static const uint8_t BROADCAST_MAC[FLOOD_EN_MAC_ADDR_LEN] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
 static app_context_t g_app;
 
 static uint32_t app_now_ms(void)
@@ -72,7 +72,7 @@ static uint32_t app_now_ms(void)
     return (uint32_t)(esp_timer_get_time() / 1000ULL);
 }
 
-static void app_format_mac(const uint8_t mac[AODV_EN_MAC_ADDR_LEN], char *buffer, size_t buffer_len)
+static void app_format_mac(const uint8_t mac[FLOOD_EN_MAC_ADDR_LEN], char *buffer, size_t buffer_len)
 {
     if (buffer_len < 18u)
     {
@@ -86,9 +86,9 @@ static void app_format_mac(const uint8_t mac[AODV_EN_MAC_ADDR_LEN], char *buffer
         mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 }
 
-static bool app_parse_mac(const char *text, uint8_t mac[AODV_EN_MAC_ADDR_LEN])
+static bool app_parse_mac(const char *text, uint8_t mac[FLOOD_EN_MAC_ADDR_LEN])
 {
-    unsigned int parts[AODV_EN_MAC_ADDR_LEN];
+    unsigned int parts[FLOOD_EN_MAC_ADDR_LEN];
     int count;
 
     if (text == NULL)
@@ -116,7 +116,7 @@ static bool app_parse_mac(const char *text, uint8_t mac[AODV_EN_MAC_ADDR_LEN])
         return false;
     }
 
-    for (size_t index = 0; index < AODV_EN_MAC_ADDR_LEN; index++)
+    for (size_t index = 0; index < FLOOD_EN_MAC_ADDR_LEN; index++)
     {
         mac[index] = (uint8_t)parts[index];
     }
@@ -124,7 +124,7 @@ static bool app_parse_mac(const char *text, uint8_t mac[AODV_EN_MAC_ADDR_LEN])
     return true;
 }
 
-static esp_err_t app_ensure_peer(const uint8_t mac[AODV_EN_MAC_ADDR_LEN], uint8_t channel)
+static esp_err_t app_ensure_peer(const uint8_t mac[FLOOD_EN_MAC_ADDR_LEN], uint8_t channel)
 {
     esp_now_peer_info_t peer;
 
@@ -134,7 +134,7 @@ static esp_err_t app_ensure_peer(const uint8_t mac[AODV_EN_MAC_ADDR_LEN], uint8_
     }
 
     memset(&peer, 0, sizeof(peer));
-    memcpy(peer.peer_addr, mac, AODV_EN_MAC_ADDR_LEN);
+    memcpy(peer.peer_addr, mac, FLOOD_EN_MAC_ADDR_LEN);
     peer.channel = channel;
     peer.ifidx = WIFI_IF_STA;
     peer.encrypt = false;
@@ -142,9 +142,9 @@ static esp_err_t app_ensure_peer(const uint8_t mac[AODV_EN_MAC_ADDR_LEN], uint8_
     return esp_now_add_peer(&peer);
 }
 
-static aodv_en_status_t app_emit_frame(
+static flood_en_status_t app_emit_frame(
     void *user_ctx,
-    const uint8_t next_hop[AODV_EN_MAC_ADDR_LEN],
+    const uint8_t next_hop[FLOOD_EN_MAC_ADDR_LEN],
     const uint8_t *frame,
     size_t frame_len,
     bool broadcast)
@@ -157,14 +157,14 @@ static aodv_en_status_t app_emit_frame(
     if (frame_len > ESP_NOW_MAX_DATA_LEN_V2)
     {
         ESP_LOGE(TAG, "frame too large for ESP-NOW v2: %u", (unsigned int)frame_len);
-        return AODV_EN_ERR_SIZE;
+        return FLOOD_EN_ERR_SIZE;
     }
 
     err = app_ensure_peer(dest_mac, app->wifi_channel);
     if (err != ESP_OK && err != ESP_ERR_ESPNOW_EXIST)
     {
         ESP_LOGE(TAG, "failed to add peer: %s", esp_err_to_name(err));
-        return AODV_EN_ERR_STATE;
+        return FLOOD_EN_ERR_STATE;
     }
 
     err = esp_now_send(dest_mac, frame, frame_len);
@@ -172,10 +172,10 @@ static aodv_en_status_t app_emit_frame(
     {
         app_format_mac(dest_mac, mac_text, sizeof(mac_text));
         ESP_LOGE(TAG, "esp_now_send failed to %s: %s", mac_text, esp_err_to_name(err));
-        return AODV_EN_ERR_STATE;
+        return FLOOD_EN_ERR_STATE;
     }
 
-    return AODV_EN_OK;
+    return FLOOD_EN_OK;
 }
 
 static void app_led_pulse_task(void *arg)
@@ -202,7 +202,7 @@ static void app_led_pulse_task(void *arg)
 
 static void app_deliver_data(
     void *user_ctx,
-    const uint8_t originator_mac[AODV_EN_MAC_ADDR_LEN],
+    const uint8_t originator_mac[FLOOD_EN_MAC_ADDR_LEN],
     const uint8_t *payload,
     uint16_t payload_len)
 {
@@ -217,7 +217,7 @@ static void app_deliver_data(
 
 static void app_ack_received(
     void *user_ctx,
-    const uint8_t ack_sender_mac[AODV_EN_MAC_ADDR_LEN],
+    const uint8_t ack_sender_mac[FLOOD_EN_MAC_ADDR_LEN],
     uint32_t sequence_number)
 {
     char mac_text[18];
@@ -242,7 +242,7 @@ static void app_recv_cb(const esp_now_recv_info_t *recv_info, const uint8_t *dat
     }
 
     memset(&event, 0, sizeof(event));
-    memcpy(event.src_mac, recv_info->src_addr, AODV_EN_MAC_ADDR_LEN);
+    memcpy(event.src_mac, recv_info->src_addr, FLOOD_EN_MAC_ADDR_LEN);
     event.rssi = (recv_info->rx_ctrl != NULL) ? recv_info->rx_ctrl->rssi : 0;
     event.data_len = (uint16_t)data_len;
     memcpy(event.data, data, (size_t)data_len);
@@ -292,7 +292,7 @@ static void app_protocol_task(void *arg)
     for (;;)
     {
         uint32_t now_ms = app_now_ms();
-        aodv_en_status_t status;
+        flood_en_status_t status;
 
         app_process_rx_queue(app);
         flood_en_node_tick(&app->node, now_ms);
@@ -307,7 +307,7 @@ static void app_protocol_task(void *arg)
                 true,
                 now_ms);
 
-            if (status != AODV_EN_OK)
+            if (status != FLOOD_EN_OK)
             {
                 ESP_LOGW(TAG, "flood DATA send status=%d", status);
             }
@@ -392,8 +392,8 @@ static void app_init_espnow(uint8_t channel)
 
 void app_flood_run(void)
 {
-    aodv_en_config_t node_config;
-    aodv_en_node_callbacks_t callbacks;
+    flood_en_config_t node_config;
+    flood_en_callbacks_t callbacks;
     char self_mac_text[18];
     char target_mac_text[18];
 
@@ -409,17 +409,16 @@ void app_flood_run(void)
     ESP_ERROR_CHECK(esp_wifi_get_mac(WIFI_IF_STA, g_app.self_mac));
     app_init_espnow(g_app.wifi_channel);
 
-    aodv_en_config_set_defaults(&node_config);
+    flood_en_config_set_defaults(&node_config);
     node_config.network_id = CONFIG_AODV_EN_APP_NETWORK_ID;
-    node_config.wifi_channel = g_app.wifi_channel;
 
     ESP_ERROR_CHECK(
-        flood_en_node_init(&g_app.node, &node_config, g_app.self_mac) == AODV_EN_OK
+        flood_en_node_init(&g_app.node, &node_config, g_app.self_mac) == FLOOD_EN_OK
             ? ESP_OK
             : ESP_FAIL);
 
     memset(&callbacks, 0, sizeof(callbacks));
-    callbacks.emit_frame = app_emit_frame;
+    callbacks.tx_frame = app_emit_frame;
     callbacks.deliver_data = app_deliver_data;
     callbacks.ack_received = app_ack_received;
     callbacks.user_ctx = &g_app;
@@ -429,7 +428,7 @@ void app_flood_run(void)
     assert(g_app.rx_queue != NULL);
 
     g_app.has_target = app_parse_mac(APP_TARGET_MAC_TEXT, g_app.target_mac);
-    if (g_app.has_target && memcmp(g_app.target_mac, g_app.self_mac, AODV_EN_MAC_ADDR_LEN) == 0)
+    if (g_app.has_target && memcmp(g_app.target_mac, g_app.self_mac, FLOOD_EN_MAC_ADDR_LEN) == 0)
     {
         ESP_LOGE(TAG, "DATA target MAC equals self MAC; disabling periodic DATA");
         g_app.has_target = false;
