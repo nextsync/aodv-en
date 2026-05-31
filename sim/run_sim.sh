@@ -12,12 +12,14 @@ variantes:
   large     6 nos em cadeia A-B-C-D-E-F, RERR e reconvergencia
   100       grade 10x10, 100 nos, parede central
   1000      grade 32x32, 1024 nos, smart city com falhas (lento)
+  flood     3 nos A-B-C, baseline flooding controlado (TTL + dedup origem,seq)
 
 exemplos:
   bash sim/run_sim.sh
   bash sim/run_sim.sh basic
   bash sim/run_sim.sh large
   bash sim/run_sim.sh 100
+  bash sim/run_sim.sh flood
 
 observacao:
   variantes 100 e 1000 setam config.route_table_size e config.neighbor_table_size,
@@ -47,6 +49,10 @@ case "$VARIANT" in
     SIM_SRC="sim/aodv_en_sim_1000.c"
     OUT_BIN="/tmp/aodv_en_sim_1000"
     ;;
+  flood)
+    SIM_SRC="sim/flood_en_sim.c"
+    OUT_BIN="/tmp/flood_en_sim"
+    ;;
   -h|--help|help)
     usage
     exit 0
@@ -70,6 +76,7 @@ cc -std=c11 -Wall -Wextra \
     firmware/components/aodv_en/src/aodv_en_rreq_cache.c \
     firmware/components/aodv_en/src/aodv_en_peers.c \
     firmware/components/aodv_en/src/aodv_en_node.c \
+    firmware/components/aodv_en/src/flood_en.c \
     "$SIM_SRC" \
     -o "$OUT_BIN"
 
