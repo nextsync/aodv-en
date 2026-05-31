@@ -17,15 +17,15 @@ extern "C"
 #endif
 
 #ifndef FLOOD_EN_SEEN_SIZE
-#define FLOOD_EN_SEEN_SIZE 64u
+#define FLOOD_EN_SEEN_SIZE 100u
 #endif
 
 #ifndef FLOOD_EN_TTL_DEFAULT
-#define FLOOD_EN_TTL_DEFAULT 16u
+#define FLOOD_EN_TTL_DEFAULT 5u
 #endif
 
 #ifndef FLOOD_EN_MAX_HOPS_DEFAULT
-#define FLOOD_EN_MAX_HOPS_DEFAULT 16u
+#define FLOOD_EN_MAX_HOPS_DEFAULT 5u
 #endif
 
     typedef enum
