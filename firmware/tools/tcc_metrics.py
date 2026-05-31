@@ -104,7 +104,11 @@ def main():
     args = p.parse_args()
 
     org = parse_origin(args.origin)
-    pdr = (100.0 * org["acks"] / org["data_sent"]) if org["data_sent"] > 0 else 0.0
+    pdr_raw = (100.0 * org["acks"] / org["data_sent"]) if org["data_sent"] > 0 else 0.0
+    # PDR nao pode exceder 100%: acks>data_sent indica efeito de borda de janela
+    # (acks de DATA enviados antes do inicio da captura). Clampa e sinaliza.
+    pdr = min(100.0, pdr_raw)
+    pdr_boundary = pdr_raw > 100.0
     lat_rtt = stats_summary(org["rtts"])
     lat_oneway = stats_summary([r / 2.0 for r in org["rtts"]])
 
@@ -131,6 +135,8 @@ def main():
         "data_sent": org["data_sent"],
         "acks": org["acks"],
         "pdr_pct": round(pdr, 2),
+        "pdr_raw_pct": round(pdr_raw, 2),
+        "pdr_boundary_effect": pdr_boundary,
         "latency_rtt_ms": lat_rtt,
         "latency_oneway_ms": lat_oneway,
         "sum_tx": sum_tx,
