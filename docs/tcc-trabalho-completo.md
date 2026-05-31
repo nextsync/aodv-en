@@ -366,7 +366,7 @@ e coleta; análise e discussão.
 | TTL máximo | N/A | 5 saltos |
 
 > No hardware as execuções deste relatório usaram janelas de ~60 s por *run* (não 300 s) e
-> 2 *seeds* por algoritmo (não 30), por economia de tempo de bancada; o ledger e os alvos
+> 3 *seeds* por algoritmo (não 30), por economia de tempo de bancada; o ledger e os alvos
 > perpétuos do autopilot permitem acumular as 30 repetições incrementalmente. `payload=32 B`,
 > `taxa=1 pkt/s`, `HELLO=2 s` foram aplicados em ambos para comparação justa.
 
@@ -588,6 +588,14 @@ no ar. Resultado (commit `cdc62ae`, antes do TTL=5):
 **Leitura:** entrega 100% em ambos; há **cruzamento** de custo de canal por escala — flooding
 competitivo em rede pequena, AODV-EN com menor TX/entrega à medida que a rede cresce.
 
+![Figura 3 — Simulação: transmissões por entrega vs número de nós (grid), AODV-EN vs
+Flooding.](img/tcc/fig-sim-crossover.png)
+
+*Figura 3 — Custo de canal (transmissões por entrega) em função do tamanho da rede, na
+simulação em grade. Entrega 100% em ambos; há um cruzamento por volta de 9–11 nós, acima do
+qual o AODV-EN passa a custar menos por entrega — a vantagem estrutural do roteamento sobre o
+flooding cresce com a escala.*
+
 ### 9.3 Efeito do TTL=5 do TCC
 
 Aplicado o TTL=5 (Quadro 10) ao flooding, a varredura passa a mostrar **entrega 0** do
@@ -612,23 +620,51 @@ Flooding = unicast-por-vizinho, TTL=5, dedup=100; AODV-EN com `HELLO=2 s`.
 |---|---|---|---|---|---|---|
 | e1 | aodv-en | 1 | 98,57 | 60,0 | 0,7785 | 12,4147 |
 | e3 | aodv-en | 2 | 100,0 | 60,0 | 0,7821 | 12,4071 |
+| e5 | aodv-en | 3 | 100,0 | 60,0 | 0,7844 | 12,4470 |
 | e2 | flooding | 1 | 100,0 | 50,0 | 0,0 | 12,8029 |
 | e4 | flooding | 2 | 100,0 | 50,6 | 0,0 | 12,8482 |
+| e6 | flooding | 3 | 100,0* | 100,0 | 0,0 | 12,6205 |
+
+`*` o *seed* 3 do flooding teve PDR bruto de 101,43% (efeito de borda de janela: ACKs de
+DATA enviados antes do início da captura), **clampado a 100%** pela ferramenta, que preserva
+`pdr_raw_pct` e marca `pdr_boundary_effect=true` para transparência (ver §8/Apêndice O). O
+mesmo *seed* teve latência one-way de 100 ms (o ACK voltou em 2 saltos nesse *run*), contra
+~50 ms nos demais — variação real capturada pela barra de desvio nas figuras.
 
 Cada linha foi extraída por `tcc_metrics.py` de logs serial reais
-(`results/m10-{aodv,flood}[-s2]-N{1,2,3}.log` + `*-metrics.json`).
+(`results/m10-{aodv,flood}[-s2,-s3]-N{1,2,3}.log` + `*-metrics.json`).
 
-### 10.3 Comparação (média de 2 *seeds*, via `experiment compare`)
+### 10.3 Comparação (média de 3 *seeds*, via `experiment compare`)
 
 | Métrica | AODV-EN | Flooding | Δ (flood − aodv) | % |
 |---|---|---|---|---|
-| **PDR (%)** | 99,285 | 100,0 | +0,715 | +0,72% |
-| **Latência one-way (ms)** | 60,0 | 50,3 | −9,7 | −16,17% |
-| **NRL (controle/dados)** | 0,7803 | 0,0 | −0,7803 | −100% |
-| **Energia (J, est.)** | 12,4109 | 12,8255 | +0,4146 | +3,34% |
+| **PDR (%)** | 99,52 | 100,0 | +0,48 | +0,48% |
+| **Latência one-way (ms)** | 60,0 | 66,9 | +6,9 | +11,4% |
+| **NRL (controle/dados)** | 0,782 | 0,0 | −0,782 | −100% |
+| **Energia (J, est.)** | 12,423 | 12,757 | +0,334 | +2,69% |
 
-Contadores de rede agregados (por *run* típico, 3 nós): AODV-EN `tx≈441 rx≈562 control≈123
-delivered≈158`; flooding `tx≈614 rx≈1323 control=0 delivered≈154`.
+> **Atenção à amostra (n=3).** Com o 3.º *seed*, a média de latência do flooding subiu de
+> 50,3 ms (n=2) para 66,9 ms (n=3) por causa de **um** *run* com ACK em 2 saltos (100 ms) — o
+> desvio-padrão é grande (ver Figura 1). Com poucos *seeds*, médias são sensíveis a *outliers*;
+> a conclusão robusta exige as 30 repetições do TCC. O número exibido vem do
+> `experiment compare` (data-driven), não de estimativa.
+
+Contadores de rede agregados (média de 3 *seeds*, 3 nós): AODV-EN `tx≈438 rx≈555 control≈122
+delivered≈157`; flooding `tx≈649 rx≈1326 control=0 delivered≈163`.
+
+![Figura 1 — Métricas de hardware (PDR, latência, NRL, energia): AODV-EN vs Flooding, média de
+3 seeds com barra de desvio.](img/tcc/fig-hw-metrics.png)
+
+*Figura 1 — Quatro métricas do TCC no hardware (3 ESP32, hub), média de 3 seeds; barras de
+erro = desvio-padrão. PDR ~empate (ambos ≈100%); latência do flooding com grande dispersão
+(outlier do seed 3); NRL do flooding = 0 (sem controle de roteamento); energia ligeiramente
+maior no flooding.*
+
+![Figura 2 — Custo de canal: TX e RX agregados da rede (média de 3 seeds).](img/tcc/fig-hw-channel.png)
+
+*Figura 2 — Transmissões (TX) e recepções (RX) somadas na rede de 3 nós. O flooding por
+unicast-para-cada-vizinho gera RX muito maior (~2,3×): todo nó recebe cada cópia disseminada.
+É a marca de custo do flooding, que cresce com a densidade/escala da rede.*
 
 ---
 
@@ -643,10 +679,18 @@ mas não eliminado, pela fila pendente).
 
 ### 11.2 Latência
 
-Flooding ~16% menor (50 vs 60 ms one-way) — não paga espera por descoberta de rota. Ressalva
-importante: os valores são **quantizados pelo laço de 100 ms** da aplicação; a diferença
-absoluta (~10 ms) é da ordem da granularidade de medição. A conclusão qualitativa (flooding
-não tem custo de *setup* de rota) é robusta; o valor numérico exato é grosseiro.
+Com n=3 *seeds*, a média do flooding (66,9 ms) ficou **acima** da do AODV-EN (60 ms) — invertendo
+a leitura de n=2 (50,3 ms) — porque um *run* do flooding teve ACK em 2 saltos (100 ms). Os
+valores são **quantizados pelo laço de 100 ms** da aplicação, e a amostra é pequena: a média é
+sensível a *outliers*. A conclusão **qualitativa** robusta é que **nenhum dos dois tem latência
+proibitiva no hub** e que o flooding não paga *setup* de rota, mas pode variar conforme o
+caminho do ACK; o valor numérico fino exige mais *seeds* e laço menor.
+
+![Figura 4 — Latência one-way por seed (AODV-EN vs Flooding).](img/tcc/fig-latency-seeds.png)
+
+*Figura 4 — Latência one-way por seed. O AODV-EN ficou estável em 60 ms (quantização do laço);
+o flooding variou (50, 50,6 e 100 ms) — o seed 3 com ACK em 2 saltos puxou a média e o desvio.
+Ilustra por que o TCC pede 30 repetições: com poucas amostras, um caminho atípico domina a média.*
 
 ### 11.3 NRL (carga de roteamento normalizada)
 
@@ -674,7 +718,7 @@ frase: **o roteamento "paga" um overhead de controle constante para evitar o cus
 disseminação que cresce com a rede** — vantajoso conforme a rede cresce, irrelevante (ou
 desvantajoso) numa rede minúscula e densa.
 
-> Estatística: as conclusões de hardware vêm de **2 *seeds*** num único cenário (C1-3n). Para
+> Estatística: as conclusões de hardware vêm de **3 *seeds*** num único cenário (C1-3n). Para
 > rigor (média, desvio, IC 95%) o alvo é 30 repetições por cenário e a cobertura de C2/C3/C4 e
 > escala em simulação — acumuláveis via os alvos perpétuos do autopilot.
 
@@ -710,8 +754,8 @@ ser "chutadas". Foram registradas em `results/QUESTIONS.md` e decididas pelo aut
    (2+ saltos exigem separar fisicamente os nós para que N1 e N3 não se ouçam diretamente,
    só via N2). C1 completo (5 nós/4 saltos), C2, C3 e C4 do TCC migram para simulação até
    haver mais boards e separação física.
-2. **Amostragem (2 *seeds*, 1 cenário, ~60 s).** Aquém das 30 repetições × 300 s do Quadro 10.
-   Os números de hardware são consistentes entre os 2 *seeds*, mas média/desvio/IC95 robustos
+2. **Amostragem (3 *seeds*, 1 cenário, ~60 s).** Aquém das 30 repetições × 300 s do Quadro 10.
+   Os 3 *seeds* já expõem variação (latência do flooding), mas média/desvio/IC95 robustos
    exigem acumular mais *runs* (alvo perpétuo do autopilot).
 3. **Quantização da latência.** O laço de 100 ms da aplicação grosseiriza o RTT medido. Para
    latência fina, reduzir o laço e/ou marcar *timestamps* mais perto do rádio.
@@ -1210,16 +1254,16 @@ Pontos-chave para quem for ler/estender o código:
 
 ---
 
-## Apêndice G — Saída-exemplo do `experiment compare` (2 seeds)
+## Apêndice G — Saída-exemplo do `experiment compare` (3 seeds)
 
 ```json
 {
-  "a": "aodv-en", "b": "flooding", "runs_a": 2, "runs_b": 2,
+  "a": "aodv-en", "b": "flooding", "runs_a": 3, "runs_b": 3,
   "metrics": {
-    "pdr":        {"aodv-en": 99.285, "flooding": 100.0, "delta_b_minus_a": 0.715,  "pct_change": 0.72},
-    "latency_ms": {"aodv-en": 60.0,   "flooding": 50.3,  "delta_b_minus_a": -9.7,   "pct_change": -16.17},
-    "nrl":        {"aodv-en": 0.7803, "flooding": 0.0,   "delta_b_minus_a": -0.7803,"pct_change": -100.0},
-    "energy_j":   {"aodv-en": 12.4109,"flooding": 12.8255,"delta_b_minus_a": 0.4146,"pct_change": 3.34}
+    "pdr":        {"aodv-en": 99.52,  "flooding": 100.0,  "delta_b_minus_a": 0.48,   "pct_change": 0.48},
+    "latency_ms": {"aodv-en": 60.0,   "flooding": 66.87,  "delta_b_minus_a": 6.87,   "pct_change": 11.4},
+    "nrl":        {"aodv-en": 0.782,  "flooding": 0.0,    "delta_b_minus_a": -0.782, "pct_change": -100.0},
+    "energy_j":   {"aodv-en": 12.423, "flooding": 12.757, "delta_b_minus_a": 0.334,  "pct_change": 2.69}
   }
 }
 ```
