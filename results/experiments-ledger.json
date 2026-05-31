@@ -1,0 +1,38 @@
+[
+  {
+    "num": 1,
+    "id": "e1",
+    "algo": "aodv-en",
+    "params": {
+      "scenario": "C1-3n",
+      "seed": 1,
+      "hops": 1
+    },
+    "metrics": {
+      "pdr": 98.57,
+      "latency_ms": 60,
+      "nrl": 0.7785,
+      "energy_j": 12.4147
+    },
+    "note": "HW 3 ESPs hub instrumentado; do results/m10-aodv-metrics.json (real). latency=one-way(rtt/2), energia=estimativa datasheet.",
+    "ts": "2026-05-31T13:05:52.217926+00:00"
+  },
+  {
+    "num": 2,
+    "id": "e2",
+    "algo": "flooding",
+    "params": {
+      "scenario": "C1-3n",
+      "seed": 1,
+      "hops": 1
+    },
+    "metrics": {
+      "pdr": 100,
+      "latency_ms": 50,
+      "nrl": 0,
+      "energy_j": 12.8029
+    },
+    "note": "HW 3 ESPs hub, flood unicast-por-vizinho (TCC), instrumentado; do results/m10-flood-metrics.json (real). NRL=0 (flood sem controle de roteamento). energia=estimativa datasheet.",
+    "ts": "2026-05-31T13:17:35.558940+00:00"
+  }
+]
