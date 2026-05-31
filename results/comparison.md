@@ -4,19 +4,20 @@
 > `.claude/autopilot/experiments.json` via `experiment compare` (data-driven, nao
 > de memoria). Energia = ESTIMATIVA datasheet ESP32-WROOM-32 (rotulada, nao medida).
 
-## 1. Hardware — C1 reduzido (3 nos, hub ~1 hop, 1 seed, 60 s, instrumentado)
+## 1. Hardware — C1 reduzido (3 nos, hub ~1 hop, MEDIA de 2 seeds, 60 s, instrumentado)
 
 Setup identico p/ os dois: payload 32 B, 1 pkt/s, 2 origens (N2,N3) -> 1 destino (N1).
 Flooding = unicast-por-vizinho (TCC 4.6.1d), TTL=5, dedup=100. AODV-EN = HELLO 2 s.
 Metricas reais: PDR=acks/data_sent (origem); latencia=RTT/2 medido na origem (mesmo
 clock); NRL=control_tx/entregues (rede); energia=Sigma(tx*Etx+rx*Erx+idle).
+Numeros = media do ledger experiments.json (2 seeds/algo) via experiment compare.
 
-| Metrica | AODV-EN | Flooding | delta (flood-aodv) | % |
-|---|---|---|---|---|
-| PDR (%) | 98.57 | 100.0 | +1.43 | +1.45% |
-| Latencia one-way (ms) | 60.0 | 50.0 | -10.0 | -16.67% |
-| NRL (controle/dados) | 0.7785 | 0.0 | -0.7785 | -100% |
-| Energia (J, estimada) | 12.41 | 12.80 | +0.39 | +3.13% |
+| Metrica | AODV-EN | Flooding | delta (flood-aodv) |
+|---|---|---|---|
+| PDR (%) | 99.29 | 100.0 | +0.71 |
+| Latencia one-way (ms) | 60.0 | 50.3 | -9.7 |
+| NRL (controle/dados) | 0.780 | 0.0 | -0.780 |
+| Energia (J, estimada) | 12.41 | 12.83 | +0.42 |
 
 Contadores de rede (3 nos): AODV tx=441 rx=562 control=123 entregues=158 ;
 Flooding tx=614 rx=1323 control=0 entregues=154.
