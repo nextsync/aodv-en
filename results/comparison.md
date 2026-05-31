@@ -1,48 +1,58 @@
-# AODV-EN vs Flooding — comparacao (estado em 2026-05-31)
+# AODV-EN vs Flooding — comparacao (2026-05-31)
 
-> Documento vivo. Parte SIM e dado real medido; parte HARDWARE esta bloqueada em
-> decisoes do humano (ver results/QUESTIONS.md). NENHUM numero foi inventado.
+> Dados REAIS de hardware (3 ESP32) + simulacao. Numeros do ledger
+> `.claude/autopilot/experiments.json` via `experiment compare` (data-driven, nao
+> de memoria). Energia = ESTIMATIVA datasheet ESP32-WROOM-32 (rotulada, nao medida).
 
-## 1. Comparacao por SIMULACAO (REAL, deterministica) — disponivel
+## 1. Hardware — C1 reduzido (3 nos, hub ~1 hop, 1 seed, 60 s, instrumentado)
 
-Fonte: `bash sim/run_sim.sh compare` (sim/compare_sim.c). Os dois nucleos
-(aodv_en_node e flood_en_node) rodam na MESMA topologia em grade, origem->destino
-em cantos opostos, 10 pacotes DATA com ACK. Conta-se cada transmissao no ar.
-Grafico: results/charts/sim-tx-per-delivered.png. CSV: results/m-bench-sim-compare.csv.
+Setup identico p/ os dois: payload 32 B, 1 pkt/s, 2 origens (N2,N3) -> 1 destino (N1).
+Flooding = unicast-por-vizinho (TCC 4.6.1d), TTL=5, dedup=100. AODV-EN = HELLO 2 s.
+Metricas reais: PDR=acks/data_sent (origem); latencia=RTT/2 medido na origem (mesmo
+clock); NRL=control_tx/entregues (rede); energia=Sigma(tx*Etx+rx*Erx+idle).
 
-| Grid | Nos | Hops | Entrega AODV | Entrega Flood | TX/entrega AODV | TX/entrega Flood |
-|------|-----|------|--------------|---------------|-----------------|------------------|
-| 2x2  | 4   | 2    | 10/10        | 10/10         | 4.50            | 6.00             |
-| 3x3  | 9   | 4    | 10/10        | 10/10         | 17.60           | 16.00            |
-| 4x4  | 16  | 6    | 10/10        | 10/10         | 26.70           | 30.00            |
-| 5x5  | 25  | 8    | 10/10        | 10/10         | 35.60           | 41.00            |
+| Metrica | AODV-EN | Flooding | delta (flood-aodv) | % |
+|---|---|---|---|---|
+| PDR (%) | 98.57 | 100.0 | +1.43 | +1.45% |
+| Latencia one-way (ms) | 60.0 | 50.0 | -10.0 | -16.67% |
+| NRL (controle/dados) | 0.7785 | 0.0 | -0.7785 | -100% |
+| Energia (J, estimada) | 12.41 | 12.80 | +0.39 | +3.13% |
 
-Leitura: entrega 100% nos dois em todas as escalas. Custo de canal (tx/entrega) tem
-cruzamento ~9-11 nos: flooding e competitivo em rede pequena/densa, AODV-EN escala
-melhor (menos tx/entrega) conforme cresce. Numeros do flood inalterados apos o fix de
-ACK (commit d3d34eb) -> fix neutro no caso single-origin do compare_sim.
+Contadores de rede (3 nos): AODV tx=441 rx=562 control=123 entregues=158 ;
+Flooding tx=614 rx=1323 control=0 entregues=154.
 
-## 2. Comparacao por HARDWARE (3 ESP32) — BLOQUEADA
+Grafico: results/charts/m10-compare.png. JSONs: results/m10-{aodv,flood}-metrics.json.
+Logs crus: results/m10-{aodv,flood}-N{1,2,3}.log.
 
-`experiment compare aodv-en flooding` retorna 0 runs: NAO ha metricas HW no ledger,
-de proposito. As 4 metricas do TCC (PDR, latencia, NRL, energia) NAO podem vir do log
-serial real atual sem decisoes do humano:
-- Q3: formulas PDR/NRL + instrumentacao por-pacote (telemetria nao loga seq+t_send na
-  origem e seq+t_recv no destino, logo latencia fim-a-fim e incalculavel hoje).
-- Q6: constantes do modelo de energia (V, I_tx, I_rx, P_idle, t_tx).
-- Q1/Q2: params do flooding (transporte broadcast vs unicast-por-vizinho; TTL=5;
-  dedup=100; payload 32B; 1 pkt/s) — divergem do baseline atual.
-- extract_monitor_metrics.py (Q4) nao parseia a telemetria do app_flood.
+### Leitura (regime hub/1-hop)
+- **PDR**: flooding 100% vs AODV 98.6% — no hub raso o flooding (todos ouvem) garante
+  entrega; AODV perdeu 1 pacote (descoberta/timeout). Ambos altos.
+- **Latencia**: flooding um pouco menor (50 vs 60 ms) — sem espera por descoberta de
+  rota. (Valores quantizados pelo loop de 100 ms da app; std~0.)
+- **NRL**: AODV 0.78 (HELLO+RREQ+RREP) vs flooding 0 (sem controle de roteamento). Pela
+  definicao do TCC (controle/dados), o flooding tem overhead de CONTROLE nulo -- mas seu
+  custo aparece em outro lugar (rx).
+- **Energia / ocupacao de canal**: flooding gasta ~3% mais energia e, sobretudo, gera
+  **rx 1323 vs 562** (2.35x): o unicast-para-cada-vizinho faz todos receberem cada copia.
+  No hub de 3 nos isso e barato; em rede maior/densa multiplica (ver sim).
 
-Dados HW REAIS ja coletados (contadores, nao as 4 metricas) ficam em:
-- AODV: results/m8-aodv-N2/summary.json
-- Flooding: results/m9-flood-metrics.json (pos-fix: N2/N3 ack simetricos)
+## 2. Simulacao — escala (grid 4-25 nos), complementar
 
-Quando Q1-Q6 forem decididas: alinhar params do flooding, instrumentar telemetria
-por-pacote, estender o extractor, re-coletar (m8/m9) e entao popular o ledger e
-re-rodar este compare para a tabela HW.
+`bash sim/run_sim.sh compare` (compare_sim.c). Entrega 100% ambos ate o alcance do TTL.
+tx/entrega cruza ~9-11 nos: flooding competitivo em rede pequena, AODV-EN escala melhor.
+Com TTL=5 (TCC), o flooding NAO alcanca grids de diametro >5 (4x4/5x5 entregam 0) --
+limitacao real do TTL; AODV (rotas) ainda entrega. Grafico: results/charts/sim-tx-per-delivered.png.
 
-## 3. Achados de correcao ja aplicados
-- fix(flood) d3d34eb: dedup de ACK por (origem-do-DATA, seq). Antes, 2 origens ao mesmo
-  destino com seq sobrepostos colidiam e uma ficava sem ACK (HW: N2 ack=0). Pos-fix HW:
-  N2 ack=30, N3 ack=30 (simetrico). Relevante para NRL/PDR do flooding multi-origem.
+## 3. Conclusao (com os dados atuais)
+No **C1 reduzido (hub, 1 hop)** o flooding empata/ganha em PDR e latencia e tem NRL de
+controle nulo, ao custo de muito mais recepcoes (rx 2.35x) e leve aumento de energia.
+A vantagem do AODV-EN aparece em **escala/diametro** (sim): confina o trafego a rota,
+enquanto o flooding multiplica copias e esbarra no TTL. 
+
+## Caveats
+- 1 seed, 1 cenario (C1-3n), hub 1-hop (HW so tem 3 boards). Para o TCC: repetir ~30x
+  (alvo perpetuo do autopilot) e rodar C2/C3/C4 + 5-10 nos (sim) p/ media/desvio/IC95.
+- Latencia RTT quantizada pelo loop de 100 ms da app (granularidade grosseira).
+- Energia e estimativa de datasheet (V=3.3, I_tx=240mA, I_rx=100mA, I_idle=20mA,
+  t_pkt=1ms); para fiel, medir com INA219/shunt.
+- 2 hops reais exigem separar fisicamente os nos (fora do hub).
