@@ -57,3 +57,6 @@
 # PDF intermediario (regenerar via docs/build_pdf.py)
 /docs/aodv-en-completo.html
 /docs/tcc-trabalho-completo.html
+
+# Playwright MCP artifacts
+/.playwright-mcp/
