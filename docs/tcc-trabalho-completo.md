@@ -1241,4 +1241,167 @@ Pontos-chave para quem for ler/estender o código:
 
 ---
 
-*Fim dos apêndices.*
+## Apêndice I — Trace real da simulação AODV-EN (`run_sim.sh basic`)
+
+Saída literal do cenário de 3 nós A–B–C, com as quatro fases (descoberta, dados, *retry* de
+ACK, *late-join*). Note o RTT instrumentado (`rtt_ms`) e o caso em que o ACK é descartado de
+propósito, forçando *retry* (o RTT salta para ~1007 ms — o `ack_timeout_ms`).
+
+```
+=== route discovery phase ===
+[t=0] A TX RREQ broadcast
+        -> B RX RREQ
+[t=1] B TX RREQ broadcast
+        -> A RX RREQ
+        -> C RX RREQ
+[t=3] C TX RREP unicast -> B
+[t=4] B TX RREP unicast -> A
+[t=5] A TX DATA unicast -> B
+[t=6] B TX DATA unicast -> C
+        C DELIVER data from 10:00:00:00:00:0A: hello over aodv-en
+[t=7] C TX ACK unicast -> B
+[t=8] B TX ACK unicast -> A
+        A ACK received from 10:00:00:00:00:0C for seq=1 rtt_ms=4
+
+=== data phase ===
+[t=9] A TX DATA unicast -> B
+[t=10] B TX DATA unicast -> C
+        C DELIVER data from 10:00:00:00:00:0A: hello over aodv-en
+[t=11] C TX ACK unicast -> B
+[t=12] B TX ACK unicast -> A
+        A ACK received from 10:00:00:00:00:0C for seq=2 rtt_ms=4
+
+=== ack retry phase ===
+[t=13] A TX DATA unicast -> B
+[t=14] B TX DATA unicast -> C
+        C DELIVER data from 10:00:00:00:00:0A: hello over aodv-en
+[t=15] C TX ACK unicast -> B
+[t=16] B TX ACK unicast -> A
+        -> ACK intentionally dropped before A
+[t=1016] A TX DATA unicast -> B
+[t=1017] B TX DATA unicast -> C
+        C DELIVER data from 10:00:00:00:00:0A: hello over aodv-en
+[t=1018] C TX ACK unicast -> B
+[t=1019] B TX ACK unicast -> A
+        A ACK received from 10:00:00:00:00:0C for seq=3 rtt_ms=1007
+...
+=== summary ===  (Simulation passed.)
+```
+
+Leitura: a descoberta acontece sincronamente (RREQ→RREP em poucos "ticks"), o DATA segue
+unicast salto a salto (A→B→C), o destino entrega e devolve ACK, e a origem confirma com RTT.
+O *retry* mostra a robustez do `pending_ack` (re-transmite após `ack_timeout_ms`).
+
+## Apêndice J — Trace real da simulação do flooding (`run_sim.sh flood`)
+
+```
+=== flood delivery phase (A -> C via B, no routes) ===
+[t=0] A TX DATA broadcast (ttl-hop=0)
+        -> B RX DATA
+[t=1] B TX DATA broadcast (ttl-hop=1)
+        -> A RX DATA          (A descarta: ja viu (A,seq))
+        -> C RX DATA
+        C DELIVER data from 10:00:00:00:00:0A: hello over flood-en
+[t=3] C TX ACK broadcast (ttl-hop=0)
+        -> B RX ACK
+[t=4] B TX ACK broadcast (ttl-hop=1)
+        -> A RX ACK
+        A ACK received from 10:00:00:00:00:0C for seq=1 rtt_ms=5
+        -> C RX ACK           (C descarta: ja viu o ACK)
+=== second flood (seq increments, still delivers) ===
+... (entrega 2/2, ack 2/2, dedup ativo, ttl_drop=0)  -> "Flood simulation passed."
+```
+
+Leitura: sem rotas, o DATA é disseminado; o `hop_count` (ttl-hop) sobe a cada salto; a
+supressão de duplicatas `(origem,seq)` impede *loops* (A e C descartam os ecos); o destino
+entrega e o ACK é disseminado de volta. No simulador o "broadcast" alcança todos os vizinhos
+de uma vez; no hardware, o adaptador faz o *fanout* por unicast (1 envio por vizinho).
+
+## Apêndice K — Fundamentos do AODV (RFC 3561) preservados
+
+O AODV-EN mantém os mecanismos centrais do AODV:
+
+1. **Sob-demanda:** rota só é buscada quando há tráfego (reativo), economizando controle.
+2. **Números de sequência de destino:** garantem rotas frescas e **livres de *loop***; uma rota
+   só é aceita/atualizada se trouxer `dest_seq` maior (ou igual com menos saltos).
+3. **RREQ/RREP:** descoberta por disseminação de RREQ e resposta unicast de RREP pelo caminho
+   reverso; rotas reversa (na ida) e direta (na volta) são instaladas em cada nó do caminho.
+4. **RREQ ID + cache:** cada RREQ tem `(originador, rreq_id)` único; nós já processados
+   descartam duplicatas (evita tempestade de broadcast).
+5. **Manutenção:** *lifetime* de rota, HELLO para vizinhança, e **RERR** aos **precursores** ao
+   detectar enlace quebrado.
+6. **TTL/diâmetro:** limita o alcance da disseminação de RREQ.
+
+Adaptações para ESP-NOW (o "EN"): transporte por quadros ESP-NOW (sem IP), `network_id` para
+isolar redes, confirmação de enlace do ESP-NOW para detectar falha, e as considerações §3.6
+(LRU de peers, possibilidade de RREQ por unicast, métrica híbrida).
+
+## Apêndice L — ESP-NOW v2: pontos relevantes ao projeto
+
+- **Sem associação/!IP:** troca quadros entre MACs diretamente; ideal para nós simples.
+- **Peers:** é preciso registrar o *peer* (`esp_now_add_peer`) antes de enviar unicast; o
+  projeto registra sob demanda (`app_ensure_peer`) e usa o *broadcast* address para o modo
+  *broadcast*.
+- **Confirmação de enlace:** o *callback* de envio informa sucesso/falha do unicast — usado
+  para detectar falha de enlace e alimentar a invalidação de rota do AODV-EN.
+- **Tamanho:** o projeto respeita `ESP_NOW_MAX_DATA_LEN_V2`; *payload* de DATA do experimento
+  = 32 B, bem abaixo do limite.
+- **Canal:** todos os nós no mesmo canal (6) e mesmo `network_id` (0xA0DE0001) para se
+  enxergarem.
+
+## Apêndice M — Dashboard em tempo real (`live_monitor.py`)
+
+Arquitetura: um processo Python (asyncio + aiohttp) abre uma *thread* leitora por porta
+serial, faz *parse* das linhas de log (regex por tipo de evento), mantém o estado da malha em
+memória e empurra atualizações por **WebSocket** para uma página com **Cytoscape.js**, que
+desenha a topologia animada (nós *online*/*offline*, arestas de vizinhança, rotas válidas/
+reversas/inválidas) e uma *timeline* de eventos. Recursos: pré-leitura de MAC via `esptool`
+no *startup* (mapeia *alias*→MAC mesmo sem capturar a linha de *boot*), modo `--demo` (eventos
+sintéticos sem hardware), `--verbose`/`-vv`. **Gotcha** documentado: com `--skip-mac-lookup` e
+ESPs já bootados (sem linha `node=` recente), o *alias*→MAC não mapeia e o dashboard fica vazio
+mesmo com a serial produzindo logs — rodar sem o *flag* (pré-leitura via esptool) resolve.
+
+## Apêndice N — Linha do tempo dos commits (branch `autopilot/2026-05-31-0026`)
+
+| Commit | Tipo | Resumo |
+|---|---|---|
+| `f3e8f28` | feat | LED de origem/entrega (app_demo) |
+| `a3f20b7` | test | valida dashboard realtime (3 ESPs, Playwright) |
+| `5738696` | feat | baseline de flooding controlado |
+| `65d77f4` | test | profile de bancada do flooding + validação sim/HW |
+| `09d9f0e`/`23d2db0` | test | comparação AODV vs flood no hub + capturas |
+| `cdc62ae` | feat | métricas e gráficos AODV vs flood (sim + HW) |
+| `8a2bde3` | refactor | **extrai `flood_en` para componente independente** |
+| `8114b2a` | chore | ignora `results/` (artefatos pesados) |
+| `99e72e3` | docs | adiciona `TCC.md` |
+| `d3d34eb` | fix | **dedup de ACK por (origem-do-DATA, seq)** (N2 ack 0→30) |
+| `9ff65dd` | docs | comparison.md (sim real + HW bloqueado) |
+| `5d3550f` | feat | params TCC no flood (TTL=5, dedup=100, 32B, 1pkt/s) |
+| `687ef0d` | feat | latência RTT no flood (origem) |
+| `65cfe0a` | feat | unicast-para-cada-vizinho (Q1) |
+| `ed908a9` | feat | latência RTT no AODV (simétrico) |
+| `3a1661b` | feat | contador NRL `control_tx` + `tcc_metrics.py` |
+| `d31b94a` | test | params AODV alinhados (32B/1pkt-s/HELLO 2s) |
+| `6540df5` | docs | m10 com dados HW reais (inc6 completo) |
+| `989011d` | docs | comparison.md com média de 2 seeds |
+| `9fd322f` | docs | este relatório completo |
+
+## Apêndice O — Como este relatório se mantém honesto
+
+Checklist aplicado a cada número e afirmação:
+
+- **PDR/latência/NRL/energia de hardware** vêm de `results/m10-*-metrics.json`, gerados por
+  `tcc_metrics.py` sobre logs serial reais (`results/m10-*-N{1,2,3}.log`), registrados no
+  *ledger* `experiments.json` e comparados por `experiment compare` — nunca digitados de
+  cabeça.
+- **Energia** é explicitamente estimativa de *datasheet* (rotulada em todo lugar).
+- **Decisões de projeto** (Q1–Q6) foram do autor; o relatório as cita como decisões, não como
+  fato técnico inevitável.
+- **Defeitos** têm sintoma, causa-raiz e validação verde antes/depois (com arquivos de
+  evidência citados).
+- **Limitações** (amostragem, hub, quantização, energia estimada, NRL=0) estão em §13, não
+  escondidas no rodapé.
+
+---
+
+*Fim dos apêndices e do relatório.*
