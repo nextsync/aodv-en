@@ -57,6 +57,7 @@ static void aodv_en_stats_from_node(
     stats->ack_timeout_drops = node->stats.ack_timeout_drops;
     stats->link_fail_events = node->stats.link_fail_events;
     stats->route_invalidations_link_fail = node->stats.route_invalidations_link_fail;
+    stats->control_tx_frames = node->stats.control_tx_frames;
 }
 
 static aodv_en_status_t aodv_en_stack_emit_frame(

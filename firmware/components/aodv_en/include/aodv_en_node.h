@@ -34,6 +34,7 @@ extern "C"
         uint32_t ack_timeout_drops;
         uint32_t link_fail_events;
         uint32_t route_invalidations_link_fail;
+        uint32_t control_tx_frames;
     } aodv_en_stats_t;
 
     typedef struct

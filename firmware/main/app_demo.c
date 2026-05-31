@@ -340,12 +340,14 @@ static void app_log_routes(const aodv_en_stack_t *stack)
         return;
     }
 
-    ESP_LOGI(TAG, "routes=%u neighbors=%u tx=%" PRIu32 " rx=%" PRIu32 " delivered=%" PRIu32,
+    ESP_LOGI(TAG, "routes=%u neighbors=%u tx=%" PRIu32 " rx=%" PRIu32 " delivered=%" PRIu32 " control=%" PRIu32 " acks=%" PRIu32,
              overview.routes_count,
              overview.neighbors_count,
              overview.stats.tx_frames,
              overview.stats.rx_frames,
-             overview.stats.delivered_frames);
+             overview.stats.delivered_frames,
+             overview.stats.control_tx_frames,
+             overview.stats.ack_received);
 
     route_count = aodv_en_stack_get_route_count(stack);
     for (size_t index = 0; index < route_count; index++)

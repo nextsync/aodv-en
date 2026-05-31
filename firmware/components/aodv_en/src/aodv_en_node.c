@@ -91,6 +91,15 @@ static aodv_en_status_t aodv_en_node_emit(
     if (status == AODV_EN_OK)
     {
         node->stats.tx_frames++;
+        if (frame_len >= sizeof(aodv_en_header_t))
+        {
+            uint8_t type = ((const aodv_en_header_t *)frame)->message_type;
+            if (type == AODV_EN_MSG_HELLO || type == AODV_EN_MSG_RREQ ||
+                type == AODV_EN_MSG_RREP || type == AODV_EN_MSG_RERR)
+            {
+                node->stats.control_tx_frames++;
+            }
+        }
     }
 
     return status;
