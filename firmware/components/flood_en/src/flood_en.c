@@ -101,7 +101,7 @@ static void flood_en_send_ack(
     memcpy(ack.destination_mac, data_originator, FLOOD_EN_MAC_ADDR_LEN);
     ack.ack_for_sequence = sequence_number;
 
-    flood_en_seen_remember(node->seen_ack, node->self_mac, sequence_number, now_ms);
+    flood_en_seen_remember(node->seen_ack, data_originator, sequence_number, now_ms);
     (void)flood_en_emit(node, (const uint8_t *)&ack, sizeof(ack));
 }
 
@@ -285,13 +285,13 @@ static flood_en_status_t flood_en_handle_ack(
         return FLOOD_EN_ERR_SIZE;
     }
 
-    if (flood_en_seen_contains(node->seen_ack, msg->originator_mac, msg->ack_for_sequence))
+    if (flood_en_seen_contains(node->seen_ack, msg->destination_mac, msg->ack_for_sequence))
     {
         node->stats.duplicate_drops++;
         return FLOOD_EN_OK;
     }
 
-    flood_en_seen_remember(node->seen_ack, msg->originator_mac, msg->ack_for_sequence, now_ms);
+    flood_en_seen_remember(node->seen_ack, msg->destination_mac, msg->ack_for_sequence, now_ms);
 
     if (flood_en_mac_equal(msg->destination_mac, node->self_mac))
     {
