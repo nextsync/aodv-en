@@ -106,6 +106,17 @@ Simulacao em C que valida o fluxo `RREQ -> RREP -> DATA -> ACK` usando o mesmo n
 - [sim/run_sim.sh](sim/run_sim.sh)
 - [sim/README.md](sim/README.md)
 
+## Baseline de flooding e comparacao
+
+Baseline comparativo ao AODV-EN: flooding controlado (broadcast com TTL + supressao de duplicatas por `(origem, sequencia)`), reusando o mesmo wire format e adapter.
+
+- nucleo: [firmware/components/aodv_en/include/flood_en.h](firmware/components/aodv_en/include/flood_en.h) / [src/flood_en.c](firmware/components/aodv_en/src/flood_en.c)
+- app de bancada: [firmware/main/app_flood.c](firmware/main/app_flood.c) (modo Kconfig `AODV_EN_APP_USE_APP_FLOOD`)
+- sim baseline: `bash sim/run_sim.sh flood`
+- sweep comparativo (grid 2x2..5x5, CSV): `bash sim/run_sim.sh compare`
+- graficos: [firmware/tools/plot_compare.py](firmware/tools/plot_compare.py)
+- evidencias e analise: [docs/evidencias](docs/evidencias) (validacao do dashboard, flooding em hardware, AODV-EN vs flooding, metricas e graficos)
+
 ## Status atual
 
-Em uma frase: `AODV-EN v1` esta funcionalmente fechado. O caminho critico restante e fechar `TC-002`/`TC-003`/`TC-004` em hardware com captura completa, implementar baseline de flooding, rodar os experimentos e escrever o TCC. Detalhes em [docs/plano-desenvolvimento-completo.md](docs/plano-desenvolvimento-completo.md).
+Em uma frase: `AODV-EN v1` esta funcionalmente fechado e o baseline de flooding ja esta implementado, validado (sim + hardware) e comparado ao AODV-EN. O caminho critico restante e fechar `TC-002`/`TC-003`/`TC-004` em hardware com captura completa, ampliar os experimentos e escrever o TCC. Detalhes em [docs/plano-desenvolvimento-completo.md](docs/plano-desenvolvimento-completo.md).

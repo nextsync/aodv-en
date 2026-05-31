@@ -13,6 +13,7 @@ variantes:
   100       grade 10x10, 100 nos, parede central
   1000      grade 32x32, 1024 nos, smart city com falhas (lento)
   flood     3 nos A-B-C, baseline flooding controlado (TTL + dedup origem,seq)
+  compare   sweep em grid (2x2..5x5) AODV-EN vs flooding, saida CSV de metricas
 
 exemplos:
   bash sim/run_sim.sh
@@ -20,6 +21,7 @@ exemplos:
   bash sim/run_sim.sh large
   bash sim/run_sim.sh 100
   bash sim/run_sim.sh flood
+  bash sim/run_sim.sh compare
 
 observacao:
   variantes 100 e 1000 setam config.route_table_size e config.neighbor_table_size,
@@ -52,6 +54,10 @@ case "$VARIANT" in
   flood)
     SIM_SRC="sim/flood_en_sim.c"
     OUT_BIN="/tmp/flood_en_sim"
+    ;;
+  compare)
+    SIM_SRC="sim/compare_sim.c"
+    OUT_BIN="/tmp/compare_sim"
     ;;
   -h|--help|help)
     usage
