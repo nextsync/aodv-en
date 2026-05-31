@@ -20,6 +20,12 @@ extern "C"
 #define FLOOD_EN_SEEN_SIZE 100u
 #endif
 
+#ifndef FLOOD_EN_TX_TRACK
+#define FLOOD_EN_TX_TRACK 32u
+#endif
+
+#define FLOOD_EN_RTT_UNKNOWN 0xFFFFFFFFu
+
 #ifndef FLOOD_EN_TTL_DEFAULT
 #define FLOOD_EN_TTL_DEFAULT 5u
 #endif
@@ -101,7 +107,8 @@ extern "C"
     typedef void (*flood_en_ack_received_fn)(
         void *user_ctx,
         const uint8_t ack_sender_mac[FLOOD_EN_MAC_ADDR_LEN],
-        uint32_t sequence_number);
+        uint32_t sequence_number,
+        uint32_t rtt_ms);
 
     typedef struct
     {
@@ -121,6 +128,13 @@ extern "C"
 
     typedef struct
     {
+        uint32_t seq;
+        uint32_t sent_at_ms;
+        bool used;
+    } flood_en_tx_time_t;
+
+    typedef struct
+    {
         uint32_t rx_frames;
         uint32_t tx_frames;
         uint32_t rebroadcast_frames;
@@ -129,6 +143,9 @@ extern "C"
         uint32_t duplicate_drops;
         uint32_t ttl_drops;
         uint32_t foreign_drops;
+        uint32_t data_sent;
+        uint32_t rtt_sum_ms;
+        uint32_t rtt_samples;
     } flood_en_stats_t;
 
     typedef struct
@@ -139,6 +156,7 @@ extern "C"
         flood_en_callbacks_t callbacks;
         flood_en_seen_entry_t seen_data[FLOOD_EN_SEEN_SIZE];
         flood_en_seen_entry_t seen_ack[FLOOD_EN_SEEN_SIZE];
+        flood_en_tx_time_t tx_times[FLOOD_EN_TX_TRACK];
         flood_en_stats_t stats;
     } flood_en_node_t;
 

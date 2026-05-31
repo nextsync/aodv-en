@@ -63,6 +63,46 @@ static void flood_en_seen_remember(
     table[target].used = true;
 }
 
+static void flood_en_tx_time_remember(flood_en_node_t *node, uint32_t seq, uint32_t now_ms)
+{
+    size_t target = 0;
+    uint32_t oldest = UINT32_MAX;
+
+    for (size_t i = 0; i < FLOOD_EN_TX_TRACK; i++)
+    {
+        if (!node->tx_times[i].used)
+        {
+            target = i;
+            oldest = 0;
+            break;
+        }
+        if (node->tx_times[i].sent_at_ms <= oldest)
+        {
+            oldest = node->tx_times[i].sent_at_ms;
+            target = i;
+        }
+    }
+
+    node->tx_times[target].seq = seq;
+    node->tx_times[target].sent_at_ms = now_ms;
+    node->tx_times[target].used = true;
+}
+
+static uint32_t flood_en_tx_time_take(flood_en_node_t *node, uint32_t seq, uint32_t now_ms)
+{
+    for (size_t i = 0; i < FLOOD_EN_TX_TRACK; i++)
+    {
+        if (node->tx_times[i].used && node->tx_times[i].seq == seq)
+        {
+            uint32_t rtt = now_ms - node->tx_times[i].sent_at_ms;
+            node->tx_times[i].used = false;
+            return rtt;
+        }
+    }
+
+    return FLOOD_EN_RTT_UNKNOWN;
+}
+
 static flood_en_status_t flood_en_emit(
     flood_en_node_t *node,
     const uint8_t *frame,
@@ -182,6 +222,8 @@ flood_en_status_t flood_en_node_send_data(
 
     seq = ++node->next_seq;
     flood_en_seen_remember(node->seen_data, node->self_mac, seq, now_ms);
+    flood_en_tx_time_remember(node, seq, now_ms);
+    node->stats.data_sent++;
 
     memset(msg, 0, sizeof(*msg));
     msg->header.protocol_version = FLOOD_EN_PROTOCOL_VERSION;
@@ -295,13 +337,21 @@ static flood_en_status_t flood_en_handle_ack(
 
     if (flood_en_mac_equal(msg->destination_mac, node->self_mac))
     {
+        uint32_t rtt = flood_en_tx_time_take(node, msg->ack_for_sequence, now_ms);
+
         node->stats.ack_received++;
+        if (rtt != FLOOD_EN_RTT_UNKNOWN)
+        {
+            node->stats.rtt_sum_ms += rtt;
+            node->stats.rtt_samples++;
+        }
         if (node->callbacks.ack_received != NULL)
         {
             node->callbacks.ack_received(
                 node->callbacks.user_ctx,
                 msg->originator_mac,
-                msg->ack_for_sequence);
+                msg->ack_for_sequence,
+                rtt);
         }
 
         return FLOOD_EN_OK;
