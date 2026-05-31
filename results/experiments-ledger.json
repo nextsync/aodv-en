@@ -178,5 +178,41 @@
     },
     "note": "seed5 boot fresco (reflash flood + hard-reset extra p/ N1 surdo). origin=N2 dest=N1. Logs results/m10-flood-s5-N{1,2,3}.log",
     "ts": "2026-05-31T19:46:02.713411+00:00"
+  },
+  {
+    "num": 11,
+    "id": "e11",
+    "algo": "flooding",
+    "params": {
+      "scenario": "C1-3n",
+      "seed": 6,
+      "fresh_boot": "true"
+    },
+    "metrics": {
+      "pdr": 98.36,
+      "latency_ms": 50,
+      "nrl": 0,
+      "energy_j": 8.346
+    },
+    "note": "seed6 boot fresco (hard-reset, boards ja flood). origin=N2 dest=N1. Logs results/m10-flood-s6-N{1,2,3}.log",
+    "ts": "2026-05-31T21:48:24.520372+00:00"
+  },
+  {
+    "num": 12,
+    "id": "e12",
+    "algo": "aodv-en",
+    "params": {
+      "scenario": "C1-3n",
+      "seed": 6,
+      "fresh_boot": "true"
+    },
+    "metrics": {
+      "pdr": 98.33,
+      "latency_ms": 60,
+      "nrl": 0.7744,
+      "energy_j": 8.451
+    },
+    "note": "seed6 boot fresco (reflash aodv_cmp+hard-reset). origin=N2 dest=N1. Logs results/m10-aodv-s6-N{1,2,3}.log",
+    "ts": "2026-05-31T21:50:54.685690+00:00"
   }
 ]
