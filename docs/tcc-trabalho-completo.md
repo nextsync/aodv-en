@@ -1011,6 +1011,132 @@ sempre com dados reais, nunca estimados.*
 
 ---
 
+## 19. Material para fechar o TCC (cap. 6 Resultados/Discussão + Conclusão)
+
+Esta seção conecta o que foi feito a **o que ainda falta escrever** no documento do TCC
+(`TCC.md`), cujo capítulo 6 (Resultados e Discussão) está vazio e cuja Conclusão/Resumo não
+foram redigidos. Tudo aqui é ancorado nos dados reais (§9–§11) e nas figuras (1–4).
+
+### 19.1 Mapeamento: o que deste relatório vai em cada parte do TCC
+
+| Parte do `TCC.md` | Fonte neste relatório |
+|---|---|
+| Cap. 5 (Projeto e Implementação) — já escrito | §2, §3, §4, §6 (confirma e detalha) |
+| **Cap. 6 Resultados e Discussão** — a escrever | §9 (sim), §10 (HW), §11 (discussão), Figuras 1–4, §19.3–19.5 |
+| **Conclusão** — a escrever | §11.5, §13, §14, §19.2, §19.6 |
+| **Resumo** — a escrever | §19.7 |
+| Objetivo específico (e) comparação com literatura | §19.4 |
+
+### 19.2 Status dos objetivos específicos (a–e) — honesto
+
+| Obj. | Descrição | Status | Evidência / ressalva |
+|---|---|---|---|
+| **a** | Analisar limitações do ESP-NOW (peers, broadcast, rotas) | **Atendido** | §1.2, §3.7, §12 |
+| **b** | Projetar adaptações (LRU, flooding controlado, métrica híbrida) | **Atendido no projeto; parcial na implementação** | LRU de peers, RREQ-por-unicast e métrica híbrida α·hop+β·(1/RSSI) estão **projetados** (§3.7/§5.6 do TCC) mas **ainda não implementados/ativos no núcleo AODV-EN** (Q5). O núcleo atual usa RREQ por *broadcast* e métrica de saltos. O *flooding controlado por unicast* foi implementado no **algoritmo de referência** (`flood_en`, §4.5). |
+| **c** | Implementar protótipo em ESP32 | **Atendido** (núcleo reativo: descoberta, rotas, seq, precursores, fila pendente, ACK, RERR) | §2–§4; roda em 3 ESP32 e em simulação |
+| **d** | Avaliar com PDR/latência/NRL/energia | **Atendido** (C1 reduzido em HW; escala em sim) | §10–§11, Figuras 1–4; energia estimada (Q6) |
+| **e** | Comparar com literatura correlata | **Atendido** | §19.4 |
+
+> **Recomendação para a escrita:** declarar explicitamente, na Conclusão, que LRU/RREQ-unicast/
+> métrica-híbrida do AODV-EN ficam como **trabalho futuro implementacional** (estão projetados).
+> Isso mantém o TCC honesto: o que foi medido é o AODV-EN reativo (broadcast/hop) vs flooding
+> controlado por unicast.
+
+### 19.3 Status por cenário experimental (C1–C4)
+
+| Cenário | Hardware | Simulação | Observação |
+|---|---|---|---|
+| **C1 Linear** | C1 **reduzido** (3 nós, hub ~1 hop), 3 seeds — §10 | grade até 5×5 (proxy de escala/diâmetro) — §9 | 5 nós/4 saltos reais exigem mais boards + separação física |
+| **C2 Árvore** | — | a implementar em `sim/` | cenário definido; não rodado |
+| **C3 Mesh parcial** | — | a implementar em `sim/` | cenário definido; não rodado |
+| **C4 Falha** | — | a implementar (desligar N3 em 60 s) | mede reconvergência AODV vs alcance residual flood |
+
+> Para a escrita: apresentar C1 com dados reais (HW+sim) e declarar C2/C3/C4 como
+> **execuções pendentes em simulação** (infraestrutura pronta: `compare_sim.c` + `tcc_metrics.py`
+> + ledger). Não inventar números para C2/C3/C4.
+
+### 19.4 Comparação com a literatura correlata (objetivo e)
+
+Posicionamento dos resultados de hardware (C1 reduzido, hub) frente aos trabalhos citados na
+introdução do TCC:
+
+| Trabalho | PDR | Latência | Natureza | Posicionamento do AODV-EN |
+|---|---|---|---|---|
+| **Becker et al. (2025)** | >99% | 2,8 ms | ESP-NOW 1 salto, linha de visada | PDR **comparável** (AODV-EN 99,5%); latência do Becker é de 1 salto puro, **sem** a quantização de 100 ms do laço da nossa app — nossa latência (~60 ms) é dominada pela instrumentação, não pelo protocolo |
+| **Cujilema et al. (2023) — BRAM-NOW** | ~90,75% (9,25% perda) | 75 ms | Mesh ESP-NOW residencial, **não padronizado** | AODV-EN tem PDR **superior** no hub (99,5–100%) e latência **menor** (60 ms < 75 ms), além de ser **baseado em padrão (RFC 3561)** — mais extensível/comparável, vantagem qualitativa que a própria introdução levanta |
+| **Urazayev et al. (2023)** | — | — | ESP-NOW vs Wi-Fi TCP: +15% alcance, −30% energia | reforça a escolha do ESP-NOW como transporte; nosso modelo de energia (estimado) é coerente com a vantagem energética do ESP-NOW |
+
+> **Caveats da comparação (declarar no texto):** (1) ambientes/topologias diferentes (LoS 1-hop,
+> mesh residencial, bancada hub); (2) nossa latência é quantizada pelo laço de 100 ms — com laço
+> menor cairia para a casa de poucos ms, como Becker; (3) nossos números são de C1 reduzido com
+> 3 seeds. A comparação é de **ordem de grandeza e posicionamento**, não pareada.
+
+### 19.5 Rascunho de "Resultados e Discussão" (para adaptar no cap. 6)
+
+> *Os experimentos foram conduzidos em um cenário C1 reduzido (três nós ESP32 em alcance direto,
+> ~1 salto), com payload de 32 bytes, taxa de 1 pacote/s e três repetições por algoritmo,
+> medindo PDR, latência fim-a-fim (via RTT na origem), NRL e consumo energético estimado. A
+> infraestrutura de simulação complementa a avaliação em escala (grade de 4 a 25 nós).*
+>
+> *Quanto à **confiabilidade (PDR)**, ambos os algoritmos entregaram praticamente todos os
+> pacotes: o flooding atingiu 100% e o AODV-EN 99,5% em média (Figura 1), com a única perda
+> ocorrendo na descoberta inicial de rota — comportamento esperado de um protocolo reativo e
+> mitigado pela fila de dados pendente. Quanto à **latência**, os valores são dominados pela
+> granularidade de 100 ms do laço da aplicação; o flooding apresentou maior dispersão (Figura 4)
+> por, em uma execução, retornar o ACK por dois saltos. Quanto à **carga de controle (NRL)**, o
+> AODV-EN apresentou NRL ≈ 0,78 (HELLO/RREQ/RREP por dado entregue), enquanto o flooding, por não
+> possuir plano de roteamento, apresentou NRL = 0 — resultado que, isoladamente, não deve ser
+> lido como ausência de custo: o custo do flooding manifesta-se no **canal** (Figura 2), com ~2,3×
+> mais recepções na rede, pois o unicast-para-cada-vizinho faz todos os nós receberem cada cópia.
+> Em **escala** (Figura 3), a simulação evidencia o cruzamento por volta de 9–11 nós, acima do
+> qual o roteamento do AODV-EN custa menos transmissões por entrega — confirmando a hipótese de
+> que o overhead de controle do AODV-EN se paga conforme a rede cresce, ao passo que o flooding,
+> com TTL=5, sequer alcança destinos além de 5 saltos.*
+
+### 19.6 Rascunho de Conclusão (para finalizar)
+
+> *Este trabalho propôs, implementou e avaliou o AODV-EN, uma adaptação do AODV (RFC 3561) para
+> redes mesh multi-hop sobre ESP-NOW v2 em ESP32. O núcleo reativo — descoberta sob demanda,
+> tabelas de rota com números de sequência, precursores, fila de dados pendente, confirmação
+> fim-a-fim e invalidação por falha de enlace — foi implementado como componente reutilizável,
+> validado em simulação e em hardware (três ESP32). Como referência, implementou-se um flooding
+> controlado (TTL + supressão de duplicatas + unicast-por-vizinho) como componente independente.*
+>
+> *A avaliação no cenário C1 reduzido mostrou confiabilidade alta para ambos (PDR ≥ 99,5%),
+> latência da ordem da granularidade de medição, e um contraste claro de custo: o AODV-EN paga
+> overhead de controle (NRL ≈ 0,78) para confinar o tráfego à rota, enquanto o flooding não tem
+> controle, mas multiplica recepções no canal (~2,3×) — desvantagem que a simulação mostra crescer
+> com a escala, com cruzamento de eficiência em torno de 9–11 nós. Assim, conclui-se que o
+> roteamento reativo do AODV-EN é vantajoso à medida que a rede cresce em tamanho e diâmetro,
+> objetivo central da adaptação para superar a ausência de multi-hop nativo do ESP-NOW.*
+>
+> *Como limitações, destacam-se a amostragem reduzida (três repetições, um cenário, hub de um
+> salto), a latência quantizada pelo laço da aplicação e a energia estimada por datasheet (não
+> medida). As adaptações de gerência de peers por LRU e de métrica híbrida (hop+RSSI), embora
+> projetadas, permanecem como trabalho futuro de implementação. Como continuidade, propõem-se:
+> completar as 30 repetições e os cenários C2/C3/C4, implementar LRU e a métrica híbrida, medir
+> energia com instrumentação física (INA219) e exercitar multi-hop real com separação física dos
+> nós.*
+
+### 19.7 Rascunho de Resumo
+
+> *As redes mesh sobre ESP-NOW carecem de roteamento multi-hop nativo. Este trabalho propõe o
+> AODV-EN, adaptação do AODV (RFC 3561) ao ESP-NOW v2 em ESP32, e o compara a um flooding
+> controlado de referência. Implementou-se o núcleo reativo (descoberta, rotas com números de
+> sequência, precursores, fila pendente, ACK fim-a-fim) como componente reutilizável, validado em
+> simulação e em três ESP32. A avaliação (PDR, latência, NRL, energia) no cenário C1 mostrou PDR
+> ≥ 99,5% para ambos; o AODV-EN paga carga de controle (NRL ≈ 0,78) para confinar o tráfego à
+> rota, enquanto o flooding, sem controle, multiplica recepções no canal (~2,3×), desvantagem que
+> cresce com a escala (cruzamento de eficiência em ~9–11 nós na simulação). Conclui-se que o
+> roteamento reativo se justifica conforme a rede cresce. Palavras-chave: redes mesh; ESP-NOW;
+> ESP32; AODV; roteamento ad-hoc.*
+
+> Todos os números acima vêm do ledger reproduzível (`experiments.json`) e das figuras geradas de
+> dados reais; ao acrescentar mais seeds/cenários, **regenerar** Figuras 1–4
+> (`plot_tcc_figures.py`), atualizar §10–§11 e este §19 a partir do `experiment compare`.
+
+---
+
 # Apêndices
 
 ## Apêndice A — Layout de bytes das mensagens
