@@ -47,6 +47,8 @@ typedef struct
     uint8_t data[APP_MAX_FRAME_LEN];
 } app_rx_event_t;
 
+#define APP_MAX_NEIGHBORS 16
+
 typedef struct
 {
     flood_en_node_t node;
@@ -61,6 +63,8 @@ typedef struct
     uint32_t print_interval_ms;
     uint32_t next_send_at_ms;
     uint32_t next_print_at_ms;
+    uint8_t neighbors[APP_MAX_NEIGHBORS][FLOOD_EN_MAC_ADDR_LEN];
+    uint8_t neighbor_count;
 } app_context_t;
 
 static const char *TAG = "flood_en_app";
@@ -142,6 +146,56 @@ static esp_err_t app_ensure_peer(const uint8_t mac[FLOOD_EN_MAC_ADDR_LEN], uint8
     return esp_now_add_peer(&peer);
 }
 
+static void app_note_neighbor(app_context_t *app, const uint8_t mac[FLOOD_EN_MAC_ADDR_LEN])
+{
+    if (memcmp(mac, BROADCAST_MAC, FLOOD_EN_MAC_ADDR_LEN) == 0 ||
+        memcmp(mac, app->self_mac, FLOOD_EN_MAC_ADDR_LEN) == 0)
+    {
+        return;
+    }
+
+    for (uint8_t i = 0; i < app->neighbor_count; i++)
+    {
+        if (memcmp(app->neighbors[i], mac, FLOOD_EN_MAC_ADDR_LEN) == 0)
+        {
+            return;
+        }
+    }
+
+    if (app->neighbor_count < APP_MAX_NEIGHBORS)
+    {
+        memcpy(app->neighbors[app->neighbor_count], mac, FLOOD_EN_MAC_ADDR_LEN);
+        app->neighbor_count++;
+    }
+}
+
+static flood_en_status_t app_send_one(
+    app_context_t *app,
+    const uint8_t mac[FLOOD_EN_MAC_ADDR_LEN],
+    const uint8_t *frame,
+    size_t frame_len)
+{
+    esp_err_t err;
+    char mac_text[18];
+
+    err = app_ensure_peer(mac, app->wifi_channel);
+    if (err != ESP_OK && err != ESP_ERR_ESPNOW_EXIST)
+    {
+        ESP_LOGE(TAG, "failed to add peer: %s", esp_err_to_name(err));
+        return FLOOD_EN_ERR_STATE;
+    }
+
+    err = esp_now_send(mac, frame, frame_len);
+    if (err != ESP_OK)
+    {
+        app_format_mac(mac, mac_text, sizeof(mac_text));
+        ESP_LOGE(TAG, "esp_now_send failed to %s: %s", mac_text, esp_err_to_name(err));
+        return FLOOD_EN_ERR_STATE;
+    }
+
+    return FLOOD_EN_OK;
+}
+
 static flood_en_status_t app_emit_frame(
     void *user_ctx,
     const uint8_t next_hop[FLOOD_EN_MAC_ADDR_LEN],
@@ -150,9 +204,7 @@ static flood_en_status_t app_emit_frame(
     bool broadcast)
 {
     app_context_t *app = (app_context_t *)user_ctx;
-    const uint8_t *dest_mac = broadcast ? BROADCAST_MAC : next_hop;
-    esp_err_t err;
-    char mac_text[18];
+    flood_en_status_t status = FLOOD_EN_OK;
 
     if (frame_len > ESP_NOW_MAX_DATA_LEN_V2)
     {
@@ -160,22 +212,27 @@ static flood_en_status_t app_emit_frame(
         return FLOOD_EN_ERR_SIZE;
     }
 
-    err = app_ensure_peer(dest_mac, app->wifi_channel);
-    if (err != ESP_OK && err != ESP_ERR_ESPNOW_EXIST)
+    if (!broadcast)
     {
-        ESP_LOGE(TAG, "failed to add peer: %s", esp_err_to_name(err));
-        return FLOOD_EN_ERR_STATE;
+        return app_send_one(app, next_hop, frame, frame_len);
     }
 
-    err = esp_now_send(dest_mac, frame, frame_len);
-    if (err != ESP_OK)
+    // Flooding controlado (TCC 4.6.1d): disseminar por UNICAST para cada vizinho
+    // conhecido. Antes de conhecer vizinhos (bootstrap), usa broadcast.
+    if (app->neighbor_count == 0)
     {
-        app_format_mac(dest_mac, mac_text, sizeof(mac_text));
-        ESP_LOGE(TAG, "esp_now_send failed to %s: %s", mac_text, esp_err_to_name(err));
-        return FLOOD_EN_ERR_STATE;
+        return app_send_one(app, BROADCAST_MAC, frame, frame_len);
     }
 
-    return FLOOD_EN_OK;
+    for (uint8_t i = 0; i < app->neighbor_count; i++)
+    {
+        if (app_send_one(app, app->neighbors[i], frame, frame_len) != FLOOD_EN_OK)
+        {
+            status = FLOOD_EN_ERR_STATE;
+        }
+    }
+
+    return status;
 }
 
 static void app_led_pulse_task(void *arg)
@@ -280,6 +337,7 @@ static void app_process_rx_queue(app_context_t *app)
 
     while (xQueueReceive(app->rx_queue, &event, 0) == pdTRUE)
     {
+        app_note_neighbor(app, event.src_mac);
         (void)flood_en_node_on_recv(
             &app->node,
             event.src_mac,
