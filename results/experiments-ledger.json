@@ -142,5 +142,41 @@
     },
     "note": "seed4 boot fresco (reflash app_demo+target N1+hard-reset, sum_tx=489 control=158). origin=N2 dest=N1. PDR98.33% lat_oneway60ms(rtt120) NRL0.74 energia8.49J. Mesmo window/condicao do flood s4 -> energia comparavel (8.49 vs 8.39). Logs results/m10-aodv-s4-N{1,2,3}.log",
     "ts": "2026-05-31T17:56:19.008608+00:00"
+  },
+  {
+    "num": 9,
+    "id": "e9",
+    "algo": "aodv-en",
+    "params": {
+      "scenario": "C1-3n",
+      "seed": 5,
+      "fresh_boot": "true"
+    },
+    "metrics": {
+      "pdr": 98.33,
+      "latency_ms": 60,
+      "nrl": 0.7814,
+      "energy_j": 8.5164
+    },
+    "note": "seed5 boot fresco (reflash aodv_cmp+hard-reset). origin=N2 dest=N1. Logs results/m10-aodv-s5-N{1,2,3}.log",
+    "ts": "2026-05-31T19:41:35.297965+00:00"
+  },
+  {
+    "num": 10,
+    "id": "e10",
+    "algo": "flooding",
+    "params": {
+      "scenario": "C1-3n",
+      "seed": 5,
+      "fresh_boot": "true"
+    },
+    "metrics": {
+      "pdr": 100,
+      "latency_ms": 50,
+      "nrl": 0,
+      "energy_j": 8.346
+    },
+    "note": "seed5 boot fresco (reflash flood + hard-reset extra p/ N1 surdo). origin=N2 dest=N1. Logs results/m10-flood-s5-N{1,2,3}.log",
+    "ts": "2026-05-31T19:46:02.713411+00:00"
   }
 ]
