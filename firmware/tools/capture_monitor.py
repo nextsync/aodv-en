@@ -1,4 +1,4 @@
-import os, time, sys
+import os, time
 from playwright.sync_api import sync_playwright
 
 OUT = "/Users/huaksonlima/Documents/tcc/aodv-en/monitor_prints"
@@ -9,118 +9,110 @@ for f in os.listdir(OUT):
         os.remove(os.path.join(OUT, f))
 
 log = []
-def shot_full(page, name):
+def full(page, name):
     p = os.path.join(OUT, name)
-    page.screenshot(path=p, full_page=True)
-    log.append((name, os.path.getsize(p)))
-
-def shot_el(page, sel, name):
     try:
-        loc = page.locator(sel).first
-        loc.scroll_into_view_if_needed(timeout=4000)
-        p = os.path.join(OUT, name)
-        loc.screenshot(path=p)
-        log.append((name, os.path.getsize(p)))
+        page.screenshot(path=p, full_page=True); log.append((name, os.path.getsize(p)))
     except Exception as e:
-        log.append((name, "ERRO:" + str(e)[:50]))
+        log.append((name, "ERR:" + str(e)[:40]))
+def el(page, sel, name, idx=None):
+    p = os.path.join(OUT, name)
+    try:
+        loc = page.locator(sel)
+        loc = loc.nth(idx) if idx is not None else loc.first
+        loc.screenshot(path=p, timeout=6000); log.append((name, os.path.getsize(p)))
+    except Exception as e:
+        log.append((name, "ERR:" + str(e)[:40]))
+
+def txt(page, sel):
+    try: return page.locator(sel).inner_text(timeout=1500).strip()
+    except Exception: return "?"
 
 with sync_playwright() as pw:
     br = pw.chromium.launch(headless=True)
-    ctx = br.new_context(viewport={"width": 1500, "height": 1000}, device_scale_factor=2)
+    ctx = br.new_context(viewport={"width": 1500, "height": 1100}, device_scale_factor=2)
     page = ctx.new_page()
-    # espera o servidor responder
     for _ in range(40):
-        try:
-            page.goto(URL, timeout=4000)
-            break
-        except Exception:
-            time.sleep(2)
-    # ---- FASE A: momentos (serie temporal desde a conexao) ----
-    momentos = 12
-    known = "0"
-    for i in range(momentos):
-        try:
-            known = page.locator("#m-known").inner_text(timeout=2000)
-        except Exception:
-            known = "?"
-        data = "0"
-        try:
-            data = page.locator("#m-data").inner_text(timeout=1000)
-        except Exception:
-            pass
-        shot_full(page, f"momento_{i:02d}_known{known}_data{data}.png")
+        try: page.goto(URL, timeout=4000); break
+        except Exception: time.sleep(2)
+
+    # FASE A: momentos (descoberta -> dados)
+    for i in range(12):
+        k = txt(page, "#m-known"); d = txt(page, "#m-delivered"); a = txt(page, "#m-ack")
+        full(page, f"momento_{i:02d}_nos{k}_data{d}_ack{a}.png")
         time.sleep(4)
-    # espera malha estabilizar (ate 3 nos) p/ as secoes
+
+    # espera node-rows
     for _ in range(30):
         try:
-            if page.locator("#m-known").inner_text(timeout=1500).strip() not in ("0", "?", ""):
-                break
-        except Exception:
-            pass
+            if page.locator(".node-row").count() > 0: break
+        except Exception: pass
         time.sleep(2)
-    time.sleep(4)  # layout do grafo
+    time.sleep(4)
 
-    # ---- FASE B: secoes / itens ----
-    shot_full(page, "secao_00_overview.png")
-    shot_el(page, "header.topbar", "secao_01_topbar.png")
-    shot_el(page, ".graph-panel", "secao_02_topologia_painel.png")
-    shot_el(page, "#net", "secao_03_grafo.png")
-    shot_el(page, "#metrics", "secao_04_resumo.png")
-    shot_el(page, "#nodes", "secao_05_nos_lista.png")
-    shot_el(page, ".events-panel", "secao_06_eventos.png")
+    # FASE B: secoes
+    full(page, "secao_00_overview.png")
+    el(page, "header.topbar", "secao_01_topbar.png")
+    el(page, ".graph-card", "secao_02_topologia_painel.png")
+    el(page, "#cy", "secao_03_grafo.png")
+    el(page, ".legend", "secao_04_legenda.png")
+    el(page, ".metrics-grid", "secao_05_resumo.png")
+    el(page, "#nodes-list", "secao_06_nos_lista.png")
+    el(page, "#events-list", "secao_07_eventos.png")
 
-    # cada item: cada metrica do resumo
-    metrics = page.locator("#metrics .metric")
-    for i in range(metrics.count()):
-        shot_el(page, f"#metrics .metric >> nth={i}", f"item_resumo_{i:02d}.png")
+    # itens: cada metrica
+    nm = page.locator(".metric").count()
+    for i in range(nm):
+        lab = ""
+        try: lab = page.locator(".metric").nth(i).locator(".metric-label").inner_text(timeout=1000)
+        except Exception: pass
+        safe = "".join(c for c in lab.lower().replace(" ", "_") if c.isalnum() or c == "_")[:16] or f"m{i}"
+        el(page, ".metric", f"item_metrica_{i:02d}_{safe}.png", idx=i)
 
-    # cada item: cada node-card
-    cards = page.locator(".node-card")
-    ncards = cards.count()
-    for i in range(ncards):
-        mac = cards.nth(i).get_attribute("data-mac") or f"idx{i}"
+    # itens: cada node-row + hover tooltip + click highlight
+    nrows = page.locator(".node-row").count()
+    for i in range(nrows):
+        mac = page.locator(".node-row").nth(i).get_attribute("data-mac") or f"idx{i}"
         safe = mac.replace(":", "")
-        shot_el(page, f".node-card >> nth={i}", f"item_no_{i:02d}_{safe}.png")
-
-    # cada item: cada evento (primeiros 12)
-    evs = page.locator("#events .event") if page.locator("#events .event").count() else page.locator("#events > *")
-    nev = min(evs.count(), 12)
-    for i in range(nev):
-        shot_el(page, f"#events > * >> nth={i}", f"item_evento_{i:02d}.png")
-
-    # ---- FASE C: interacoes / detalhe ----
-    for i in range(ncards):
+        el(page, ".node-row", f"item_no_{i:02d}_{safe}.png", idx=i)
+        # hover -> tooltip
         try:
-            cards.nth(i).click(timeout=3000)
-            time.sleep(1.2)
-            mac = cards.nth(i).get_attribute("data-mac") or f"idx{i}"
-            safe = mac.replace(":", "")
-            shot_el(page, "#net", f"detalhe_no_{i:02d}_{safe}_grafo.png")
-            shot_full(page, f"detalhe_no_{i:02d}_{safe}_full.png")
+            page.locator(".node-row").nth(i).hover(timeout=3000); time.sleep(0.8)
+            full(page, f"detalhe_no_{i:02d}_{safe}_hover.png")
         except Exception as e:
-            log.append((f"detalhe_no_{i}", "ERRO:" + str(e)[:50]))
-    # botoes
+            log.append((f"hover_{i}", "ERR:" + str(e)[:40]))
+        # click -> highlight no grafo
+        try:
+            page.locator(".node-row").nth(i).click(timeout=3000); time.sleep(1.0)
+            el(page, "#cy", f"detalhe_no_{i:02d}_{safe}_grafo.png")
+            full(page, f"detalhe_no_{i:02d}_{safe}_full.png")
+        except Exception as e:
+            log.append((f"click_{i}", "ERR:" + str(e)[:40]))
+
+    # itens: cada evento (primeiros 15)
+    nev = min(page.locator(".event-line").count(), 15)
+    for i in range(nev):
+        el(page, ".event-line", f"item_evento_{i:02d}.png", idx=i)
+
+    # interacoes
     try:
-        page.locator("#btn-relayout").click(timeout=3000); time.sleep(2)
-        shot_el(page, "#net", "interacao_relayout.png")
-    except Exception as e:
-        log.append(("relayout", "ERRO:" + str(e)[:50]))
+        page.locator("#btn-relayout").click(timeout=3000); time.sleep(2.2)
+        el(page, "#cy", "interacao_relayout.png")
+    except Exception as e: log.append(("relayout", "ERR:" + str(e)[:40]))
     try:
         page.locator("#btn-fit").click(timeout=3000); time.sleep(1.5)
-        shot_el(page, "#net", "interacao_fit.png")
-    except Exception as e:
-        log.append(("fit", "ERRO:" + str(e)[:50]))
+        el(page, "#cy", "interacao_fit.png")
+    except Exception as e: log.append(("fit", "ERR:" + str(e)[:40]))
 
-    # ---- FASE D: mais momentos (malha rodando) ----
+    # FASE D: mais momentos
     for i in range(6):
         time.sleep(6)
-        d = "0"
-        try: d = page.locator("#m-data").inner_text(timeout=1500)
-        except Exception: pass
-        shot_full(page, f"momentoB_{i:02d}_data{d}.png")
+        d = txt(page, "#m-delivered"); a = txt(page, "#m-ack")
+        full(page, f"momentoB_{i:02d}_data{d}_ack{a}.png")
 
     ctx.close(); br.close()
 
-print("TOTAL", len([1 for n, _ in log]))
-for n, s in log:
-    print(n, s)
+ok = [n for n, s in log if not (isinstance(s, str) and s.startswith("ERR"))]
+err = [(n, s) for n, s in log if isinstance(s, str) and s.startswith("ERR")]
+print("OK", len(ok), "ERR", len(err))
+for n, s in err: print("ERRO", n, s)
