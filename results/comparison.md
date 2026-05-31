@@ -16,20 +16,20 @@ cumulativos exigem captura logo apos boot, senao energia/NRL inflam.
 
 | Metrica | AODV-EN | Flooding | delta (flood-aodv) |
 |---|---|---|---|
-| PDR (%) | 98.93 | 99.73 | +0.80 |
+| PDR (%) | 98.93 | 99.45 | +0.52 |
 | Latencia one-way (ms) | 60.0 | 66.8 | +6.8 |
-| NRL (controle/dados) | 0.775 | 0.0 | -0.775 |
-| Energia (J, estimada) | 10.58 | 10.56 | -0.02 |
+| NRL (controle/dados) | 0.774 | 0.0 | -0.774 |
+| Energia (J, estimada) | 10.46 | 10.56 | +0.10 |
 
-Contadores de rede (3 nos, media 6 seeds): AODV tx=469 rx=575 control=141 entregues=183 ;
-Flooding tx=491 rx=850 control=0 entregues=165.
+Contadores de rede (3 nos, media 6 seeds): AODV tx=465 rx=564 control=142 entregues=184 ;
+Flooding tx=482 rx=836 control=0 entregues=167.
 
 Figuras (regenerar c/ 6 seeds via `plot_tcc_figures.py`): docs/img/tcc/fig-hw-{metrics,channel}.png.
 JSONs: results/m10-{aodv,flood}[-s2..s6]-metrics.json. Logs crus: results/m10-{aodv,flood}[-s*]-N{1,2,3}.log.
 NOTA: o relatorio docs/tcc-trabalho-completo.md ainda esta em 3 seeds; migrar para 6 (prosa+figuras+PDF) e tarefa a parte.
 
 ### Leitura (regime hub/1-hop)
-- **PDR**: ambos altos (AODV 98.9%, flooding 99.7%); diferenca dentro da variacao. As
+- **PDR**: ambos altos (AODV 98.9%, flooding 99.5%); diferenca dentro da variacao. As
   perdas do AODV concentram-se na descoberta inicial de rota (1o pacote), mitigada pela
   fila pendente.
 - **Latencia**: AODV menor na media (60 vs 67 ms). O flooding tem MAIOR dispersao entre
@@ -39,7 +39,7 @@ NOTA: o relatorio docs/tcc-trabalho-completo.md ainda esta em 3 seeds; migrar pa
   definicao do TCC (controle/dados), o flooding tem overhead de CONTROLE nulo -- mas seu
   custo aparece em outro lugar (rx).
 - **Energia / ocupacao de canal**: energia praticamente empatada (<1%); o contraste real
-  esta no canal: **rx 850 vs 575** (1.5x): o unicast-para-cada-vizinho faz todos receberem
+  esta no canal: **rx 836 vs 564** (1.48x): o unicast-para-cada-vizinho faz todos receberem
   cada copia. No hub de 3 nos isso e barato; em rede maior/densa multiplica (ver sim).
 
 ## 2. Simulacao — escala (grid 4-25 nos), complementar
