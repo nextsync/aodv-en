@@ -77,8 +77,9 @@ def fig_hw_channel():
     # contadores de rede por seed, dos JSONs de metricas
     rows = {"aodv-en": {"tx": [], "rx": []}, "flooding": {"tx": [], "rx": []}}
     pats = [("aodv-en", "m10-aodv-metrics.json"), ("aodv-en", "m10-aodv-s2-metrics.json"),
-            ("aodv-en", "m10-aodv-s3-metrics.json"), ("flooding", "m10-flood-metrics.json"),
-            ("flooding", "m10-flood-s2-metrics.json"), ("flooding", "m10-flood-s3-metrics.json")]
+            ("aodv-en", "m10-aodv-s3-metrics.json"), ("aodv-en", "m10-aodv-s4-metrics.json"),
+            ("flooding", "m10-flood-metrics.json"), ("flooding", "m10-flood-s2-metrics.json"),
+            ("flooding", "m10-flood-s3-metrics.json"), ("flooding", "m10-flood-s4-metrics.json")]
     for algo, fn in pats:
         f = ROOT / "results" / fn
         if f.exists():
