@@ -108,9 +108,9 @@ Simulacao em C que valida o fluxo `RREQ -> RREP -> DATA -> ACK` usando o mesmo n
 
 ## Baseline de flooding e comparacao
 
-Baseline comparativo ao AODV-EN: flooding controlado (broadcast com TTL + supressao de duplicatas por `(origem, sequencia)`), reusando o mesmo wire format e adapter.
+Baseline comparativo ao AODV-EN: flooding controlado (broadcast com TTL + supressao de duplicatas por `(origem, sequencia)`). E um **componente ESP-IDF independente** (`flood_en`), com wire format, tipos e API proprios — nao depende do componente `aodv_en`.
 
-- nucleo: [firmware/components/aodv_en/include/flood_en.h](firmware/components/aodv_en/include/flood_en.h) / [src/flood_en.c](firmware/components/aodv_en/src/flood_en.c)
+- nucleo (componente proprio): [firmware/components/flood_en/include/flood_en.h](firmware/components/flood_en/include/flood_en.h) / [src/flood_en.c](firmware/components/flood_en/src/flood_en.c)
 - app de bancada: [firmware/main/app_flood.c](firmware/main/app_flood.c) (modo Kconfig `AODV_EN_APP_USE_APP_FLOOD`)
 - sim baseline: `bash sim/run_sim.sh flood`
 - sweep comparativo (grid 2x2..5x5, CSV): `bash sim/run_sim.sh compare`

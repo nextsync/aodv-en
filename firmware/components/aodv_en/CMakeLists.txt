@@ -7,7 +7,6 @@ idf_component_register(
         "src/aodv_en_routes.c"
         "src/aodv_en_rreq_cache.c"
         "src/aodv_en_peers.c"
-        "src/flood_en.c"
     INCLUDE_DIRS
         "include"
 )

@@ -34,30 +34,54 @@ EOF
 
 VARIANT="${1:-basic}"
 
+AODV_INC=(-Ifirmware/components/aodv_en/include)
+AODV_SRCS=(
+  firmware/components/aodv_en/src/aodv_en_mac.c
+  firmware/components/aodv_en/src/aodv_en_neighbors.c
+  firmware/components/aodv_en/src/aodv_en_routes.c
+  firmware/components/aodv_en/src/aodv_en_rreq_cache.c
+  firmware/components/aodv_en/src/aodv_en_peers.c
+  firmware/components/aodv_en/src/aodv_en_node.c
+)
+FLOOD_INC=(-Ifirmware/components/flood_en/include)
+FLOOD_SRCS=(firmware/components/flood_en/src/flood_en.c)
+
 case "$VARIANT" in
   basic)
     SIM_SRC="sim/aodv_en_sim.c"
     OUT_BIN="/tmp/aodv_en_sim_basic"
+    INCLUDES=("${AODV_INC[@]}")
+    LIB_SRCS=("${AODV_SRCS[@]}")
     ;;
   large)
     SIM_SRC="sim/aodv_en_sim_large.c"
     OUT_BIN="/tmp/aodv_en_sim_large"
+    INCLUDES=("${AODV_INC[@]}")
+    LIB_SRCS=("${AODV_SRCS[@]}")
     ;;
   100)
     SIM_SRC="sim/aodv_en_sim_100.c"
     OUT_BIN="/tmp/aodv_en_sim_100"
+    INCLUDES=("${AODV_INC[@]}")
+    LIB_SRCS=("${AODV_SRCS[@]}")
     ;;
   1000)
     SIM_SRC="sim/aodv_en_sim_1000.c"
     OUT_BIN="/tmp/aodv_en_sim_1000"
+    INCLUDES=("${AODV_INC[@]}")
+    LIB_SRCS=("${AODV_SRCS[@]}")
     ;;
   flood)
     SIM_SRC="sim/flood_en_sim.c"
     OUT_BIN="/tmp/flood_en_sim"
+    INCLUDES=("${FLOOD_INC[@]}")
+    LIB_SRCS=("${FLOOD_SRCS[@]}")
     ;;
   compare)
     SIM_SRC="sim/compare_sim.c"
     OUT_BIN="/tmp/compare_sim"
+    INCLUDES=("${AODV_INC[@]}" "${FLOOD_INC[@]}")
+    LIB_SRCS=("${AODV_SRCS[@]}" "${FLOOD_SRCS[@]}")
     ;;
   -h|--help|help)
     usage
@@ -75,14 +99,8 @@ ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT_DIR"
 
 cc -std=c11 -Wall -Wextra \
-    -Ifirmware/components/aodv_en/include \
-    firmware/components/aodv_en/src/aodv_en_mac.c \
-    firmware/components/aodv_en/src/aodv_en_neighbors.c \
-    firmware/components/aodv_en/src/aodv_en_routes.c \
-    firmware/components/aodv_en/src/aodv_en_rreq_cache.c \
-    firmware/components/aodv_en/src/aodv_en_peers.c \
-    firmware/components/aodv_en/src/aodv_en_node.c \
-    firmware/components/aodv_en/src/flood_en.c \
+    "${INCLUDES[@]}" \
+    "${LIB_SRCS[@]}" \
     "$SIM_SRC" \
     -o "$OUT_BIN"
 
