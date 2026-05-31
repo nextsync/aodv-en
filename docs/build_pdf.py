@@ -35,6 +35,8 @@ OUT_PDF = ROOT / "docs" / "aodv-en-completo.pdf"
 # Cada entrada: (caminho relativo, titulo na capa/sumario)
 DOCS = [
     ("README.md", "Visao Geral do Projeto"),
+    ("docs/tcc-trabalho-completo.md", "Relatorio Completo do Trabalho (AODV-EN vs Flooding)"),
+    ("TCC.md", "Especificacao do TCC (cenarios, metricas, algoritmos)"),
     ("docs/aodv-base-invariantes.md", "Invariantes do AODV"),
     ("docs/aodv-en-spec-v1.md", "Especificacao v1 (normativa)"),
     ("docs/aodv-en-funcionamento.md", "Funcionamento Completo do Protocolo"),
