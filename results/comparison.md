@@ -4,38 +4,43 @@
 > `.claude/autopilot/experiments.json` via `experiment compare` (data-driven, nao
 > de memoria). Energia = ESTIMATIVA datasheet ESP32-WROOM-32 (rotulada, nao medida).
 
-## 1. Hardware — C1 reduzido (3 nos, hub ~1 hop, MEDIA de 2 seeds, 60 s, instrumentado)
+## 1. Hardware — C1 reduzido (3 nos, hub ~1 hop, MEDIA de 4 seeds, 60 s, instrumentado)
 
 Setup identico p/ os dois: payload 32 B, 1 pkt/s, 2 origens (N2,N3) -> 1 destino (N1).
 Flooding = unicast-por-vizinho (TCC 4.6.1d), TTL=5, dedup=100. AODV-EN = HELLO 2 s.
 Metricas reais: PDR=acks/data_sent (origem); latencia=RTT/2 medido na origem (mesmo
 clock); NRL=control_tx/entregues (rede); energia=Sigma(tx*Etx+rx*Erx+idle).
-Numeros = media do ledger experiments.json (2 seeds/algo) via experiment compare.
+Numeros = media do ledger experiments.json (4 seeds/algo) via experiment compare.
+Seed 4 coletada com boot fresco (reflash + hard-reset) — ver gotcha: contadores
+cumulativos exigem captura logo apos boot, senao energia/NRL inflam.
 
 | Metrica | AODV-EN | Flooding | delta (flood-aodv) |
 |---|---|---|---|
-| PDR (%) | 99.29 | 100.0 | +0.71 |
-| Latencia one-way (ms) | 60.0 | 50.3 | -9.7 |
-| NRL (controle/dados) | 0.780 | 0.0 | -0.780 |
-| Energia (J, estimada) | 12.41 | 12.83 | +0.42 |
+| PDR (%) | 99.23 | 99.59 | +0.37 |
+| Latencia one-way (ms) | 60.0 | 75.2 | +15.2 |
+| NRL (controle/dados) | 0.772 | 0.0 | -0.772 |
+| Energia (J, estimada) | 11.44 | 11.66 | +0.22 |
 
-Contadores de rede (3 nos): AODV tx=441 rx=562 control=123 entregues=158 ;
-Flooding tx=614 rx=1323 control=0 entregues=154.
+Contadores de rede (3 nos, media 4 seeds): AODV tx=458 rx=567 control=133 entregues=173 ;
+Flooding tx=558 rx=1008 control=0 entregues=168.
 
-Grafico: results/charts/m10-compare.png. JSONs: results/m10-{aodv,flood}-metrics.json.
-Logs crus: results/m10-{aodv,flood}-N{1,2,3}.log.
+Figuras (regenerar c/ 4 seeds via `plot_tcc_figures.py`): docs/img/tcc/fig-hw-{metrics,channel}.png.
+JSONs: results/m10-{aodv,flood}[-s2,-s3,-s4]-metrics.json. Logs crus: results/m10-{aodv,flood}[-s*]-N{1,2,3}.log.
+NOTA: o relatorio docs/tcc-trabalho-completo.md ainda esta em 3 seeds; migrar para 4 (prosa+figuras+PDF) e tarefa a parte.
 
 ### Leitura (regime hub/1-hop)
-- **PDR**: flooding 100% vs AODV 98.6% — no hub raso o flooding (todos ouvem) garante
-  entrega; AODV perdeu 1 pacote (descoberta/timeout). Ambos altos.
-- **Latencia**: flooding um pouco menor (50 vs 60 ms) — sem espera por descoberta de
-  rota. (Valores quantizados pelo loop de 100 ms da app; std~0.)
-- **NRL**: AODV 0.78 (HELLO+RREQ+RREP) vs flooding 0 (sem controle de roteamento). Pela
+- **PDR**: ambos altos (AODV 99.2%, flooding 99.6%); diferenca dentro da variacao. As
+  perdas do AODV concentram-se na descoberta inicial de rota (1o pacote), mitigada pela
+  fila pendente.
+- **Latencia**: AODV menor na media (60 vs 75 ms). O flooding tem MAIOR dispersao entre
+  seeds (50–100 ms): em parte das execucoes o ACK volta por 2 saltos, elevando o RTT.
+  (Valores quantizados pelo loop de 100 ms da app.)
+- **NRL**: AODV 0.77 (HELLO+RREQ+RREP) vs flooding 0 (sem controle de roteamento). Pela
   definicao do TCC (controle/dados), o flooding tem overhead de CONTROLE nulo -- mas seu
   custo aparece em outro lugar (rx).
-- **Energia / ocupacao de canal**: flooding gasta ~3% mais energia e, sobretudo, gera
-  **rx 1323 vs 562** (2.35x): o unicast-para-cada-vizinho faz todos receberem cada copia.
-  No hub de 3 nos isso e barato; em rede maior/densa multiplica (ver sim).
+- **Energia / ocupacao de canal**: energia quase empatada (~2%); o contraste real esta no
+  canal: **rx 1008 vs 567** (1.8x): o unicast-para-cada-vizinho faz todos receberem cada
+  copia. No hub de 3 nos isso e barato; em rede maior/densa multiplica (ver sim).
 
 ## 2. Simulacao — escala (grid 4-25 nos), complementar
 

@@ -106,5 +106,41 @@
     },
     "note": "HW seed3 flood, PDR clampado<=100 (raw teve efeito de borda)",
     "ts": "2026-05-31T16:47:09.079284+00:00"
+  },
+  {
+    "num": 7,
+    "id": "e7",
+    "algo": "flooding",
+    "params": {
+      "scenario": "C1-3n",
+      "seed": 4,
+      "fresh_boot": "true"
+    },
+    "metrics": {
+      "pdr": 98.36,
+      "latency_ms": 100,
+      "nrl": 0,
+      "energy_j": 8.3871
+    },
+    "note": "seed4 boot fresco (reflash+hard-reset, sum_tx=364 ~ s1-s3). origin=N2 dest=N1(28:05:A5:34:99:34). PDR98.36% lat_oneway100ms(rtt200) NRL0 energia8.39J (canal mais leve nesse window: N1 dest rebroadcast=0). Logs results/m10-flood-s4-N{1,2,3}.log",
+    "ts": "2026-05-31T17:52:29.940884+00:00"
+  },
+  {
+    "num": 8,
+    "id": "e8",
+    "algo": "aodv-en",
+    "params": {
+      "scenario": "C1-3n",
+      "seed": 4,
+      "fresh_boot": "true"
+    },
+    "metrics": {
+      "pdr": 98.33,
+      "latency_ms": 60,
+      "nrl": 0.7418,
+      "energy_j": 8.4924
+    },
+    "note": "seed4 boot fresco (reflash app_demo+target N1+hard-reset, sum_tx=489 control=158). origin=N2 dest=N1. PDR98.33% lat_oneway60ms(rtt120) NRL0.74 energia8.49J. Mesmo window/condicao do flood s4 -> energia comparavel (8.49 vs 8.39). Logs results/m10-aodv-s4-N{1,2,3}.log",
+    "ts": "2026-05-31T17:56:19.008608+00:00"
   }
 ]
