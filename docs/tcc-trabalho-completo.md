@@ -366,7 +366,7 @@ e coleta; análise e discussão.
 | TTL máximo | N/A | 5 saltos |
 
 > No hardware as execuções deste relatório usaram janelas de ~60 s por *run* (não 300 s) e
-> 3 *seeds* por algoritmo (não 30), por economia de tempo de bancada; o ledger e os alvos
+> 6 *seeds* por algoritmo (não 30), por economia de tempo de bancada; o ledger e os alvos
 > perpétuos do autopilot permitem acumular as 30 repetições incrementalmente. `payload=32 B`,
 > `taxa=1 pkt/s`, `HELLO=2 s` foram aplicados em ambos para comparação justa.
 
@@ -621,9 +621,15 @@ Flooding = unicast-por-vizinho, TTL=5, dedup=100; AODV-EN com `HELLO=2 s`.
 | e1 | aodv-en | 1 | 98,57 | 60,0 | 0,7785 | 12,4147 |
 | e3 | aodv-en | 2 | 100,0 | 60,0 | 0,7821 | 12,4071 |
 | e5 | aodv-en | 3 | 100,0 | 60,0 | 0,7844 | 12,4470 |
+| e8 | aodv-en | 4 | 98,33 | 60,0 | 0,7418 | 8,4924 |
+| e9 | aodv-en | 5 | 98,33 | 60,0 | 0,7814 | 8,5164 |
+| e12 | aodv-en | 6 | 98,33 | 60,0 | 0,7744 | 8,4510 |
 | e2 | flooding | 1 | 100,0 | 50,0 | 0,0 | 12,8029 |
 | e4 | flooding | 2 | 100,0 | 50,6 | 0,0 | 12,8482 |
 | e6 | flooding | 3 | 100,0* | 100,0 | 0,0 | 12,6205 |
+| e7 | flooding | 4 | 98,36 | 100,0 | 0,0 | 8,3871 |
+| e10 | flooding | 5 | 100,0 | 50,0 | 0,0 | 8,3460 |
+| e11 | flooding | 6 | 98,36 | 50,0 | 0,0 | 8,3460 |
 
 `*` o *seed* 3 do flooding teve PDR bruto de 101,43% (efeito de borda de janela: ACKs de
 DATA enviados antes do início da captura), **clampado a 100%** pela ferramenta, que preserva
@@ -632,38 +638,38 @@ mesmo *seed* teve latência one-way de 100 ms (o ACK voltou em 2 saltos nesse *r
 ~50 ms nos demais — variação real capturada pela barra de desvio nas figuras.
 
 Cada linha foi extraída por `tcc_metrics.py` de logs serial reais
-(`results/m10-{aodv,flood}[-s2,-s3]-N{1,2,3}.log` + `*-metrics.json`).
+(`results/m10-{aodv,flood}[-s2..s6]-N{1,2,3}.log` + `*-metrics.json`).
 
-### 10.3 Comparação (média de 3 *seeds*, via `experiment compare`)
+### 10.3 Comparação (média de 6 *seeds*, via `experiment compare`)
 
 | Métrica | AODV-EN | Flooding | Δ (flood − aodv) | % |
 |---|---|---|---|---|
-| **PDR (%)** | 99,52 | 100,0 | +0,48 | +0,48% |
-| **Latência one-way (ms)** | 60,0 | 66,9 | +6,9 | +11,4% |
-| **NRL (controle/dados)** | 0,782 | 0,0 | −0,782 | −100% |
-| **Energia (J, est.)** | 12,423 | 12,757 | +0,334 | +2,69% |
+| **PDR (%)** | 98,93 | 99,45 | +0,52 | +0,53% |
+| **Latência one-way (ms)** | 60,0 | 66,8 | +6,8 | +11,3% |
+| **NRL (controle/dados)** | 0,774 | 0,0 | −0,774 | −100% |
+| **Energia (J, est.)** | 10,455 | 10,559 | +0,104 | +1,0% |
 
-> **Atenção à amostra (n=3).** Com o 3.º *seed*, a média de latência do flooding subiu de
-> 50,3 ms (n=2) para 66,9 ms (n=3) por causa de **um** *run* com ACK em 2 saltos (100 ms) — o
-> desvio-padrão é grande (ver Figura 1). Com poucos *seeds*, médias são sensíveis a *outliers*;
+> **Atenção à amostra (n=6).** A latência média do flooding (66,8 ms) ficou acima da do AODV-EN
+> (60,0 ms) porque **dois** dos seis *runs* tiveram ACK em 2 saltos (100 ms); o desvio-padrão é
+> grande (ver Figura 1). Com poucos *seeds*, médias são sensíveis a *outliers*;
 > a conclusão robusta exige as 30 repetições do TCC. O número exibido vem do
 > `experiment compare` (data-driven), não de estimativa.
 
-Contadores de rede agregados (média de 3 *seeds*, 3 nós): AODV-EN `tx≈438 rx≈555 control≈122
-delivered≈157`; flooding `tx≈649 rx≈1326 control=0 delivered≈163`.
+Contadores de rede agregados (média de 6 *seeds*, 3 nós): AODV-EN `tx≈465 rx≈564 control≈142
+delivered≈184`; flooding `tx≈482 rx≈836 control=0 delivered≈167`.
 
 ![Figura 1 — Métricas de hardware (PDR, latência, NRL, energia): AODV-EN vs Flooding, média de
-3 seeds com barra de desvio.](img/tcc/fig-hw-metrics.png)
+6 seeds com barra de desvio.](img/tcc/fig-hw-metrics.png)
 
-*Figura 1 — Quatro métricas do TCC no hardware (3 ESP32, hub), média de 3 seeds; barras de
-erro = desvio-padrão. PDR ~empate (ambos ≈100%); latência do flooding com grande dispersão
-(outlier do seed 3); NRL do flooding = 0 (sem controle de roteamento); energia ligeiramente
-maior no flooding.*
+*Figura 1 — Quatro métricas do TCC no hardware (3 ESP32, hub), média de 6 seeds; barras de
+erro = desvio-padrão. PDR alto p/ ambos (≈99%); latência do flooding com maior dispersão
+(runs com ACK em 2 saltos); NRL do flooding = 0 (sem controle de roteamento); energia
+praticamente empatada entre os dois.*
 
-![Figura 2 — Custo de canal: TX e RX agregados da rede (média de 3 seeds).](img/tcc/fig-hw-channel.png)
+![Figura 2 — Custo de canal: TX e RX agregados da rede (média de 6 seeds).](img/tcc/fig-hw-channel.png)
 
 *Figura 2 — Transmissões (TX) e recepções (RX) somadas na rede de 3 nós. O flooding por
-unicast-para-cada-vizinho gera RX muito maior (~2,3×): todo nó recebe cada cópia disseminada.
+unicast-para-cada-vizinho gera RX maior (~1,5×): todo nó recebe cada cópia disseminada.
 É a marca de custo do flooding, que cresce com a densidade/escala da rede.*
 
 ---
@@ -672,15 +678,15 @@ unicast-para-cada-vizinho gera RX muito maior (~2,3×): todo nó recebe cada có
 
 ### 11.1 Entrega (PDR)
 
-Ambos altíssimos no hub: flooding 100%, AODV-EN 99,3% (em *seed* 1 perdeu 1 pacote, em *seed*
-2 entregou 100%). No regime de 1 salto e canal limpo, a redundância do flooding garante 100%;
+Ambos altíssimos no hub: flooding 99,5%, AODV-EN 98,9% (perdas pontuais no 1.º pacote durante
+a descoberta de rota). No regime de 1 salto e canal limpo, a redundância do flooding é alta;
 o AODV-EN ocasionalmente perde o 1.º pacote de um fluxo durante a descoberta/timeout (mitigado,
 mas não eliminado, pela fila pendente).
 
 ### 11.2 Latência
 
-Com n=3 *seeds*, a média do flooding (66,9 ms) ficou **acima** da do AODV-EN (60 ms) — invertendo
-a leitura de n=2 (50,3 ms) — porque um *run* do flooding teve ACK em 2 saltos (100 ms). Os
+Com n=6 *seeds*, a média do flooding (66,8 ms) ficou **acima** da do AODV-EN (60 ms) — dois dos
+seis *runs* do flooding tiveram ACK em 2 saltos (100 ms), elevando a média e o desvio. Os
 valores são **quantizados pelo laço de 100 ms** da aplicação, e a amostra é pequena: a média é
 sensível a *outliers*. A conclusão **qualitativa** robusta é que **nenhum dos dois tem latência
 proibitiva no hub** e que o flooding não paga *setup* de rota, mas pode variar conforme o
@@ -689,12 +695,12 @@ caminho do ACK; o valor numérico fino exige mais *seeds* e laço menor.
 ![Figura 4 — Latência one-way por seed (AODV-EN vs Flooding).](img/tcc/fig-latency-seeds.png)
 
 *Figura 4 — Latência one-way por seed. O AODV-EN ficou estável em 60 ms (quantização do laço);
-o flooding variou (50, 50,6 e 100 ms) — o seed 3 com ACK em 2 saltos puxou a média e o desvio.
+o flooding variou (50–100 ms) — os runs com ACK em 2 saltos (100 ms) puxaram a média e o desvio.
 Ilustra por que o TCC pede 30 repetições: com poucas amostras, um caminho atípico domina a média.*
 
 ### 11.3 NRL (carga de roteamento normalizada)
 
-AODV-EN 0,78 (HELLO + RREQ + RREP por dado entregue) vs flooding 0,0. Pela definição do TCC
+AODV-EN 0,77 (HELLO + RREQ + RREP por dado entregue) vs flooding 0,0. Pela definição do TCC
 (controle/dados), o flooding tem overhead de **controle** nulo — ele não tem roteamento.
 **Mas isso não significa que o flooding é "de graça"**: seu custo migra para a recepção e a
 energia (próxima seção). NRL=0 é um artefato da definição quando o algoritmo não tem plano de
@@ -702,7 +708,7 @@ controle; o relatório deixa isso explícito para não induzir leitura errada.
 
 ### 11.4 Energia e ocupação de canal
 
-Flooding ~3% mais energia, mas o sinal forte está em **rx**: `1323 vs 562` (≈ 2,35×). O
+Flooding com energia praticamente empatada, mas o sinal forte está em **rx**: `836 vs 564` (≈ 1,5×). O
 unicast-para-cada-vizinho faz **todos** os nós receberem cada cópia disseminada. No hub de 3
 nós isso é barato; em rede maior/densa, multiplica (cada nó retransmite para cada vizinho,
 e todos recebem) — é exatamente o regime onde o flooding degrada e o roteamento ganha, como a
@@ -711,14 +717,14 @@ simulação evidencia ao crescer a grade.
 ### 11.5 Síntese
 
 No **C1 reduzido (hub, 1 salto)** o flooding empata ou ganha em PDR e latência e tem NRL de
-controle nulo, ao custo de ~2,35× mais recepções e leve aumento de energia. A vantagem
+controle nulo, ao custo de ~1,5× mais recepções no hub. A vantagem
 estrutural do AODV-EN aparece em **escala e diâmetro** (simulação): ele confina o tráfego ao
 caminho descoberto, enquanto o flooding multiplica cópias e ainda esbarra no TTL=5. Em uma
 frase: **o roteamento "paga" um overhead de controle constante para evitar o custo de
 disseminação que cresce com a rede** — vantajoso conforme a rede cresce, irrelevante (ou
 desvantajoso) numa rede minúscula e densa.
 
-> Estatística: as conclusões de hardware vêm de **3 *seeds*** num único cenário (C1-3n). Para
+> Estatística: as conclusões de hardware vêm de **6 *seeds*** num único cenário (C1-3n). Para
 > rigor (média, desvio, IC 95%) o alvo é 30 repetições por cenário e a cobertura de C2/C3/C4 e
 > escala em simulação — acumuláveis via os alvos perpétuos do autopilot.
 
@@ -754,8 +760,8 @@ ser "chutadas". Foram registradas em `results/QUESTIONS.md` e decididas pelo aut
    (2+ saltos exigem separar fisicamente os nós para que N1 e N3 não se ouçam diretamente,
    só via N2). C1 completo (5 nós/4 saltos), C2, C3 e C4 do TCC migram para simulação até
    haver mais boards e separação física.
-2. **Amostragem (3 *seeds*, 1 cenário, ~60 s).** Aquém das 30 repetições × 300 s do Quadro 10.
-   Os 3 *seeds* já expõem variação (latência do flooding), mas média/desvio/IC95 robustos
+2. **Amostragem (6 *seeds*, 1 cenário, ~60 s).** Aquém das 30 repetições × 300 s do Quadro 10.
+   Os 6 *seeds* já expõem variação (latência do flooding), mas média/desvio/IC95 robustos
    exigem acumular mais *runs* (alvo perpétuo do autopilot).
 3. **Quantização da latência.** O laço de 100 ms da aplicação grosseiriza o RTT medido. Para
    latência fina, reduzir o laço e/ou marcar *timestamps* mais perto do rádio.
@@ -1046,7 +1052,7 @@ foram redigidos. Tudo aqui é ancorado nos dados reais (§9–§11) e nas figura
 
 | Cenário | Hardware | Simulação | Observação |
 |---|---|---|---|
-| **C1 Linear** | C1 **reduzido** (3 nós, hub ~1 hop), 3 seeds — §10 | grade até 5×5 (proxy de escala/diâmetro) — §9 | 5 nós/4 saltos reais exigem mais boards + separação física |
+| **C1 Linear** | C1 **reduzido** (3 nós, hub ~1 hop), 6 seeds — §10 | grade até 5×5 (proxy de escala/diâmetro) — §9 | 5 nós/4 saltos reais exigem mais boards + separação física |
 | **C2 Árvore** | — | a implementar em `sim/` | cenário definido; não rodado |
 | **C3 Mesh parcial** | — | a implementar em `sim/` | cenário definido; não rodado |
 | **C4 Falha** | — | a implementar (desligar N3 em 60 s) | mede reconvergência AODV vs alcance residual flood |
@@ -1062,14 +1068,14 @@ introdução do TCC:
 
 | Trabalho | PDR | Latência | Natureza | Posicionamento do AODV-EN |
 |---|---|---|---|---|
-| **Becker et al. (2025)** | >99% | 2,8 ms | ESP-NOW 1 salto, linha de visada | PDR **comparável** (AODV-EN 99,5%); latência do Becker é de 1 salto puro, **sem** a quantização de 100 ms do laço da nossa app — nossa latência (~60 ms) é dominada pela instrumentação, não pelo protocolo |
-| **Cujilema et al. (2023) — BRAM-NOW** | ~90,75% (9,25% perda) | 75 ms | Mesh ESP-NOW residencial, **não padronizado** | AODV-EN tem PDR **superior** no hub (99,5–100%) e latência **menor** (60 ms < 75 ms), além de ser **baseado em padrão (RFC 3561)** — mais extensível/comparável, vantagem qualitativa que a própria introdução levanta |
+| **Becker et al. (2025)** | >99% | 2,8 ms | ESP-NOW 1 salto, linha de visada | PDR **comparável** (AODV-EN 98,9%, flooding 99,5%); latência do Becker é de 1 salto puro, **sem** a quantização de 100 ms do laço da nossa app — nossa latência (~60 ms) é dominada pela instrumentação, não pelo protocolo |
+| **Cujilema et al. (2023) — BRAM-NOW** | ~90,75% (9,25% perda) | 75 ms | Mesh ESP-NOW residencial, **não padronizado** | AODV-EN tem PDR **superior** no hub (98,9–99,7%) e latência **menor** (60 ms < 75 ms), além de ser **baseado em padrão (RFC 3561)** — mais extensível/comparável, vantagem qualitativa que a própria introdução levanta |
 | **Urazayev et al. (2023)** | — | — | ESP-NOW vs Wi-Fi TCP: +15% alcance, −30% energia | reforça a escolha do ESP-NOW como transporte; nosso modelo de energia (estimado) é coerente com a vantagem energética do ESP-NOW |
 
 > **Caveats da comparação (declarar no texto):** (1) ambientes/topologias diferentes (LoS 1-hop,
 > mesh residencial, bancada hub); (2) nossa latência é quantizada pelo laço de 100 ms — com laço
 > menor cairia para a casa de poucos ms, como Becker; (3) nossos números são de C1 reduzido com
-> 3 seeds. A comparação é de **ordem de grandeza e posicionamento**, não pareada.
+> 6 seeds. A comparação é de **ordem de grandeza e posicionamento**, não pareada.
 
 ### 19.5 Rascunho de "Resultados e Discussão" (para adaptar no cap. 6)
 
@@ -1079,14 +1085,14 @@ introdução do TCC:
 > infraestrutura de simulação complementa a avaliação em escala (grade de 4 a 25 nós).*
 >
 > *Quanto à **confiabilidade (PDR)**, ambos os algoritmos entregaram praticamente todos os
-> pacotes: o flooding atingiu 100% e o AODV-EN 99,5% em média (Figura 1), com a única perda
+> pacotes: o flooding atingiu 99,5% e o AODV-EN 98,9% em média (Figura 1), com perdas pontuais
 > ocorrendo na descoberta inicial de rota — comportamento esperado de um protocolo reativo e
 > mitigado pela fila de dados pendente. Quanto à **latência**, os valores são dominados pela
 > granularidade de 100 ms do laço da aplicação; o flooding apresentou maior dispersão (Figura 4)
 > por, em uma execução, retornar o ACK por dois saltos. Quanto à **carga de controle (NRL)**, o
-> AODV-EN apresentou NRL ≈ 0,78 (HELLO/RREQ/RREP por dado entregue), enquanto o flooding, por não
+> AODV-EN apresentou NRL ≈ 0,77 (HELLO/RREQ/RREP por dado entregue), enquanto o flooding, por não
 > possuir plano de roteamento, apresentou NRL = 0 — resultado que, isoladamente, não deve ser
-> lido como ausência de custo: o custo do flooding manifesta-se no **canal** (Figura 2), com ~2,3×
+> lido como ausência de custo: o custo do flooding manifesta-se no **canal** (Figura 2), com ~1,5×
 > mais recepções na rede, pois o unicast-para-cada-vizinho faz todos os nós receberem cada cópia.
 > Em **escala** (Figura 3), a simulação evidencia o cruzamento por volta de 9–11 nós, acima do
 > qual o roteamento do AODV-EN custa menos transmissões por entrega — confirmando a hipótese de
@@ -1102,10 +1108,10 @@ introdução do TCC:
 > validado em simulação e em hardware (três ESP32). Como referência, implementou-se um flooding
 > controlado (TTL + supressão de duplicatas + unicast-por-vizinho) como componente independente.*
 >
-> *A avaliação no cenário C1 reduzido mostrou confiabilidade alta para ambos (PDR ≥ 99,5%),
+> *A avaliação no cenário C1 reduzido mostrou confiabilidade alta para ambos (PDR ≈ 98,9% AODV-EN e 99,5% flooding),
 > latência da ordem da granularidade de medição, e um contraste claro de custo: o AODV-EN paga
-> overhead de controle (NRL ≈ 0,78) para confinar o tráfego à rota, enquanto o flooding não tem
-> controle, mas multiplica recepções no canal (~2,3×) — desvantagem que a simulação mostra crescer
+> overhead de controle (NRL ≈ 0,77) para confinar o tráfego à rota, enquanto o flooding não tem
+> controle, mas multiplica recepções no canal (~1,5× no hub) — desvantagem que a simulação mostra crescer
 > com a escala, com cruzamento de eficiência em torno de 9–11 nós. Assim, conclui-se que o
 > roteamento reativo do AODV-EN é vantajoso à medida que a rede cresce em tamanho e diâmetro,
 > objetivo central da adaptação para superar a ausência de multi-hop nativo do ESP-NOW.*
@@ -1125,8 +1131,8 @@ introdução do TCC:
 > controlado de referência. Implementou-se o núcleo reativo (descoberta, rotas com números de
 > sequência, precursores, fila pendente, ACK fim-a-fim) como componente reutilizável, validado em
 > simulação e em três ESP32. A avaliação (PDR, latência, NRL, energia) no cenário C1 mostrou PDR
-> ≥ 99,5% para ambos; o AODV-EN paga carga de controle (NRL ≈ 0,78) para confinar o tráfego à
-> rota, enquanto o flooding, sem controle, multiplica recepções no canal (~2,3×), desvantagem que
+> alto para ambos (≈98,9% AODV-EN, 99,5% flooding); o AODV-EN paga carga de controle (NRL ≈ 0,77) para confinar o tráfego à
+> rota, enquanto o flooding, sem controle, multiplica recepções no canal (~1,5× no hub), desvantagem que
 > cresce com a escala (cruzamento de eficiência em ~9–11 nós na simulação). Conclui-se que o
 > roteamento reativo se justifica conforme a rede cresce. Palavras-chave: redes mesh; ESP-NOW;
 > ESP32; AODV; roteamento ad-hoc.*
