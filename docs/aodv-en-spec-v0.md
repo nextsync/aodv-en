@@ -1,5 +1,21 @@
 # AODV-EN Spec v0
 
+## Estado
+
+- estado: `OBSOLETA`
+- substituida por: [aodv-en-spec-v1.md](aodv-en-spec-v1.md)
+
+Esta versao foi mantida apenas para registro historico do escopo inicial de MVP. Toda referencia normativa do projeto deve apontar para a `v1`. Em caso de conflito, a `v1` prevalece.
+
+Mudancas mais relevantes da `v0` para a `v1`:
+
+- `HELLO` deixa de ser opcional e passa a ser parte do MVP
+- `RERR` ganha semantica de precursores (RFC 3561 secao 6.2)
+- fila de `DATA` pendente passa a ser parte do nucleo
+- regras de `sequence number` em `RREP` alinhadas com RFC 3561 secao 6.6.1
+- `metric = hop_count` fixado para `v1`; `RSSI` fica como ponto de evolucao
+- adicao explicita de criterios de aprovacao de `v1` baseados nos casos de teste de bancada
+
 ## Objetivo
 
 Este documento define a versao inicial do protocolo `AODV-EN`, uma adaptacao do AODV para redes mesh multi-hop construidas sobre ESP-NOW e ESP32.

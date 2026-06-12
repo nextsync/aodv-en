@@ -10,6 +10,9 @@ config AODV_EN_APP_USE_APP_DEMO
 config AODV_EN_APP_USE_PROTO_EXAMPLE
     bool "Use app_proto_example (health/text/command example)"
 
+config AODV_EN_APP_USE_APP_FLOOD
+    bool "Use app_flood (controlled flooding baseline)"
+
 endchoice
 
 config AODV_EN_APP_NODE_NAME
