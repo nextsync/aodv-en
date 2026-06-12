@@ -2,17 +2,16 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {3.1}{\ignorespaces Figura 1 -- Fluxo metodológico da pesquisa}}{23}{figure.caption.4}%
-\contentsline {figure}{\numberline {3.2}{\ignorespaces Figura 2 -- Fluxo de execução dos experimentos e análise dos dados}}{30}{figure.caption.5}%
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Fluxo metodológico da pesquisa}}{21}{figure.caption.5}%
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Fluxo de execução dos experimentos e análise dos dados}}{28}{figure.caption.6}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {4.1}{\ignorespaces Figura 3 -- Arquitetura geral do AODV-EN}}{31}{figure.caption.6}%
-\contentsline {figure}{\numberline {4.2}{\ignorespaces Figura 4 -- Estrutura modular da implementação do AODV-EN}}{33}{figure.caption.7}%
-\contentsline {figure}{\numberline {4.3}{\ignorespaces Figura 5 -- Fluxo de descoberta de rotas no AODV-EN}}{38}{figure.caption.8}%
-\contentsline {figure}{\numberline {4.4}{\ignorespaces Figura 6 -- Fluxo de tratamento de falhas e reconvergência no AODV-EN}}{40}{figure.caption.9}%
-\contentsline {figure}{\numberline {4.5}{\ignorespaces Figura 7 - Fórmula do custo}}{43}{figure.caption.10}%
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Arquitetura geral do AODV-EN}}{30}{figure.caption.7}%
+\contentsline {figure}{\numberline {4.2}{\ignorespaces Estrutura modular da implementação do AODV-EN}}{33}{figure.caption.8}%
+\contentsline {figure}{\numberline {4.3}{\ignorespaces Fluxo de descoberta de rotas no AODV-EN}}{38}{figure.caption.9}%
+\contentsline {figure}{\numberline {4.4}{\ignorespaces Fluxo de tratamento de falhas e reconvergência no AODV-EN}}{40}{figure.caption.10}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {5.1}{\ignorespaces Figura 8 -- Métricas de hardware (PDR, latência, NRL e energia): AODV-EN vs.~Flooding, média de 6 seeds com barra de desvio.}}{46}{figure.caption.11}%
-\contentsline {figure}{\numberline {5.2}{\ignorespaces Figura 9 -- Transmissões e recepções agregadas da rede de 3 nós (média de 6 seeds).}}{47}{figure.caption.12}%
-\contentsline {figure}{\numberline {5.3}{\ignorespaces Figura 10 -- Latência one-way por seed (AODV-EN vs.~Flooding).}}{48}{figure.caption.13}%
-\contentsline {figure}{\numberline {5.4}{\ignorespaces Figura 11 -- Transmissões por pacote entregue em função do número de nós (simulação).}}{49}{figure.caption.14}%
+\contentsline {figure}{\numberline {5.1}{\ignorespaces Métricas de hardware (PDR, latência, NRL e energia): AODV-EN vs.~Flooding, média de 6 seeds com barra de desvio.}}{47}{figure.caption.11}%
+\contentsline {figure}{\numberline {5.2}{\ignorespaces Transmissões e recepções agregadas da rede de 3 nós (média de 6 seeds).}}{48}{figure.caption.12}%
+\contentsline {figure}{\numberline {5.3}{\ignorespaces Latência one-way por seed (AODV-EN vs.~Flooding).}}{49}{figure.caption.13}%
+\contentsline {figure}{\numberline {5.4}{\ignorespaces Transmissões por pacote entregue em função do número de nós (simulação).}}{50}{figure.caption.14}%
 \addvspace {10\p@ }

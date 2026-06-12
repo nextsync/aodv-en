@@ -21,9 +21,17 @@
 \usepackage{listings}
 \usepackage{xcolor}
 \usepackage{placeins}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric,arrows.meta,positioning,fit,backgrounds,calc,decorations.pathreplacing}
 \usepackage{tabularx}
 \usepackage{newfloat}
 \usepackage{caption}
+\DeclareFloatingEnvironment[
+  fileext=loq,
+  listname={Lista de Quadros},
+  name=Quadro,
+  placement=H
+]{quadro}
 \usepackage{graphics}\graphicspath{{./figuras/}}
 
 % --- compatibilidade com a saida do pandoc (capitulos convertidos) ---
@@ -82,6 +90,7 @@
 \tableofcontents
 \listoffigures
 \listoftables
+\listofquadros
 
 % textos
 \mainmatter

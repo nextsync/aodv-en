@@ -77,13 +77,11 @@ identificação do problema e motivação; (2) definição dos objetivos da
 solução; (3) design e desenvolvimento; (4) demonstração; (5) avaliação;
 e (6) comunicação. O Quadro 7 apresenta estas etapas e suas descrições.
 
-\textbf{Quadro 7 -- Etapas do Design Science Research segundo
-\citeonline{peffers2007}}
-
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
   >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\caption{Etapas do Design Science Research segundo \citeauthor{peffers2007} (\citeyear{peffers2007})}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Etapa DSR
@@ -158,14 +156,13 @@ O presente trabalho está organizado em cinco fases, que foram mapeadas
 Quadro 8 apresenta este mapeamento, relacionando cada fase do trabalho à
 respectiva etapa DSR, suas atividades específicas e produtos esperados.
 
-\textbf{Quadro 8 -- Mapeamento das fases do trabalho às etapas da DSR}
-
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\caption{Mapeamento das fases do trabalho às etapas da DSR}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Fase
@@ -214,10 +211,39 @@ abordagem Design Science Research, as fases do trabalho e a etapa de
 avaliação experimental. A representação contribui para visualizar a
 sequência lógica das atividades desenvolvidas ao longo da pesquisa.
 
-\begin{figure}
+\begin{figure}[H]
 \centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Figura 1 -- Fluxo metodológico da pesquisa}]{figuras/image1.png}}
-\caption{Figura 1 -- Fluxo metodológico da pesquisa}
+\begin{tikzpicture}[
+  node distance=0.55cm and 1.4cm,
+  font=\footnotesize,
+  pbox/.style={rectangle, rounded corners=3pt, draw=black!70, text width=5.2cm, align=center, minimum height=1cm, inner sep=4pt, fill=gray!8},
+  probbox/.style={pbox, fill=red!15, draw=red!50},
+  methbox/.style={pbox, fill=violet!15, draw=violet!50},
+  dsrbox/.style={rectangle, rounded corners=3pt, draw=blue!40, dashed, text width=3.8cm, align=center, minimum height=0.9cm, inner sep=4pt, fill=blue!8},
+  resbox/.style={pbox, fill=green!15, draw=green!50},
+  arr/.style={->, >=Stealth, thick},
+  darr/.style={->, >=Stealth, dashed, draw=blue!50, thin}
+]
+\node[probbox] (prob) {Problema de pesquisa: Ausência de suporte nativo a roteamento multi-hop no ESP-NOW};
+\node[methbox, below=of prob] (met) {Escolha metodológica: Design Science Research (DSR)};
+\node[pbox, below=of met] (f1) {Fase 1: Revisão bibliográfica};
+\node[pbox, below=of f1] (f2) {Fase 2: Projeto do algoritmo AODV-EN};
+\node[pbox, below=of f2] (f3) {Fase 3: Implementação e montagem do ambiente de testes};
+\node[pbox, below=of f3] (f4) {Fase 4: Execução dos experimentos e coleta de dados};
+\node[pbox, below=of f4] (f5) {Fase 5: Análise e discussão dos resultados};
+\node[resbox, below=of f5] (res) {Resultado Final: Avaliação do AODV-EN e conclusões};
+\node[dsrbox, right=of f2] (dsr1) {DSR: Identificação do problema e motivação};
+\node[dsrbox, right=of f3] (dsr2) {DSR: Definição dos objetivos / Design e desenvolvimento};
+\node[dsrbox, right=of f4] (dsr3) {DSR: Demonstração};
+\node[dsrbox, right=of f5] (dsr4) {DSR: Avaliação e comunicação};
+\draw[arr] (prob)--(met); \draw[arr] (met)--(f1); \draw[arr] (f1)--(f2);
+\draw[arr] (f2)--(f3); \draw[arr] (f3)--(f4); \draw[arr] (f4)--(f5); \draw[arr] (f5)--(res);
+\draw[darr] (f2.east)--(dsr1.west);
+\draw[darr] (f3.east)--(dsr2.west);
+\draw[darr] (f4.east)--(dsr3.west);
+\draw[darr] (f5.east)--(dsr4.west);
+\end{tikzpicture}
+\caption{Fluxo metodológico da pesquisa}
 \end{figure}
 
 \subsection{Fase 1: Revisão
@@ -269,43 +295,42 @@ notificação de falhas.
 \subsection{Fase 3: Implementação e Montagem do Ambiente de
 Testes}\label{fase-3-implementauxe7uxe3o-e-montagem-do-ambiente-de-testes}
 
-A terceira fase dá continuidade à etapa de Design e Desenvolvimento,
+A terceira fase deu continuidade à etapa de Design e Desenvolvimento,
 materializando o projeto em código funcional e preparando o ambiente
-para os experimentos. A implementação será realizada em linguagem C
+para os experimentos. A implementação foi realizada em linguagem C
 utilizando o framework ESP-IDF (Espressif IoT Development Framework). O
-código será organizado em módulos: gerenciamento de peers, descoberta de
+código foi organizado em módulos: gerenciamento de peers, descoberta de
 rotas, manutenção de rotas, encaminhamento de pacotes e interface de
-coleta de métricas. Paralelamente, será implementado o algoritmo
-Flooding para fins de comparação. O ambiente de testes (testbed) será
-composto por 10 módulos ESP32 DevKit V1, alimentados por fontes USB 5V.
-A disposição física dos nós seguirá as topologias definidas na Seção
-4.4. Cada nó executará o mesmo firmware, sendo configurado com
+coleta de métricas. Paralelamente, foi implementado o algoritmo
+Flooding para fins de comparação. O ambiente de testes (testbed) foi
+composto por três módulos ESP32 DevKit V1 disponíveis no período de
+coleta, alimentados por fontes USB 5V --- a disponibilidade de hardware
+limitou a campanha a três nós, com os demais cenários avaliados por
+simulação. Cada nó executou o mesmo firmware, configurado com
 identificador único através de variáveis de compilação.
 
 \subsection{Fase 4: Execução dos Experimentos e Coleta de
 Dados}\label{fase-4-execuuxe7uxe3o-dos-experimentos-e-coleta-de-dados}
 
-A quarta fase corresponde à etapa de Demonstração da DSR, onde o
-artefato é exercitado em cenários representativos para demonstrar sua
-eficácia na resolução do problema. Os experimentos seguirão o
-planejamento detalhado na Seção 4.4. Para cada cenário experimental,
-serão realizadas múltiplas execuções (mínimo de 30 repetições) para
-garantir significância estatística. As métricas serão coletadas
-automaticamente pelo firmware e transmitidas para um nó coordenador, que
-as registra em arquivos de log para posterior análise.
+A quarta fase correspondeu à etapa de Demonstração da DSR, onde o
+artefato foi exercitado em cenários representativos para demonstrar sua
+eficácia na resolução do problema. Os experimentos seguiram o
+planejamento detalhado na Seção 3.4, com execução parcial em hardware
+--- seis repetições no cenário C1-3n (três nós em concentrador) --- e
+complementação por simulação para os cenários de maior escala e
+diâmetro. As métricas foram coletadas automaticamente pelo firmware e
+armazenadas em arquivos de log para posterior análise.
 
 \subsection{Fase 5: Análise e Discussão dos
 Resultados}\label{fase-5-anuxe1lise-e-discussuxe3o-dos-resultados}
 
-A quinta fase corresponde às etapas de Avaliação e Comunicação da DSR.
-Os dados coletados serão submetidos a análise estatística utilizando
-técnicas descritivas (média, desvio padrão, intervalos de confiança) e
-inferenciais (testes de hipóteses) quando apropriado. A avaliação
-comparará os resultados do AODV-EN com: (i) o algoritmo Flooding
-implementado localmente; e (ii) resultados reportados na literatura para
-soluções similares, como o BRAM-NOW de Cujilema et al.~(2023). A
-comunicação dos resultados será realizada através deste TCC e,
-potencialmente, através de publicação em evento científico.
+A quinta fase correspondeu às etapas de Avaliação e Comunicação da DSR.
+Os dados coletados foram submetidos a análise descritiva (média e desvio
+padrão) para as quatro métricas definidas. A avaliação comparou os
+resultados do AODV-EN com o algoritmo Flooding implementado localmente,
+com posicionamento qualitativo em relação a soluções da literatura, como
+o BRAM-NOW \cite{cujilema2023}. A comunicação dos resultados é realizada
+através deste TCC.
 
 \section{Planejamento Experimental}\label{planejamento-experimental}
 
@@ -315,30 +340,33 @@ de uma rede mesh baseada em ESP-NOW. Considerando que a proposta envolve
 roteamento multi-hop, seleção de rotas, manutenção da comunicação e
 recuperação diante de falhas, os experimentos foram organizados em
 cenários capazes de representar situações progressivamente mais
-complexas de comunicação multi-hop. A avaliação será realizada por meio
+complexas de comunicação multi-hop. A avaliação foi realizada por meio
 da comparação entre o AODV-EN e um algoritmo de referência baseado em
-Flooding, permitindo observar diferenças quanto à confiabilidade da
-entrega, latência fim-a-fim, carga de controle e consumo energético
-estimado.
+Flooding, observando diferenças quanto à confiabilidade da entrega,
+latência fim-a-fim, carga de controle e consumo energético estimado.
 
 \subsection{Cenários experimentais}\label{cenuxe1rios-experimentais}
 
-Os experimentos serão conduzidos em quatro cenários distintos,
+Os experimentos foram planejados em quatro cenários distintos,
 projetados para avaliar aspectos complementares do desempenho do
 algoritmo proposto. O cenário C1 avalia o comportamento multi-hop básico
 em uma topologia linear; o cenário C2 verifica o encaminhamento em uma
 estrutura hierárquica; o cenário C3 analisa a seleção de rotas em uma
 malha parcial com caminhos alternativos; e o cenário C4 observa a
 capacidade de detecção de falhas e recuperação da comunicação.
+Por limitação de disponibilidade de hardware no período de coleta, apenas
+uma versão reduzida do cenário C1 --- denominada C1-3n, com três nós em
+concentrador e seis repetições por algoritmo --- foi executada em
+hardware real; os demais cenários foram avaliados por simulação
+(Capítulo 5, Seção 5.4).
 
-\textbf{Quadro 9 -- Configuração dos cenários experimentais}
-
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\caption{Configuração dos cenários experimentais}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Cenário
@@ -385,13 +413,12 @@ o tempo de validade das rotas ativas. Para o Flooding, define-se o valor
 máximo de TTL, utilizado para limitar a propagação dos pacotes e evitar
 retransmissões indefinidas.
 
-\textbf{Quadro 10 -- Parâmetros dos experimentos}
-
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}
   >{\centering\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\centering\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\centering\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\caption{Parâmetros dos experimentos}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\centering
 Parâmetro
@@ -410,25 +437,21 @@ Taxa de envio (steady state) & 1 pacote/segundo & 1 pacote/segundo \\
 Duração de cada execução & 300 segundos (5 min) & 300 segundos (5
 min) \\
 Repetições por cenário & 30 & 30 \\
-HELLO\_INTERVAL & 2.000 ms & N/A \\
-ACTIVE\_ROUTE\_TIMEOUT & 10.000 ms & N/A \\
+HELLO\_INTERVAL & 2.000 ms (RFC: 1.000 ms)\textsuperscript{a} & N/A \\
+ACTIVE\_ROUTE\_TIMEOUT & 10.000 ms (RFC: 3.000 ms)\textsuperscript{a} & N/A \\
 TTL máximo (Flooding) & N/A & 5 saltos \\
+Peso $\alpha$ (hop) & 8 & N/A \\
+Peso $\beta$ (RSSI) & 1 & N/A \\
+Cache de \emph{peers} & 8 entradas (LRU) & N/A \\
 \end{longtable}
 }
 
-\section{}\label{section}
-
-\section{}\label{section-1}
-
-\section{}\label{section-2}
-
-\section{}\label{section-3}
-
-\section{}\label{section-4}
-
-\section{}\label{section-5}
-
 Fonte: Elaborado pelos autores.
+
+\noindent\footnotesize\textsuperscript{a}Valores ajustados em relação à RFC 3561 para reduzir
+o \emph{overhead} de mensagens HELLO e aumentar a tolerância a falhas
+transitórias em redes embarcadas de baixo custo.
+\normalsize
 
 \section{Métricas de Avaliação}\label{muxe9tricas-de-avaliauxe7uxe3o}
 
@@ -443,13 +466,12 @@ entrega dos pacotes; o NRL mede o overhead de controle introduzido pelo
 protocolo; e o consumo energético estimado permite analisar o impacto
 das transmissões sobre a autonomia dos dispositivos.
 
-\textbf{Quadro 11 -- Métricas de avaliação de desempenho}
-
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\caption{Métricas de avaliação de desempenho}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Métrica
@@ -546,8 +568,55 @@ controle, eventos de retransmissão, falhas de comunicação, atualizações
 de rota e tempos de envio e recepção.
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth,keepaspectratio]{figuras/image2.png}
-\caption{Figura 2 -- Fluxo de execução dos experimentos e análise dos dados}
+\resizebox{0.98\textwidth}{!}{%
+\begin{tikzpicture}[
+  font=\scriptsize,
+  phase/.style={rectangle, draw=black!60, rounded corners=3pt, text width=2.85cm,
+                align=center, minimum height=0.9cm, inner sep=4pt},
+  prepbox/.style={phase, fill=orange!10, draw=orange!50},
+  execbox/.style={phase, fill=cyan!12, draw=cyan!50},
+  procbox/.style={phase, fill=yellow!15, draw=yellow!60!black},
+  concbox/.style={phase, fill=green!12, draw=green!50},
+  header/.style={rectangle, rounded corners=3pt, draw=black!40, fill=black!9,
+                 text width=2.85cm, align=center, font=\scriptsize\bfseries,
+                 inner sep=4pt, minimum height=0.75cm},
+  arr/.style={->, >=Stealth, thick},
+  larr/.style={->, >=Stealth, thick, draw=black!60}
+]
+\node[header] (h1) {Fase de Preparação};
+\node[header, right=0.65cm of h1] (h2) {Fase de Execução};
+\node[header, right=0.65cm of h2] (h3) {Fase de Processamento\\e Análise};
+\node[header, right=0.65cm of h3] (h4) {Fase de Conclusão};
+
+\node[prepbox, below=0.35cm of h1] (p1) {Implementar\\AODV-EN e Flooding};
+\node[prepbox, below=0.32cm of p1] (p2) {Definir cenário\\C1, C2, C3 ou C4};
+\node[prepbox, below=0.32cm of p2] (p3) {Fixar parâmetros\\nós, carga, taxa, duração};
+
+\node[execbox, below=0.95cm of h2] (e1) {Executar\\repetições do cenário};
+\node[execbox, below=0.32cm of e1] (e2) {Coletar logs\\e métricas};
+
+\node[procbox, below=0.35cm of h3] (r1) {Organizar dados\\em tabelas};
+\node[procbox, below=0.32cm of r1] (r2) {Calcular métricas\\PDR, latência, NRL, energia};
+\node[procbox, below=0.32cm of r2] (r3) {Analisar média\\e desvio padrão};
+\node[procbox, below=0.32cm of r3] (r4) {Comparar\\AODV-EN e Flooding};
+
+\node[concbox, below=3.55cm of h4] (c1) {Interpretar resultados\\e registrar conclusões};
+
+\draw[larr] (h1)--(h2);
+\draw[larr] (h2)--(h3);
+\draw[larr] (h3)--(h4);
+\draw[arr] (p1)--(p2);
+\draw[arr] (p2)--(p3);
+\draw[arr] (e1)--(e2);
+\draw[arr] (r1)--(r2);
+\draw[arr] (r2)--(r3);
+\draw[arr] (r3)--(r4);
+\draw[larr] (p3.east) -- ++(0.32,0) |- (e1.west);
+\draw[larr] (e2.east) -- ++(0.32,0) |- (r1.west);
+\draw[larr] (r4.east) -- (c1.west);
+\end{tikzpicture}
+}
+\caption{Fluxo de execução dos experimentos e análise dos dados}
 \end{figure}
 A Figura 2 sintetiza o fluxo de execução dos experimentos e de
 tratamento dos dados, desde a configuração do ambiente experimental até

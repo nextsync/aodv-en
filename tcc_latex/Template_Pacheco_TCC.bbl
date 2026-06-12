@@ -23,11 +23,24 @@
   protocols and challenges.
 \emph{IEEE Communications Surveys and Tutorials}, 2021.}
 
+\bibitem[Couto et al. 2003]{couto2003}
+\abntrefinfo{Couto et al.}{COUTO et al.}{2003}
+{COUTO, D. S.~J. D. et al. A high-throughput path metric for multi-hop wireless
+  routing. In:  \emph{Proceedings of the 9th ACM International Conference on
+  Mobile Computing and Networking (MobiCom)}. [S.l.]: ACM, 2003. p. 134--146.}
+
 \bibitem[Cujilema et al. 2023]{cujilema2023}
 \abntrefinfo{Cujilema et al.}{CUJILEMA et al.}{2023}
 {CUJILEMA, J. et al. {BRAM-NOW}: A secure mesh networking algorithm over
   esp-now.
 \emph{IEEE Latin America Transactions}, 2023.}
+
+\bibitem[Draves, Padhye e Zill 2004]{draves2004}
+\abntrefinfo{Draves, Padhye e Zill}{DRAVES; PADHYE; ZILL}{2004}
+{DRAVES, R.; PADHYE, J.; ZILL, B. Routing in multi-radio, multi-hop wireless
+  mesh networks. In:  \emph{Proceedings of the 10th ACM International
+  Conference on Mobile Computing and Networking (MobiCom)}. [S.l.]: ACM, 2004.
+  p. 114--128.}
 
 \bibitem[{Espressif Systems} 2024]{espressif2024}
 \abntrefinfo{{Espressif Systems}}{{Espressif Systems}}{2024}
@@ -35,10 +48,23 @@
   Documenta\c{c}\~{a}o t\'{e}cnica.
 Dispon\'{i}vel em: https://www.espressif.com.}
 
+\bibitem[Heinzelman, Chandrakasan e Balakrishnan 2000]{heinzelman2000}
+\abntrefinfo{Heinzelman, Chandrakasan e Balakrishnan}{HEINZELMAN; CHANDRAKASAN;
+  BALAKRISHNAN}{2000}
+{HEINZELMAN, W.~R.; CHANDRAKASAN, A.; BALAKRISHNAN, H. Energy-efficient
+  communication protocol for wireless microsensor networks. In:
+  \emph{Proceedings of the 33rd Annual Hawaii International Conference on
+  System Sciences (HICSS)}. [S.l.]: IEEE, 2000. p. 10--pp.}
+
 \bibitem[Hevner et al. 2004]{hevner2004}
 \abntrefinfo{Hevner et al.}{HEVNER et al.}{2004}
 {HEVNER, A.~R. et al. Design science in information systems research.
 \emph{MIS Quarterly}, v.~28, n.~1, p. 75--105, 2004.}
+
+\bibitem[Karl e Willig 2005]{karlwillig2005}
+\abntrefinfo{Karl e Willig}{KARL; WILLIG}{2005}
+{KARL, H.; WILLIG, A. \emph{Protocols and Architectures for Wireless Sensor
+  Networks}. [S.l.]: John Wiley \& Sons, 2005.}
 
 \bibitem[March e Smith 1995]{marchsmith1995}
 \abntrefinfo{March e Smith}{MARCH; SMITH}{1995}
@@ -80,6 +106,12 @@ Dispon\'{i}vel em: https://www.rfc-editor.org/rfc/rfc3561.}
 \abntrefinfo{Urazayev et al.}{URAZAYEV et al.}{2023}
 {URAZAYEV, D. et al. Indoor performance evaluation of esp-now.
 \emph{IEEE Access}, 2023.}
+
+\bibitem[Vasseur et al. 2012]{rfc6551}
+\abntrefinfo{Vasseur et al.}{VASSEUR et al.}{2012}
+{VASSEUR, J.~P. et al. \emph{{Routing Metrics Used for Path Calculation in
+  Low-Power and Lossy Networks}}. 2012. RFC 6551, IETF.
+Dispon\'{i}vel em: https://www.rfc-editor.org/rfc/rfc6551.}
 
 \bibitem[\v{S}est\'{a}k 2022]{sestak2022}
 \abntrefinfo{\v{S}est\'{a}k}{\V{S}EST\'{a}K}{2022}

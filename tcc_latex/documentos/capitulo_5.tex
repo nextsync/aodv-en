@@ -60,10 +60,7 @@ valores do \emph{flooding} correspondem à campanha com transporte por
 \emph{broadcast} puro; os do AODV-EN, à campanha reativa com
 \emph{broadcast} de RREQ e métrica de saltos.
 
-\textbf{Quadro 15 -- Ledger de execuções em hardware (C1-3n, 6 seeds por
-algoritmo)}
-
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}
   >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}
   >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}
@@ -71,6 +68,7 @@ algoritmo)}
   >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}
   >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}
   >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}@{}}
+\caption{Ledger de execuções em hardware (C1-3n, 6 seeds por algoritmo)}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\centering
 Algoritmo
@@ -106,14 +104,12 @@ Flooding & 6 & 98,53 & 85,9 & 0,0 & 12,66 \\
 
 Fonte: Elaborado pelos autores.
 
-O Quadro 16 consolida a comparação, apresentando média e desvio padrão
+A Tabela 1 consolida a comparação, apresentando média e desvio padrão
 de cada métrica para os dois algoritmos.
 
-\textbf{Quadro 16 -- Comparação AODV-EN vs.~Flooding (média ± desvio
-padrão de 6 seeds)}
-
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{table}
 \begin{longtable}[]{@{}lccc@{}}
+\caption{Comparação AODV-EN vs.~Flooding (média $\pm$ desvio padrão de 6 seeds)}\\
 \toprule\noalign{}
 Métrica & AODV-EN & Flooding (broadcast) & Δ (flood − aodv) \\
 \midrule\noalign{}
@@ -135,12 +131,9 @@ correspondentes ao desvio padrão entre as seis repetições.
 \begin{figure}
 \centering
 \pandocbounded{\includegraphics[keepaspectratio,alt={Figura 8 -- Métricas de hardware (PDR, latência, NRL e energia): AODV-EN vs.~Flooding, média de 6 seeds com barra de desvio.}]{figuras/fig_hw_metrics.png}}
-\caption{Figura 8 -- Métricas de hardware (PDR, latência, NRL e
+\caption{Métricas de hardware (PDR, latência, NRL e
 energia): AODV-EN vs.~Flooding, média de 6 seeds com barra de desvio.}
 \end{figure}
-
-\textbf{Figura 8 -- Comparação das quatro métricas no hardware (3 ESP32,
-hub), média de 6 seeds}
 
 A Figura 9 detalha o custo de ocupação de canal, apresentando o total de
 transmissões (TX) e recepções (RX) agregadas na rede de três nós.
@@ -148,11 +141,9 @@ transmissões (TX) e recepções (RX) agregadas na rede de três nós.
 \begin{figure}
 \centering
 \pandocbounded{\includegraphics[keepaspectratio,alt={Figura 9 -- Transmissões e recepções agregadas da rede de 3 nós (média de 6 seeds).}]{figuras/fig_hw_channel.png}}
-\caption{Figura 9 -- Transmissões e recepções agregadas da rede de 3 nós
+\caption{Transmissões e recepções agregadas da rede de 3 nós
 (média de 6 seeds).}
 \end{figure}
-
-\textbf{Figura 9 -- Custo de canal: TX e RX agregados da rede}
 
 \section{Discussão por Métrica}\label{discussuxe3o-por-muxe9trica}
 
@@ -185,10 +176,8 @@ as repetições.
 \begin{figure}
 \centering
 \pandocbounded{\includegraphics[keepaspectratio,alt={Figura 10 -- Latência one-way por seed (AODV-EN vs.~Flooding).}]{figuras/fig_latency_seeds.png}}
-\caption{Figura 10 -- Latência one-way por seed (AODV-EN vs.~Flooding).}
+\caption{Latência one-way por seed (AODV-EN vs.~Flooding).}
 \end{figure}
-
-\textbf{Figura 10 -- Latência one-way por seed}
 
 \textbf{Carga de roteamento normalizada (NRL).} O AODV-EN apresentou NRL
 de 0,774 (mensagens HELLO, RREQ e RREP por dado entregue), enquanto o
@@ -227,12 +216,9 @@ rotas, continua entregando.
 \begin{figure}
 \centering
 \pandocbounded{\includegraphics[keepaspectratio,alt={Figura 11 -- Transmissões por pacote entregue em função do número de nós (simulação).}]{figuras/fig_sim_crossover.png}}
-\caption{Figura 11 -- Transmissões por pacote entregue em função do
+\caption{Transmissões por pacote entregue em função do
 número de nós (simulação).}
 \end{figure}
-
-\textbf{Figura 11 -- Crossover de eficiência entre AODV-EN e Flooding em
-escala (simulação)}
 
 Esse resultado confirma a hipótese central do trabalho: o roteamento
 reativo paga um \emph{overhead} de controle aproximadamente constante
