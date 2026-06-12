@@ -77,6 +77,7 @@ fi
 
 export SDKCONFIG="$BUILD_DIR/sdkconfig"
 
+cd "$FW_DIR"
 idf.py -B "$BUILD_DIR" set-target esp32 >/dev/null
 idf.py -B "$BUILD_DIR" build
 idf.py -B "$BUILD_DIR" -p "$PORT" -b 115200 erase-flash flash

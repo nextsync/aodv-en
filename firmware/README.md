@@ -1,6 +1,8 @@
 # Firmware ESP32 do AODV-EN
 
-Este diretorio contem o primeiro app ESP-IDF executavel do projeto.
+App ESP-IDF de bancada que consome a lib `AODV-EN` ([components/aodv_en](components/aodv_en)) sobre ESP-NOW v2.
+
+A spec funcional do protocolo esta em [../docs/aodv-en-spec-v1.md](../docs/aodv-en-spec-v1.md). Os criterios de aprovacao em hardware estao mapeados em [../docs/tests](../docs/tests).
 
 ## O que ele faz hoje
 
@@ -12,11 +14,18 @@ Este diretorio contem o primeiro app ESP-IDF executavel do projeto.
 - opcionalmente tenta enviar `DATA` periodico para um MAC configurado
 - imprime logs, estatisticas e estado geral no serial
 
+## Modos de aplicacao
+
+Selecionavel por `menuconfig` -> `AODV-EN App` -> `Application example mode`:
+
+- `app_proto_example` (padrao): camada de aplicacao com `HEALTH/TEXT/CMD` e CLI serial
+- `app_demo` (legado): apenas `HELLO` e `DATA` periodicos
+
+`main.c` faz o branch via `CONFIG_AODV_EN_APP_USE_APP_DEMO` / `CONFIG_AODV_EN_APP_USE_PROTO_EXAMPLE`.
+
 ## API da lib (para outras aplicacoes)
 
-Agora o componente oferece uma fachada de integracao em:
-
-- `firmware/components/aodv_en/include/aodv_en.h`
+A fachada da lib esta em [components/aodv_en/include/aodv_en.h](components/aodv_en/include/aodv_en.h).
 
 Padrao de uso recomendado:
 
@@ -36,61 +45,53 @@ Padrao de uso recomendado:
    - `aodv_en_stack_send_hello_at(...)`
    - `aodv_en_stack_send_data_at(...)`
 
-Esse modelo separa o protocolo (core) da plataforma (adapter), facilitando portar para outros ambientes sem alterar o nucleo do AODV-EN.
+Esse modelo separa o protocolo (core) da plataforma (adapter), o que permite portar para outros ambientes sem alterar o nucleo do `AODV-EN`. A simulacao em [../sim](../sim) usa exatamente esse contrato com mocks.
 
 ## Como buildar
 
 ```bash
-cd /Users/huaksonlima/Documents/tcc/aodv-en/firmware
-zsh build.sh
+zsh firmware/build.sh
 ```
 
-## Como gravar
+## Como gravar e abrir monitor
 
 ```bash
-cd /Users/huaksonlima/Documents/tcc/aodv-en/firmware
-zsh flash_monitor.sh /dev/cu.usbserial-XXXX
+zsh firmware/flash_monitor.sh /dev/cu.usbserial-XXXX
 ```
 
-## Como monitorar e salvar log em arquivo
+## Como gravar e salvar log em arquivo
 
 ```bash
-cd /Users/huaksonlima/Documents/tcc/aodv-en
 zsh firmware/monitor_log.sh -p /dev/ttyUSB0 -B build/tc002_node_a -t tc004_soak -l node_a
 ```
 
-Arquivo salvo em:
+Arquivos salvos em `firmware/logs/serial/`.
 
-- `firmware/logs/serial/`
+## Casos de teste por papel
+
+- [tests/tc001](tests/tc001) - 2 nos diretos (`TC-001`)
+- [tests/tc002](tests/tc002) - 3 nos em cadeia (`TC-002`, `TC-003`, `TC-004`)
+- [tests/tc005](tests/tc005) - 4 nos em cadeia (`TC-005`)
+
+Cada diretorio tem `build_flash.sh`, `monitor_log.sh` (wrapper) e `node_X.defaults`.
 
 ## Como configurar
 
 ```bash
-cd /Users/huaksonlima/Documents/tcc/aodv-en/firmware
-source ./idf-env.sh
+source firmware/idf-env.sh
 idf.py menuconfig
 ```
 
-`idf-env.sh` e o bootstrap padrao para o firmware. Ele tenta carregar o ESP-IDF nesta ordem:
+`idf-env.sh` resolve o ESP-IDF nesta ordem:
 
 1. `ESP_IDF_EXPORT` (quando definido)
 2. `IDF_PATH/export.sh`
 3. `$HOME/esp/esp-idf/export.sh`
 4. `idf.py` ja disponivel no `PATH`
 
-## Observacao
+Menu: `AODV-EN App`. Campos principais:
 
-Se os scripts ainda nao estiverem com permissao de execucao no seu ambiente, rode-os com `zsh`, como mostrado acima.
-
-Menu:
-
-- `AODV-EN App`
-
-Campos principais:
-
-- modo de exemplo da aplicacao:
-  - `app_demo` (legado)
-  - `app_proto_example` (health/text/command)
+- modo de exemplo (`app_proto_example` ou `app_demo`)
 - nome do no
 - `network_id`
 - canal Wi-Fi
@@ -99,7 +100,7 @@ Campos principais:
 - MAC alvo
 - texto do payload
 
-Se selecionar `app_proto_example`, ficam disponiveis campos extras:
+Para `app_proto_example`, ficam disponiveis campos extras:
 
 - `PROTO health interval (ms)`
 - `PROTO unicast interval (ms)`
@@ -110,16 +111,9 @@ Se selecionar `app_proto_example`, ficam disponiveis campos extras:
 - `PROTO command name`
 - `PROTO command args`
 
-Com esse exemplo novo:
+## CLI serial (modo `app_proto_example`)
 
-- cada no responde automaticamente `HEALTH_REQ` com `HEALTH_RSP`;
-- e possivel enviar `TEXT` para um alvo unicast configurado;
-- e possivel enviar `CMD_REQ` para outro no, com handlers de exemplo:
-  - `ping`
-  - `echo`
-  - `info`
-
-Se `PROTO enable serial CLI commands` estiver habilitado, voce tambem pode digitar no monitor:
+Quando `PROTO enable serial CLI commands` estiver habilitado:
 
 - `help`
 - `health all`
@@ -128,28 +122,63 @@ Se `PROTO enable serial CLI commands` estiver habilitado, voce tambem pode digit
 - `cmd <AA:BB:CC:DD:EE:FF> <comando> [args]`
 - `routes`
 
-## Desenho da topologia (a partir dos logs)
+Comandos embutidos: `ping`, `echo`, `info`.
 
-Depois de extrair os metrics de um log com `extract_monitor_metrics.py`, voce pode gerar um desenho da topologia:
+## Dashboard ao vivo (real-time)
 
-```bash
-python3 firmware/tools/draw_topology.py \
-  firmware/logs/analysis/node_a_tc004_soak_v2_20260421-183532 \
-  --mode latest
-```
-
-Saidas:
-
-- `topology/topology.mmd` (Mermaid)
-- `topology/topology.dot` (Graphviz DOT)
-- `topology/topology.svg` (quando `dot` estiver instalado)
-- `topology/topology.json` (resumo estruturado)
-
-Para incluir todos os links observados durante a execucao (nao so o ultimo snapshot), use:
+[firmware/tools/live_monitor.py](tools/live_monitor.py) levanta um dashboard web em `http://localhost:8765/` que le multiplas portas seriais em paralelo, parseia os logs e empurra eventos via WebSocket para uma topologia animada (Cytoscape.js) com painel de metricas e timeline.
 
 ```bash
-python3 firmware/tools/draw_topology.py \
-  firmware/logs/analysis/node_a_tc004_soak_v2_20260421-183532 \
-  --mode observed \
-  --name topology_observed
+# instalar dependencias uma vez
+pip install aiohttp pyserial
+
+# modo demo (sem hardware) - util para validar o dashboard
+python3 firmware/tools/live_monitor.py --demo
+
+# com hardware: uma --port DEV:ALIAS por no
+python3 firmware/tools/live_monitor.py \
+    --port /dev/ttyUSB0:NODE_A \
+    --port /dev/ttyUSB1:NODE_B \
+    --port /dev/ttyUSB2:NODE_C
 ```
+
+Recursos visuais:
+- topologia ao vivo com cores por papel (gateway, relay, leaf) e estado online/offline
+- pulse verde animando o caminho `A -> B -> C` quando o `ACK` chega na origem
+- flash vermelho em `ESP-NOW send fail` e `invalidated` (link quebrado)
+- card de alerta para fila cheia (`status=-2`) e falhas de enlace
+- timeline scrollavel com 60 eventos recentes
+- painel "Resumo da malha" com nos online, hops max, rotas validas, ACKs e deliveries
+
+A interface esta em [firmware/tools/live_monitor_web/](tools/live_monitor_web/) (HTML + CSS + JS, sem build system).
+
+## Ferramentas de analise
+
+A partir dos logs em `firmware/logs/serial/`:
+
+```bash
+python3 firmware/tools/extract_monitor_metrics.py firmware/logs/serial/<arquivo>.log
+```
+
+Saida em `firmware/logs/analysis/<basename>/`:
+- `summary.json` e `summary.txt`
+- CSVs: `events`, `snapshots`, `routes`, `target_route_series`, `ack_events`, `discovery_windows`, `minute_metrics`...
+
+Geracao de graficos:
+
+```bash
+python3 firmware/tools/plot_monitor_metrics.py firmware/logs/analysis/<basename>
+python3 firmware/tools/plot_comparison_metrics.py --run label1::path1/summary.json --run label2::path2/summary.json
+```
+
+Geracao de topologia:
+
+```bash
+python3 firmware/tools/draw_topology.py firmware/logs/analysis/<basename> --mode latest
+```
+
+Saidas em `topology/`: `topology.mmd` (Mermaid), `topology.dot` (Graphviz), `topology.svg` (quando `dot` estiver instalado), `topology.json` (resumo).
+
+## Observacao sobre permissoes
+
+Se os scripts ainda nao estiverem com permissao de execucao no seu ambiente, rode-os com `zsh`, como mostrado acima.

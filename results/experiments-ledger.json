@@ -1,0 +1,218 @@
+[
+  {
+    "num": 1,
+    "id": "e1",
+    "algo": "aodv-en",
+    "params": {
+      "scenario": "C1-3n",
+      "seed": 1,
+      "hops": 1
+    },
+    "metrics": {
+      "pdr": 98.57,
+      "latency_ms": 60,
+      "nrl": 0.7785,
+      "energy_j": 12.4147
+    },
+    "note": "HW 3 ESPs hub instrumentado; do results/m10-aodv-metrics.json (real). latency=one-way(rtt/2), energia=estimativa datasheet.",
+    "ts": "2026-05-31T13:05:52.217926+00:00"
+  },
+  {
+    "num": 2,
+    "id": "e2",
+    "algo": "flooding",
+    "params": {
+      "scenario": "C1-3n",
+      "seed": 1,
+      "hops": 1
+    },
+    "metrics": {
+      "pdr": 100,
+      "latency_ms": 50,
+      "nrl": 0,
+      "energy_j": 12.8029
+    },
+    "note": "HW 3 ESPs hub, flood unicast-por-vizinho (TCC), instrumentado; do results/m10-flood-metrics.json (real). NRL=0 (flood sem controle de roteamento). energia=estimativa datasheet.",
+    "ts": "2026-05-31T13:17:35.558940+00:00"
+  },
+  {
+    "num": 3,
+    "id": "e3",
+    "algo": "aodv-en",
+    "params": {
+      "scenario": "C1-3n",
+      "seed": 2,
+      "hops": 1
+    },
+    "metrics": {
+      "pdr": 100,
+      "latency_ms": 60,
+      "nrl": 0.7821,
+      "energy_j": 12.4071
+    },
+    "note": "HW seed2, do results/m10-aodv-s2-metrics.json (real)",
+    "ts": "2026-05-31T14:40:31.082815+00:00"
+  },
+  {
+    "num": 4,
+    "id": "e4",
+    "algo": "flooding",
+    "params": {
+      "scenario": "C1-3n",
+      "seed": 2,
+      "hops": 1
+    },
+    "metrics": {
+      "pdr": 100,
+      "latency_ms": 50.6,
+      "nrl": 0,
+      "energy_j": 12.8482
+    },
+    "note": "HW seed2, flood unicast, do results/m10-flood-s2-metrics.json (real)",
+    "ts": "2026-05-31T14:42:16.876639+00:00"
+  },
+  {
+    "num": 5,
+    "id": "e5",
+    "algo": "aodv-en",
+    "params": {
+      "scenario": "C1-3n",
+      "seed": 3,
+      "hops": 1
+    },
+    "metrics": {
+      "pdr": 100,
+      "latency_ms": 60,
+      "nrl": 0.7844,
+      "energy_j": 12.447
+    },
+    "note": "HW seed3, real",
+    "ts": "2026-05-31T16:41:57.112117+00:00"
+  },
+  {
+    "num": 6,
+    "id": "e6",
+    "algo": "flooding",
+    "params": {
+      "scenario": "C1-3n",
+      "seed": 3,
+      "hops": 1
+    },
+    "metrics": {
+      "pdr": 100,
+      "latency_ms": 100,
+      "nrl": 0,
+      "energy_j": 12.6205
+    },
+    "note": "HW seed3 flood, PDR clampado<=100 (raw teve efeito de borda)",
+    "ts": "2026-05-31T16:47:09.079284+00:00"
+  },
+  {
+    "num": 7,
+    "id": "e7",
+    "algo": "flooding",
+    "params": {
+      "scenario": "C1-3n",
+      "seed": 4,
+      "fresh_boot": "true"
+    },
+    "metrics": {
+      "pdr": 98.36,
+      "latency_ms": 100,
+      "nrl": 0,
+      "energy_j": 8.3871
+    },
+    "note": "seed4 boot fresco (reflash+hard-reset, sum_tx=364 ~ s1-s3). origin=N2 dest=N1(28:05:A5:34:99:34). PDR98.36% lat_oneway100ms(rtt200) NRL0 energia8.39J (canal mais leve nesse window: N1 dest rebroadcast=0). Logs results/m10-flood-s4-N{1,2,3}.log",
+    "ts": "2026-05-31T17:52:29.940884+00:00"
+  },
+  {
+    "num": 8,
+    "id": "e8",
+    "algo": "aodv-en",
+    "params": {
+      "scenario": "C1-3n",
+      "seed": 4,
+      "fresh_boot": "true"
+    },
+    "metrics": {
+      "pdr": 98.33,
+      "latency_ms": 60,
+      "nrl": 0.7418,
+      "energy_j": 8.4924
+    },
+    "note": "seed4 boot fresco (reflash app_demo+target N1+hard-reset, sum_tx=489 control=158). origin=N2 dest=N1. PDR98.33% lat_oneway60ms(rtt120) NRL0.74 energia8.49J. Mesmo window/condicao do flood s4 -> energia comparavel (8.49 vs 8.39). Logs results/m10-aodv-s4-N{1,2,3}.log",
+    "ts": "2026-05-31T17:56:19.008608+00:00"
+  },
+  {
+    "num": 9,
+    "id": "e9",
+    "algo": "aodv-en",
+    "params": {
+      "scenario": "C1-3n",
+      "seed": 5,
+      "fresh_boot": "true"
+    },
+    "metrics": {
+      "pdr": 98.33,
+      "latency_ms": 60,
+      "nrl": 0.7814,
+      "energy_j": 8.5164
+    },
+    "note": "seed5 boot fresco (reflash aodv_cmp+hard-reset). origin=N2 dest=N1. Logs results/m10-aodv-s5-N{1,2,3}.log",
+    "ts": "2026-05-31T19:41:35.297965+00:00"
+  },
+  {
+    "num": 10,
+    "id": "e10",
+    "algo": "flooding",
+    "params": {
+      "scenario": "C1-3n",
+      "seed": 5,
+      "fresh_boot": "true"
+    },
+    "metrics": {
+      "pdr": 100,
+      "latency_ms": 50,
+      "nrl": 0,
+      "energy_j": 8.346
+    },
+    "note": "seed5 boot fresco (reflash flood + hard-reset extra p/ N1 surdo). origin=N2 dest=N1. Logs results/m10-flood-s5-N{1,2,3}.log",
+    "ts": "2026-05-31T19:46:02.713411+00:00"
+  },
+  {
+    "num": 11,
+    "id": "e11",
+    "algo": "flooding",
+    "params": {
+      "scenario": "C1-3n",
+      "seed": 6,
+      "fresh_boot": "true"
+    },
+    "metrics": {
+      "pdr": 98.36,
+      "latency_ms": 50,
+      "nrl": 0,
+      "energy_j": 8.346
+    },
+    "note": "seed6 boot fresco (hard-reset, boards ja flood). origin=N2 dest=N1. Logs results/m10-flood-s6-N{1,2,3}.log",
+    "ts": "2026-05-31T21:48:24.520372+00:00"
+  },
+  {
+    "num": 12,
+    "id": "e12",
+    "algo": "aodv-en",
+    "params": {
+      "scenario": "C1-3n",
+      "seed": 6,
+      "fresh_boot": "true"
+    },
+    "metrics": {
+      "pdr": 98.33,
+      "latency_ms": 60,
+      "nrl": 0.7744,
+      "energy_j": 8.451
+    },
+    "note": "seed6 boot fresco (reflash aodv_cmp+hard-reset). origin=N2 dest=N1. Logs results/m10-aodv-s6-N{1,2,3}.log",
+    "ts": "2026-05-31T21:50:54.685690+00:00"
+  }
+]
