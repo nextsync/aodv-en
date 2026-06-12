@@ -1,0 +1,204 @@
+### 4.7. Instrumentacao, Definicoes Operacionais e Plano Estatistico
+
+Para garantir rigor metodologico e reprodutibilidade, esta secao define de forma explicita: (i) as hipoteses de pesquisa, (ii) as variaveis experimentais, (iii) a instrumentacao de coleta, (iv) as formulas e regras de calculo das metricas, (v) os criterios de validade de execucao, e (vi) o plano estatistico para comparacao entre AODV-EN e baseline Flooding.
+
+O encadeamento completo desta etapa e representado pelos fluxos `F8` e `F9` do catalogo em `docs/fluxos-tcc-aodv-en.md`.
+
+#### 4.7.1 Hipoteses de pesquisa
+
+Considerando os objetivos do trabalho e a literatura de roteamento ad-hoc, sao definidas as seguintes hipoteses:
+
+- `H1 (eficiencia de controle)`: o AODV-EN apresenta `NRL` significativamente menor que o Flooding nos cenarios `C1`, `C2`, `C3` e `C4`.
+- `H2 (consumo energetico estimado)`: o AODV-EN apresenta menor energia estimada por pacote entregue em relacao ao Flooding.
+- `H3 (confiabilidade)`: o AODV-EN mantem `PDR` comparavel ao Flooding, sem degradacao estatisticamente relevante.
+- `H4 (desempenho temporal)`: o AODV-EN apresenta menor latencia fim-a-fim mediana em regime estavel e menor penalidade temporal apos reconvergencia no cenario de falha (`C4`).
+
+#### 4.7.2 Variaveis experimentais
+
+As variaveis sao organizadas em tres classes.
+
+`a) Variaveis independentes (fatores)`
+
+- Protocolo de roteamento: `AODV-EN` vs `Flooding`.
+- Topologia/cenario: `C1` (linear), `C2` (arvore), `C3` (mesh parcial), `C4` (falha induzida).
+- Carga de trafego: taxa de envio e tamanho de payload.
+- Condicao de enlace: estavel vs degradacao/falha controlada.
+
+`b) Variaveis dependentes (respostas)`
+
+- `PDR` (%)
+- Latencia fim-a-fim (ms)
+- `NRL` (pacotes de controle por pacote de dados entregue)
+- Energia estimada (J) e energia estimada por pacote entregue (J/pacote)
+
+`c) Variaveis de controle`
+
+- Hardware: ESP32 DevKit V1.
+- Firmware: mesma versao/commit para todos os nos de uma campanha.
+- Canal e `network_id` identicos entre nos.
+- Distancia fisica aproximada entre nos por cenario.
+- Alimentacao estavel (USB/fonte equivalente).
+- Duracao por execucao e numero de repeticoes por cenario/protocolo.
+
+#### 4.7.3 Instrumentacao de coleta e rastreabilidade
+
+A coleta e feita em duas camadas: captura de log bruto e extracao estruturada.
+
+`Camada 1 - captura bruta`
+
+- Script de monitor: `firmware/monitor_log.sh`.
+- Artefato bruto: `firmware/logs/serial/<run>.log`.
+- Captura por no, com identificacao de papel (`node_a`, `node_b`, `node_c`, etc.).
+
+`Camada 2 - extracao e consolidacao`
+
+- Extrator: `firmware/tools/extract_monitor_metrics.py`.
+- Saidas principais por execucao:
+- `summary.json`
+- `summary.txt`
+- `events.csv`
+- `snapshots.csv`
+- `routes.csv`
+- `ack_events.csv`
+- `data_status_events.csv`
+- `fail_events.csv`
+- `minute_metrics.csv`
+
+`Camada 3 - visualizacao e comparacao`
+
+- Graficos por execucao: `firmware/tools/plot_monitor_metrics.py`.
+- Graficos comparativos: `firmware/tools/plot_comparison_metrics.py`.
+- Artefatos comparativos: `comparison_metrics.csv` e PNGs por lote.
+
+Para garantir rastreabilidade, cada execucao deve registrar: data/hora, cenario, protocolo, identificador dos nos, hash do firmware (SHA), parametros de compilacao e nome dos arquivos de log gerados.
+
+#### 4.7.4 Definicoes operacionais das metricas
+
+Para evitar ambiguidade, as metricas sao calculadas por regras operacionais unicas para ambos os protocolos.
+
+`a) Packet Delivery Ratio (PDR)`
+
+Seja:
+
+- `N_sent`: total de pacotes de dados emitidos pela origem (sequencias unicas).
+- `N_delivered`: total de pacotes efetivamente entregues no destino.
+
+Entao:
+
+`PDR = (N_delivered / N_sent) * 100`
+
+Regra operacional: um pacote e considerado entregue quando ha confirmacao no destino (registro de recepcao aplicacional) ou ACK aplicacional correspondente, conforme o mecanismo de telemetria definido para o experimento.
+
+`b) Latencia fim-a-fim`
+
+Para cada pacote `i` entregue:
+
+- `t_tx(i)`: timestamp de envio na origem.
+- `t_rx(i)`: timestamp de recepcao no destino.
+- `L_i = t_rx(i) - t_tx(i)`.
+
+Medidas reportadas: media, mediana, desvio padrao e `IC95%`.
+
+`c) Normalized Routing Load (NRL)`
+
+Seja:
+
+- `N_ctrl_tx`: total de transmissoes de controle (ex.: `RREQ`, `RREP`, `RERR`, `HELLO` no AODV-EN; retransmissoes de disseminacao no Flooding).
+- `N_data_delivered`: pacotes de dados entregues ao destino.
+
+Entao:
+
+`NRL = N_ctrl_tx / N_data_delivered`
+
+`d) Energia estimada`
+
+A energia e estimada por modelo analitico, com base no tempo em estado e correntes tipicas do ESP32:
+
+`E_total = (V * I_tx * T_tx) + (V * I_rx * T_rx) + (V * I_idle * T_idle)`
+
+Onde:
+
+- `V`: tensao de operacao.
+- `I_tx`, `I_rx`, `I_idle`: correntes medias em cada estado.
+- `T_tx`, `T_rx`, `T_idle`: tempos acumulados por estado na execucao.
+
+Medida derivada para comparacao:
+
+`E_por_pacote = E_total / N_data_delivered`
+
+Caso nao seja possivel medir diretamente `T_rx`, utiliza-se aproximacao conservadora baseada em contagem de eventos e duracao da campanha, com essa limitacao explicitada na secao de validade.
+
+#### 4.7.5 Criterios de validade de execucao e tratamento de outliers
+
+Cada execucao e classificada como valida ou invalida antes da analise inferencial.
+
+`Execucao invalida` (descartada e repetida) quando ocorrer qualquer condicao:
+
+- reboot/reset detectado no log durante a janela valida de medicao;
+- perda/corrupcao de arquivo de log;
+- divergencia de configuracao (canal, `network_id`, firmware, cenario);
+- interrupcao humana nao prevista no protocolo de teste.
+
+`Outliers`:
+
+- outliers estatisticos sao identificados por `IQR` e/ou `z-score`;
+- nao sao removidos automaticamente;
+- so podem ser removidos com justificativa tecnica objetiva (ex.: anomalia de instrumentacao);
+- analise principal e reportada com e sem exclusao quando aplicavel.
+
+#### 4.7.6 Plano estatistico
+
+Para cada combinacao `protocolo x cenario`, sao realizadas repeticoes independentes (alvo minimo: 30 execucoes por configuracao) para sustentar inferencia estatistica.
+
+O plano de analise segue as etapas:
+
+`1) Estatistica descritiva`
+
+- media, mediana, desvio padrao, minimo, maximo e `IC95%` por metrica.
+
+`2) Verificacao de pressupostos`
+
+- normalidade: teste de Shapiro-Wilk;
+- homogeneidade de variancias: teste de Levene (quando aplicavel).
+
+`3) Testes de hipotese`
+
+- se distribuicao aproximadamente normal: teste t de Welch;
+- caso contrario: teste de Mann-Whitney;
+- nivel de significancia: `alpha = 0.05`.
+
+`4) Correcao para multiplas comparacoes`
+
+- aplicar procedimento de Holm-Bonferroni quando houver baterias de testes por cenario/metrica.
+
+`5) Tamanho de efeito`
+
+- dados parametricos: `Cohen's d`;
+- dados nao parametricos: `Cliff's delta`.
+
+`6) Criterio de decisao`
+
+- rejeitar `H0` quando `p < alpha` apos correcao;
+- interpretar em conjunto com tamanho de efeito e intervalo de confianca, evitando conclusao baseada apenas em `p-value`.
+
+#### 4.7.7 Ameacas a validade e mitigacoes
+
+`Validade interna`:
+
+- risco: interferencia de RF nao controlada;
+- mitigacao: repeticoes, randomizacao da ordem de execucao e registro de eventos de degradacao.
+
+`Validade de construto`:
+
+- risco: metrica operacional nao refletir exatamente o conceito teorico;
+- mitigacao: definicoes operacionais explicitas, rastreabilidade por log e publicacao das formulas.
+
+`Validade externa`:
+
+- risco: resultados de bancada nao generalizarem para todos os ambientes;
+- mitigacao: uso de multiplas topologias e cenario com falha induzida, com delimitacao explicita do escopo.
+
+`Validade de conclusao estatistica`:
+
+- risco: baixo poder estatistico ou violacao de pressupostos;
+- mitigacao: numero minimo de repeticoes, testes apropriados por distribuicao, correcao de multiplas comparacoes e reporte de tamanho de efeito.

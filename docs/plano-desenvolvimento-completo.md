@@ -11,6 +11,14 @@ Ele serve como:
 - guia de experimentacao
 - trilha de escrita do trabalho final
 
+## Material visual para escrita do TCC
+
+- fluxos consolidados (Mermaid): [fluxos-tcc-aodv-en.md](./fluxos-tcc-aodv-en.md)
+- uso recomendado:
+- capitulo de metodologia: `F1`, `F3`, `F4`, `F8`
+- capitulo de implementacao: `F2`, `F5`, `F6`, `F7`
+- capitulo de resultados/discussao: `F4`, `F8`, `F9`
+
 ## Legenda de status
 
 - `CONCLUIDO`
