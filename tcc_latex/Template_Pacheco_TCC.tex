@@ -1,0 +1,105 @@
+\documentclass[a4paper,12pt,twoside]{book}
+% --- pacotes (os seus) ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{multirow}
+\usepackage[brazilian]{babel}
+\geometry{left=3cm, right=2cm, top=3cm, bottom=2cm}
+\usepackage[alf]{abntex2cite}
+\usepackage{advdate}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{placeins}
+\usepackage{tabularx}
+\usepackage{newfloat}
+\usepackage{caption}
+\usepackage{graphics}\graphicspath{{./figuras/}}
+
+% --- compatibilidade com a saida do pandoc (capitulos convertidos) ---
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{calc}
+\providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\providecommand{\pandocbounded}[1]{#1}
+\providecommand{\real}[1]{#1}
+\makeatletter
+\@ifundefined{c@none}{\newcounter{none}}{}
+\makeatother
+\providecommand{\V}[1]{\v{#1}}
+\DeclareUnicodeCharacter{03B1}{\ensuremath{\alpha}}
+\DeclareUnicodeCharacter{03B2}{\ensuremath{\beta}}
+\DeclareUnicodeCharacter{03A3}{\ensuremath{\Sigma}}
+\DeclareUnicodeCharacter{0394}{\ensuremath{\Delta}}
+\DeclareUnicodeCharacter{00D7}{\ensuremath{\times}}
+\DeclareUnicodeCharacter{00B1}{\ensuremath{\pm}}
+\DeclareUnicodeCharacter{2212}{\ensuremath{-}}
+\DeclareUnicodeCharacter{2192}{\ensuremath{\rightarrow}}
+\DeclareUnicodeCharacter{2194}{\ensuremath{\leftrightarrow}}
+\DeclareUnicodeCharacter{2022}{\textbullet}
+\setkeys{Gin}{width=0.85\textwidth,keepaspectratio}
+
+\onehalfspacing
+
+% evitar páginas em branco entre capítulos / seções
+\let\cleardoublepage\clearpage
+
+\begin{document}
+
+% título
+\input{./documentos/title_page.tex}
+\clearpage
+\thispagestyle{empty}
+
+% pré-textuais
+\frontmatter
+\pagenumbering{roman}
+\setcounter{page}{1} % ajuste conforme sua numeração em romano
+
+\input{./documentos/informacoes.tex}
+\input{./documentos/ficha_catalografica.tex}
+
+\input{./documentos/termo_autorizacao.tex}
+\clearpage
+\input{./documentos/declaracao_distribuicao.tex}
+\input{./documentos/ata_defesa.tex}
+\input{./documentos/agradecimentos.tex}
+\input{./documentos/resumo.tex}
+\clearpage
+\input{./documentos/abstract.tex}
+
+\tableofcontents
+\listoffigures
+\listoftables
+
+% textos
+\mainmatter
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\include{./documentos/capitulo_1.tex}
+\include{./documentos/capitulo_2.tex}
+\include{./documentos/capitulo_3.tex}
+\include{./documentos/capitulo_4.tex}
+\include{./documentos/capitulo_5.tex}
+\include{./documentos/capitulo_6.tex}
+
+% bibliografia
+\renewcommand{\bibname}{Referências}
+\addcontentsline{toc}{chapter}{REFERÊNCIAS}
+\bibliographystyle{abntex2-alf}
+\bibliography{referencias}
+
+
+\end{document}
