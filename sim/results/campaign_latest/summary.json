@@ -1,0 +1,104 @@
+{
+  "generated_at_utc": "2026-04-26T14:35:22.066918+00:00",
+  "rows_total": 128,
+  "best_profile": "hop_only",
+  "profiles": {
+    "hop_only": {
+      "runs": 32,
+      "pdr_avg": 0.424375,
+      "latency_avg_ms": 216.04,
+      "nrl_avg": 21.68190215625,
+      "nrl_control_avg": 10.15589078125,
+      "energy_avg_mj": 1543.05,
+      "offered_avg": 100.0,
+      "delivered_avg": 42.4375,
+      "tx_total_avg": 688.3125,
+      "tx_control_avg": 280.5625
+    },
+    "hybrid_default": {
+      "runs": 32,
+      "pdr_avg": 0.404375,
+      "latency_avg_ms": 232.889125,
+      "nrl_avg": 22.79520234375,
+      "nrl_control_avg": 10.481766562499999,
+      "energy_avg_mj": 1729.725,
+      "offered_avg": 100.0,
+      "delivered_avg": 40.4375,
+      "tx_total_avg": 756.1875,
+      "tx_control_avg": 330.09375
+    },
+    "hybrid_rssi_bias": {
+      "runs": 32,
+      "pdr_avg": 0.3971875,
+      "latency_avg_ms": 197.6318125,
+      "nrl_avg": 25.07974290625,
+      "nrl_control_avg": 12.36357321875,
+      "energy_avg_mj": 1721.9625,
+      "offered_avg": 100.0,
+      "delivered_avg": 39.71875,
+      "tx_total_avg": 753.59375,
+      "tx_control_avg": 333.5625
+    }
+  },
+  "scenario_comparison_best_profile_vs_flooding": [
+    {
+      "scenario": "linear_stable",
+      "aodv_profile": "hop_only",
+      "aodv_pdr": 0.205,
+      "flooding_pdr": 0.14875,
+      "aodv_latency_ms": 399.998,
+      "flooding_latency_ms": 1.0,
+      "aodv_nrl": 40.13137,
+      "flooding_nrl": 32.945971,
+      "aodv_energy_mj": 1454.5,
+      "flooding_energy_mj": 1141.85
+    },
+    {
+      "scenario": "partial_mesh_failure",
+      "aodv_profile": "hop_only",
+      "aodv_pdr": 0.41375,
+      "flooding_pdr": 0.92375,
+      "aodv_latency_ms": 144.408,
+      "flooding_latency_ms": 1.0,
+      "aodv_nrl": 20.022861,
+      "flooding_nrl": 10.239482,
+      "aodv_energy_mj": 1903.6,
+      "flooding_energy_mj": 3741.1
+    },
+    {
+      "scenario": "partial_mesh_stable",
+      "aodv_profile": "hop_only",
+      "aodv_pdr": 0.41125,
+      "flooding_pdr": 0.92625,
+      "aodv_latency_ms": 201.343,
+      "flooding_latency_ms": 1.0,
+      "aodv_nrl": 20.252983,
+      "flooding_nrl": 10.270195,
+      "aodv_energy_mj": 1946.45,
+      "flooding_energy_mj": 3790.15
+    },
+    {
+      "scenario": "tree_stable",
+      "aodv_profile": "hop_only",
+      "aodv_pdr": 0.6675,
+      "flooding_pdr": 0.50125,
+      "aodv_latency_ms": 118.411,
+      "flooding_latency_ms": 1.0,
+      "aodv_nrl": 6.320395,
+      "flooding_nrl": 14.186247,
+      "aodv_energy_mj": 867.65,
+      "flooding_energy_mj": 1737.5
+    }
+  ],
+  "average_deltas_aodv_minus_flooding": {
+    "pdr_delta_avg": -0.200625,
+    "latency_delta_ms_avg": 215.04,
+    "nrl_delta_avg": 4.771428499999999,
+    "energy_delta_mj_avg": -1059.6
+  },
+  "artifacts": {
+    "raw_csv": "/home/dioguin/Documentos/Projetos/aodv-en/sim/results/campaign_latest/campaign_raw.csv",
+    "agg_scenario_protocol_csv": "/home/dioguin/Documentos/Projetos/aodv-en/sim/results/campaign_latest/campaign_agg_scenario_protocol.csv",
+    "agg_profile_csv": "/home/dioguin/Documentos/Projetos/aodv-en/sim/results/campaign_latest/campaign_agg_profiles.csv"
+  }
+}

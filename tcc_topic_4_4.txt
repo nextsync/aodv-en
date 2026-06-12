@@ -1,0 +1,79 @@
+### 4.4. Detalhamento do Artefato e Mecanismos de Robustez (Hardening)
+
+A implementação do algoritmo AODV-EN não se limitou à transposição fiel da RFC 3561 para o ecossistema ESP32; ela exigiu um processo de endurecimento (hardening) focado na resiliência operacional. Esta seção detalha os quatro mecanismos críticos desenvolvidos para garantir a estabilidade da rede sob condições adversas de rádio e restrições severas de hardware.
+
+#### 4.4.1. Estabilização de Rota via Histerese Híbrida
+Em redes sem fio, a Intensidade do Sinal Recebido (RSSI) é uma métrica altamente volátil, sujeita a interferências multipath e desvanecimento rápido (fading). Em uma implementação básica de AODV, qualquer oscilação de sinal poderia disparar uma troca de rota (route flapping), gerando um overhead de processamento e transmissões de controle desnecessárias que consomem energia e largura de banda.
+
+Para mitigar esse comportamento, o AODV-EN implementa uma política de Histerese Híbrida na função de decisão `aodv_en_route_should_replace`. O algoritmo protege a rota ativa exigindo que um novo candidato a próximo salto (next-hop) não seja apenas "ligeiramente melhor", mas "substancialmente superior" em termos de frescor de dados ou qualidade de enlace.
+
+```mermaid
+sequenceDiagram
+    participant C as Candidato (RREP/HELLO)
+    participant N as Nó Local (Lógica de Decisão)
+    participant E as Rota Ativa (Existente)
+    
+    Note over N: Avalia viabilidade técnica
+    N->>N: Comparar Sequence Numbers
+    alt Seq do Candidato >> Seq Ativa (Ganho >= 2)
+        N->>E: Substituição Imediata (Informação mais fresca)
+    else Seq do Candidato == Seq Ativa
+        N->>N: Avaliar Histerese de Métrica
+        alt Ganho de Hops > 0 OU Melhora de RSSI > Limiar
+            N->>E: Substituição por Eficiência (Histerese Atendida)
+        else Melhoria Marginal
+            N-->>C: Descarte (Prioriza Estabilidade)
+        end
+    end
+```
+
+Os limiares de decisão são parametrizáveis, permitindo que a rede seja ajustada para ser mais conservadora (estável) ou agressiva (otimizada para o caminho mais curto).
+
+#### 4.4.2. Gerenciamento de Precursores e Propagação Seletiva de Erro (RERR)
+O protocolo ESP-NOW opera de forma connectionless, o que significa que um nó não possui ciência imediata se um vizinho intermediário em uma cadeia multi-hop deixou de operar. Sem um mecanismo de feedback, pacotes de dados seriam continuamente enviados para "buracos negros" na topologia, resultando em perda total de PDR (Packet Delivery Ratio).
+
+O AODV-EN resolve esta lacuna através da manutenção de uma Lista de Precursores para cada destino (conforme RFC 3561, Seção 6.2). Ao encaminhar um pacote de dados ou um RREP, o nó local registra o vizinho de origem como um interessado naquela rota. Caso ocorra uma falha física de transmissão (detectada pelo feedback do driver ESP-NOW), o nó não apenas invalida a rota, mas assume o papel de emissor de erro.
+
+```mermaid
+sequenceDiagram
+    participant P as Precursor (Nó Upstream)
+    participant L as Nó Local (Detecta Falha)
+    participant D as Destino (Link Quebrado)
+    
+    Note over L,D: Falha persistente de transmissão (Unicast)
+    L->>L: Invalida rota para Destino
+    L->>L: Varre lista de precursores
+    loop Para cada Precursor
+        L->>P: Envia RERR (Unicast Direto)
+        Note over P: Invalida rota local e propaga erro
+    end
+    Note over P: Origem inicia nova descoberta (RREQ)
+```
+
+O uso de Unicast para precursores, em vez de Broadcast genérico para erro, é uma otimização vital para o ESP-NOW, pois reduz a colisão no meio físico e garante que apenas os nós afetados pela quebra de caminho gastem recursos processando o erro.
+
+#### 4.4.3. Mitigação de Loops de Controle e Recursão Infinita
+Durante os testes de estresse em larga escala (simulações com 1000 nós), identificou-se que o plano de controle do AODV-EN poderia entrar em um estado de colapso recursivo. Se o envio de uma mensagem RERR falhasse (devido à saturação do canal), o sistema tentava gerar um novo RERR para reportar a falha do envio do primeiro, criando um loop infinito de eventos que exauria a pilha de memória (Stack Overflow).
+
+A solução implementada introduz um filtro de integridade no processamento de erros. O mecanismo garante que um evento de falha de link nunca notifique o próprio "próximo salto" que originou a falha (`broken_next_hop`).
+
+```mermaid
+graph TD
+    A[Evento: Falha de Link detectada] --> B{Identificar Vizinho Alvo}
+    B --> C{Vizinho == Responsável pela Quebra?}
+    C -- Sim --> D[Bloqueia Propagação (Filtro de Recursão)]
+    C -- Não --> E{Vizinho é Precursor?}
+    E -- Sim --> F[Envia RERR Unicast]
+    E -- Não --> G[Fallback: Broadcast Controlado]
+    D --> H[Sistema Estabilizado]
+    F --> H
+    G --> H
+    style D fill:#f96,stroke:#333,stroke-width:2px
+```
+
+Este "endurecimento" algorítmico permite que o AODV-EN opere de forma determinística mesmo sob condições severas de interferência ou saturação de rede, impedindo que o plano de controle se torne uma ameaça à integridade do nó.
+
+#### 4.4.4. Virtualização de Vizinhos via Política LRU (Least Recently Used)
+Uma restrição intransponível do hardware ESP32 é o limite de pares (peers) que o rádio ESP-NOW pode manter em sua tabela de hardware (máximo de 20 dispositivos com criptografia). Em redes de grande escala, como o cenário de iluminação pública simulado neste trabalho, um nó pode facilmente ouvir centenas de vizinhos durante uma fase de descoberta.
+
+O AODV-EN supera esta barreira física através de uma camada de gestão dinâmica de pares baseada na política LRU. A estrutura de dados do protocolo desvincula os "vizinhos lógicos" (tabela do protocolo) dos "vizinhos físicos" (tabela do rádio). Quando um novo vizinho precisa ser contatado e a tabela de hardware está saturada, o sistema identifica automaticamente o par com o maior tempo de inatividade e realiza a substituição transparente. Esta técnica permite que o protótipo execute roteamento multi-hop em malhas com número de nós ordens de grandeza superior à capacidade nativa do chip.
