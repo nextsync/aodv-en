@@ -2,8 +2,9 @@
 
 ## Status
 
-- estado atual: PLANEJADA
+- estado atual: `PLANEJADA_PARA_V2`
 - implementacao em codigo: NAO
+- decisao explicita em [aodv-en-spec-v1.md](../aodv-en-spec-v1.md): fora do escopo de v1
 - objetivo deste arquivo: registrar decisao tecnica, escopo e criterios de aceite antes da implementacao
 
 ## Contexto

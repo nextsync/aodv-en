@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AODV-EN | Live Mesh Monitor</title>
+    <link rel="stylesheet" href="/static/app.css" />
+    <script src="https://unpkg.com/cytoscape@3.30.2/dist/cytoscape.min.js"></script>
+</head>
+<body>
+    <header class="topbar">
+        <div class="brand">
+            <span class="brand-dot"></span>
+            <span class="brand-text">AODV-EN <span class="brand-sub">live mesh monitor</span></span>
+        </div>
+        <div class="connection" id="connection">
+            <span class="dot dot-pending"></span>
+            <span class="conn-text">conectando...</span>
+        </div>
+    </header>
+
+    <main class="layout">
+        <section class="graph-card">
+            <div class="graph-header">
+                <h2>Topologia da malha</h2>
+                <div class="graph-controls">
+                    <button id="btn-relayout" class="btn-ghost" title="Reorganizar">↻ relayout</button>
+                    <button id="btn-fit" class="btn-ghost" title="Centralizar">⤢ fit</button>
+                </div>
+            </div>
+            <div id="cy" class="cy"></div>
+            <div class="legend">
+                <span class="lg lg-online"></span>online
+                <span class="lg lg-offline"></span>offline
+                <span class="lg lg-edge-valid"></span>rota valida
+                <span class="lg lg-edge-reverse"></span>rota reversa
+                <span class="lg lg-edge-invalid"></span>invalida
+            </div>
+        </section>
+
+        <aside class="sidebar">
+            <section class="card">
+                <h2 class="card-title">Resumo da malha</h2>
+                <div class="metrics-grid">
+                    <div class="metric">
+                        <div class="metric-label">Nos online</div>
+                        <div class="metric-value" id="m-online">0</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Nos conhecidos</div>
+                        <div class="metric-value" id="m-known">0</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Hops max</div>
+                        <div class="metric-value" id="m-hops">—</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Rotas validas</div>
+                        <div class="metric-value" id="m-routes">—</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">DATA entregue</div>
+                        <div class="metric-value" id="m-delivered">0</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">ACK recebido</div>
+                        <div class="metric-value" id="m-ack">0</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card">
+                <h2 class="card-title">Nos</h2>
+                <div id="nodes-list" class="nodes-list">
+                    <div class="empty">Nenhum no detectado ainda.</div>
+                </div>
+            </section>
+
+            <section class="card">
+                <h2 class="card-title">Eventos recentes</h2>
+                <div id="events-list" class="events-list">
+                    <div class="empty">Sem eventos.</div>
+                </div>
+            </section>
+
+            <section class="card alert-card hidden" id="alert-card">
+                <div class="alert-icon">!</div>
+                <div class="alert-body">
+                    <div class="alert-title" id="alert-title">Atencao</div>
+                    <div class="alert-msg" id="alert-msg">—</div>
+                </div>
+            </section>
+
+            <section class="card footer-card">
+                <span class="footer-label">AODV-EN · TCC IFG Inhumas</span>
+            </section>
+        </aside>
+    </main>
+
+    <div id="node-tooltip" class="node-tooltip hidden"></div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

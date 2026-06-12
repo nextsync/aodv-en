@@ -8,6 +8,7 @@
 
 #include "app_demo.h"
 #include "aodv_en.h"
+#include "driver/gpio.h"
 #include "esp_event.h"
 #include "esp_log.h"
 #include "esp_mac.h"
@@ -19,6 +20,13 @@
 #include "freertos/queue.h"
 #include "freertos/task.h"
 #include "nvs_flash.h"
+
+// LED onboard usado para identificar visualmente o NODE de origem (ENABLE_DATA=y)
+// e dar feedback de DATA recebido em qualquer no.
+// GPIO 2 e o LED azul nas placas DevKit v1 e similares.
+#define APP_BLINK_LED_GPIO       GPIO_NUM_2
+#define APP_BLINK_PERIOD_MS      500
+#define APP_DELIVER_PULSE_MS     150  // pulse curto no LED quando recebe DATA
 
 #define APP_RX_QUEUE_LEN 8
 #define APP_TX_RESULT_QUEUE_LEN 16
@@ -204,6 +212,29 @@ static aodv_en_status_t app_emit_frame(
     return AODV_EN_OK;
 }
 
+static void app_led_pulse_task(void *arg)
+{
+    (void)arg;
+    // Garantir que o GPIO ja foi configurado (caso nao tenha vindo do blink_task).
+    static bool gpio_ready = false;
+    if (!gpio_ready)
+    {
+        gpio_config_t cfg = {
+            .pin_bit_mask = 1ULL << APP_BLINK_LED_GPIO,
+            .mode = GPIO_MODE_OUTPUT,
+            .pull_up_en = GPIO_PULLUP_DISABLE,
+            .pull_down_en = GPIO_PULLDOWN_DISABLE,
+            .intr_type = GPIO_INTR_DISABLE,
+        };
+        gpio_config(&cfg);
+        gpio_ready = true;
+    }
+    gpio_set_level(APP_BLINK_LED_GPIO, 1);
+    vTaskDelay(pdMS_TO_TICKS(APP_DELIVER_PULSE_MS));
+    gpio_set_level(APP_BLINK_LED_GPIO, 0);
+    vTaskDelete(NULL);
+}
+
 static void app_deliver_data(
     void *user_ctx,
     const uint8_t originator_mac[AODV_EN_MAC_ADDR_LEN],
@@ -215,18 +246,27 @@ static void app_deliver_data(
     (void)user_ctx;
     app_format_mac(originator_mac, mac_text, sizeof(mac_text));
     ESP_LOGI(TAG, "DATA deliver from %s: %.*s", mac_text, payload_len, (const char *)payload);
+
+    // Pulse curto no LED para feedback visual no destino
+    // (independente de o no ser origem ou nao).
+    xTaskCreate(app_led_pulse_task, "led_pulse", 1024, NULL, 1, NULL);
 }
 
 static void app_ack_received(
     void *user_ctx,
     const uint8_t ack_sender_mac[AODV_EN_MAC_ADDR_LEN],
-    uint32_t sequence_number)
+    uint32_t sequence_number,
+    uint32_t rtt_ms)
 {
     char mac_text[18];
 
     (void)user_ctx;
     app_format_mac(ack_sender_mac, mac_text, sizeof(mac_text));
     ESP_LOGI(TAG, "ACK received from %s for seq=%" PRIu32, mac_text, sequence_number);
+    if (rtt_ms != AODV_EN_RTT_UNKNOWN)
+    {
+        ESP_LOGI(TAG, "LAT seq=%" PRIu32 " rtt_ms=%" PRIu32, sequence_number, rtt_ms);
+    }
 }
 
 static void app_send_cb(const esp_now_send_info_t *tx_info, esp_now_send_status_t status)
@@ -300,12 +340,14 @@ static void app_log_routes(const aodv_en_stack_t *stack)
         return;
     }
 
-    ESP_LOGI(TAG, "routes=%u neighbors=%u tx=%" PRIu32 " rx=%" PRIu32 " delivered=%" PRIu32,
+    ESP_LOGI(TAG, "routes=%u neighbors=%u tx=%" PRIu32 " rx=%" PRIu32 " delivered=%" PRIu32 " control=%" PRIu32 " acks=%" PRIu32,
              overview.routes_count,
              overview.neighbors_count,
              overview.stats.tx_frames,
              overview.stats.rx_frames,
-             overview.stats.delivered_frames);
+             overview.stats.delivered_frames,
+             overview.stats.control_tx_frames,
+             overview.stats.ack_received);
 
     route_count = aodv_en_stack_get_route_count(stack);
     for (size_t index = 0; index < route_count; index++)
@@ -464,6 +506,26 @@ static void app_init_wifi(uint8_t channel)
     ESP_ERROR_CHECK(esp_wifi_set_channel(channel, WIFI_SECOND_CHAN_NONE));
 }
 
+static void app_blink_task(void *arg)
+{
+    (void)arg;
+    gpio_config_t cfg = {
+        .pin_bit_mask = 1ULL << APP_BLINK_LED_GPIO,
+        .mode = GPIO_MODE_OUTPUT,
+        .pull_up_en = GPIO_PULLUP_DISABLE,
+        .pull_down_en = GPIO_PULLDOWN_DISABLE,
+        .intr_type = GPIO_INTR_DISABLE,
+    };
+    gpio_config(&cfg);
+    bool level = false;
+    for (;;)
+    {
+        level = !level;
+        gpio_set_level(APP_BLINK_LED_GPIO, level);
+        vTaskDelay(pdMS_TO_TICKS(APP_BLINK_PERIOD_MS));
+    }
+}
+
 static void app_init_espnow(uint8_t channel)
 {
     uint32_t version = 0;
@@ -552,4 +614,12 @@ void app_demo_run(void)
     }
 
     xTaskCreate(app_protocol_task, "aodv_en_task", 8192, &g_app, 5, NULL);
+
+    // Pisca LED onboard apenas quando este no e a origem (envia DATA periodico).
+    // Util para identificar fisicamente o NODE_A entre varios ESPs na bancada.
+    if (g_app.has_target)
+    {
+        ESP_LOGI(TAG, "blink LED on GPIO%d (origem da malha)", APP_BLINK_LED_GPIO);
+        xTaskCreate(app_blink_task, "blink", 1024, NULL, 1, NULL);
+    }
 }
