@@ -1,5 +1,11 @@
 # Feature: Pending DATA Queue
 
+## Estado
+
+- estado: `INTEGRADO_NA_V1`
+- alinhado com [aodv-en-spec-v1.md](../aodv-en-spec-v1.md), secao "Fila de DATA pendente"
+- ultima revisao: 2026-05-01
+
 ## Objetivo
 
 Evitar perda imediata de DATA quando a rota para o destino ainda nao existe no momento do envio.
