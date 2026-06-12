@@ -16,8 +16,8 @@ multi-hop sobre o ESP-NOW por meio de uma adaptação fiel do AODV, contornando 
 ausência de roteamento nativo, o limite de \emph{peers} e as restrições de difusão do
 protocolo. Em relação aos objetivos específicos, foram analisadas as limitações
 técnicas do ESP-NOW (Capítulo 2), projetadas e implementadas as adaptações necessárias
-(Capítulos 4 e 5), e avaliado o desempenho do algoritmo frente a um algoritmo de
-referência baseado em \emph{flooding} (Capítulo 6).
+(Capítulo 4), e avaliado o desempenho do algoritmo frente a um algoritmo de
+referência baseado em \emph{flooding} (Capítulo 5).
 
 A avaliação experimental, conduzida no cenário reduzido C1-3n com seis repetições por
 algoritmo, indicou confiabilidade equivalente entre as abordagens (PDR de 98,93\% para
@@ -46,12 +46,14 @@ Como limitações, destacam-se a amostragem reduzida (seis repetições em um ú
 aquém das trinta repetições e dos cenários C2 a C4 planejados), a topologia de
 concentrador com aproximadamente um salto, a quantização da latência pelo laço da
 aplicação e o caráter estimado do consumo energético. As adaptações de gerenciamento de
-\emph{peers} por política LRU e de métrica híbrida (saltos combinados com RSSI),
-embora projetadas, permanecem como trabalho futuro de implementação.
+\emph{peers} por política LRU e de métrica híbrida (saltos combinados com RSSI)
+foram projetadas e implementadas no firmware (Capítulo 4); contudo, a campanha
+experimental utilizou exclusivamente o núcleo reativo com métrica de contagem de
+saltos, de modo que a avaliação comparativa dessas extensões constitui trabalho futuro.
 
 Como desdobramentos, propõem-se: a ampliação do número de repetições e a cobertura dos
 demais cenários experimentais; a separação física dos nós para exercitar múltiplos
 saltos reais; a medição física de energia com instrumentação dedicada; e a
-implementação efetiva da política LRU de \emph{peers} e da métrica híbrida de
-roteamento. Tais extensões consolidariam o AODV-EN como uma alternativa padronizada,
+avaliação experimental da política LRU de \emph{peers} e da métrica híbrida de
+roteamento em cenários multi-hop reais. Tais extensões consolidariam o AODV-EN como uma alternativa padronizada,
 de baixo custo e eficiente em energia para redes mesh sobre ESP-NOW.

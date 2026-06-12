@@ -38,13 +38,11 @@ influenciam diretamente a viabilidade e eficácia das aplicações. O
 Quadro 1 sintetiza os principais requisitos e suas implicações para o
 projeto de redes de sensores.
 
-\textbf{Quadro 1 -- Requisitos críticos para projeto de Redes de
-Sensores Sem Fio}
-
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}
   >{\centering\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
   >{\centering\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\caption{Requisitos críticos para projeto de Redes de Sensores Sem Fio}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\centering
 Requisito
@@ -103,10 +101,9 @@ analógico-digitais (ADC), conversores digital-analógicos (DAC),
 interfaces SPI, I²C, I²S, UART, PWM, sensores de toque capacitivo e
 sensor de efeito Hall.
 
-\textbf{Quadro 2 -- Especificações técnicas do microcontrolador ESP32}
-
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}cl@{}}
+\caption{Especificações técnicas do microcontrolador ESP32}\\
 \toprule\noalign{}
 Característica & Especificação \\
 \midrule\noalign{}
@@ -133,13 +130,12 @@ energético. O Quadro 3 apresenta os modos de energia disponíveis e seus
 respectivos consumos típicos, conforme especificado no \emph{datasheet}
 do fabricante.
 
-\textbf{Quadro 3 -- Modos de operação e consumo energético do ESP32}
-
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\caption{Modos de operação e consumo energético do ESP32}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Modo de Operação
@@ -202,12 +198,11 @@ no modo CCMP, permitindo comunicação segura quando necessário. A
 identificação dos dispositivos é realizada através de seus endereços MAC
 de 6 bytes.
 
-\textbf{Quadro 4 -- Características técnicas do protocolo ESP-NOW}
-
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}
   >{\centering\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
   >{\centering\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\caption{Características técnicas do protocolo ESP-NOW}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\centering
 Parâmetro
@@ -227,8 +222,7 @@ Mecanismo de acesso ao meio & CSMA p-persistent (slot \textasciitilde481
 µs) \\
 Retransmissões automáticas & Até 31 tentativas por pacote \\
 Criptografia & AES-128 CCMP (opcional) \\
-Número máximo de peers & 20 peers (com criptografia) / 10 peers (sem
-criptografia) \\
+Número máximo de peers & 20 peers no total, dos quais até 6 com criptografia habilitada \cite{espressif2024} \\
 \end{longtable}
 }
 
@@ -265,12 +259,12 @@ multi-hop. O protocolo foi concebido exclusivamente para comunicações
 ponto-a-ponto ou em topologia estrela, não oferecendo mecanismos para
 encaminhamento de pacotes através de nós intermediários
 \cite{becker2025}. A segunda limitação refere-se ao número máximo de
-\emph{peers} simultâneos, cada dispositivo ESP32 pode manter no máximo
-20 \emph{peers} registrados em sua tabela de pares quando utilizada
-criptografia, ou 10 \emph{peers} sem criptografia. Essa restrição,
-imposta por limitações de memória do hardware, impede a escalabilidade
-direta da rede e exige estratégias de gerenciamento dinâmico de
-\emph{peers} para contorná-la. A terceira limitação relaciona-se à
+\emph{peers} simultâneos: cada dispositivo ESP32 suporta no máximo
+20 \emph{peers} registrados na tabela de pares, sendo que apenas 6
+desses podem ter criptografia AES-128 habilitada individualmente
+\cite{espressif2024}. Essa restrição, imposta por limitações de memória
+do hardware, impede a escalabilidade direta da rede e exige estratégias
+de gerenciamento dinâmico de \emph{peers} para contorná-la. A terceira limitação relaciona-se à
 ausência de mecanismo de \emph{broadcast} nativo eficiente. Embora seja
 possível enviar mensagens para o endereço de \emph{broadcast}
 (FF:FF:FF:FF:FF:FF), essa abordagem não oferece confirmação de entrega e
@@ -340,15 +334,13 @@ dentro de zonas locais e roteamento reativo para comunicação entre
 zonas. Essa estratégia busca balancear as vantagens de ambas as
 abordagens, mas introduz complexidade adicional na implementação.
 
-\textbf{Quadro 5 -- Comparativo entre categorias de protocolos de
-roteamento ad-hoc}
-
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\caption{Comparativo entre categorias de protocolos de roteamento ad-hoc}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Característica
@@ -490,10 +482,9 @@ que influenciam o comportamento e desempenho do protocolo. O Quadro 6
 apresenta os principais parâmetros e seus valores padrão, que podem ser
 ajustados conforme as características específicas da rede.
 
-\textbf{Quadro 6 -- Parâmetros de configuração do AODV (RFC 3561)}
-
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}lll@{}}
+\caption{Parâmetros de configuração do AODV (RFC 3561)}\\
 \toprule\noalign{}
 Parâmetro & Valor Padrão & Descrição \\
 \midrule\noalign{}
@@ -514,94 +505,3 @@ TTL\_THRESHOLD & 7 & TTL máximo antes de usar NET\_DIAMETER \\
 }
 
 Fonte: RFC 3561 \cite{perkins2003}.
-
-\section{Considerações para o Projeto do
-AODV-EN}\label{considerauxe7uxf5es-para-o-projeto-do-aodv-en}
-
-A adaptação do protocolo AODV para operação sobre ESP-NOW (AODV-EN)
-requer a consideração de três aspectos fundamentais: gerenciamento do
-limite de \emph{peers}, substituição do mecanismo de \emph{broadcast} e
-definição de métrica de roteamento adequada.
-
-\subsection{Gerenciamento de peers com política
-LRU}\label{gerenciamento-de-peers-com-poluxedtica-lru}
-
-O limite de 20 \emph{peers} simultâneos imposto pelo ESP-NOW exige uma
-estratégia de gerenciamento dinâmico para permitir a comunicação com um
-número potencialmente maior de nós ao longo do tempo. A política LRU
-(\emph{Least Recently Used}) é proposta como mecanismo de substituição:
-quando a tabela de \emph{peers} está cheia e uma nova comunicação é
-necessária, o \emph{peer} menos recentemente utilizado é removido para
-dar lugar ao novo. Essa abordagem baseia-se no princípio de localidade
-temporal: nós comunicados recentemente têm maior probabilidade de serem
-comunicados novamente.
-
-\subsection{Flooding controlado sobre broadcast de
-enlace}\label{flooding-controlado-sobre-broadcast-de-enlace}
-
-A disseminação de mensagens RREQ no AODV original utiliza
-\emph{broadcast} IP. Embora o ESP-NOW não ofereça confirmação de entrega
-para quadros de \emph{broadcast}, ele permite enviar para o endereço de
-\emph{broadcast} de enlace (FF:FF:FF:FF:FF:FF), o que reproduz fielmente
-a semântica de difusão do AODV: cada nó retransmite uma única vez cada
-RREQ novo, com supressão de duplicatas por par (originador,
-identificador) e limite de propagação por TTL.
-
-Considerou-se, em uma etapa intermediária do projeto, substituir essa
-difusão por \emph{flooding} controlado via transmissões unicast
-sequenciais para cada vizinho conhecido, aproveitando a confirmação de
-enlace do unicast ESP-NOW. Essa alternativa foi, contudo, descartada
-após avaliação experimental: o unicast ESP-NOW carrega um mecanismo de
-retransmissão automática em nível de MAC (confirmação CTS-ACK, com até
-várias retransmissões por quadro) que o \emph{broadcast} não possui.
-Esse mecanismo descaracteriza a comparação com o algoritmo de referência
-baseado em \emph{flooding} --- inflando artificialmente a confiabilidade
-medida --- e exige a manutenção de uma tabela de vizinhos para o
-\emph{fanout}, afastando-se da definição canônica de \emph{flooding}
-presente na literatura \cite{ni1999} e da própria RFC 3561. Optou-se,
-portanto, pela disseminação por \emph{broadcast} de enlace, tanto para o
-RREQ do AODV-EN quanto para o algoritmo de referência, garantindo
-simetria metodológica na avaliação.
-
-\subsection{Métrica híbrida de
-roteamento}\label{muxe9trica-huxedbrida-de-roteamento}
-
-O protocolo AODV original utiliza a contagem de saltos (\emph{hop
-count}) como métrica única de roteamento, priorizando rotas com menor
-distância lógica. No entanto, essa abordagem desconsidera aspectos
-relacionados à qualidade dos enlaces sem fio, os quais são
-particularmente relevantes em redes ad-hoc e sensores.
-
-Nesse contexto, diferentes trabalhos propõem o uso de métricas híbridas
-que combinam informações topológicas e indicadores de qualidade de
-enlace, como a intensidade do sinal recebido (\emph{Received Signal
-Strength Indicator}--RSSI). Considerando essa perspectiva, o AODV-EN
-fundamenta-se em uma métrica composta que integra o número de saltos e a
-qualidade média dos enlaces ao longo da rota, podendo ser expressa por:
-
-\textbf{\emph{Custo(rota) = α × HopCount + β × (1 / RSSI\_médio)}}
-
-Onde α e β são pesos configuráveis que permitem balancear a importância
-relativa da distância lógica (número de saltos) e da qualidade dos
-enlaces. Essa abordagem possibilita a seleção de rotas que otimizem
-simultaneamente o comprimento do caminho e a confiabilidade esperada das
-transmissões.
-
-\subsection{Estimativa de consumo
-energético}\label{estimativa-de-consumo-energuxe9tico}
-
-A avaliação do consumo energético em algoritmos de roteamento para redes
-de sensores sem fio é comumente realizada a partir de modelos analíticos
-baseados no perfil de consumo dos dispositivos empregados. De modo
-geral, a energia consumida durante a transmissão de um pacote pode ser
-expressa como o produto entre a potência de transmissão e o tempo de
-envio, conforme:
-
-\textbf{\emph{E\_tx = P\_tx × t\_tx = (V × I\_tx) × t\_tx}}
-
-Onde que \emph{E\_tx} representa a energia consumida por transmissão,
-\emph{P\_tx} a potência elétrica durante o envio, \emph{V} a tensão de
-operação e \emph{I\_tx} a corrente elétrica associada ao modo de
-transmissão. Esses modelos permitem estimar o impacto energético das
-comunicações e comparar diferentes protocolos ou estratégias de
-roteamento sob condições semelhantes de operação.

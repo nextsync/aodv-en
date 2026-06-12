@@ -1,0 +1,25 @@
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {quadro}{\numberline {2.1}{\ignorespaces Requisitos críticos para projeto de Redes de Sensores Sem Fio}}{6}{quadro.2.1}%
+\contentsline {quadro}{\numberline {2.2}{\ignorespaces Especificações técnicas do microcontrolador ESP32}}{7}{quadro.2.2}%
+\contentsline {quadro}{\numberline {2.3}{\ignorespaces Modos de operação e consumo energético do ESP32}}{7}{quadro.2.3}%
+\contentsline {quadro}{\numberline {2.3}{\ignorespaces Modos de operação e consumo energético do ESP32}}{8}{quadro.2.3}%
+\contentsline {quadro}{\numberline {2.4}{\ignorespaces Características técnicas do protocolo ESP-NOW}}{9}{quadro.2.4}%
+\contentsline {quadro}{\numberline {2.5}{\ignorespaces Comparativo entre categorias de protocolos de roteamento ad-hoc}}{11}{quadro.2.5}%
+\contentsline {quadro}{\numberline {2.5}{\ignorespaces Comparativo entre categorias de protocolos de roteamento ad-hoc}}{12}{quadro.2.5}%
+\contentsline {quadro}{\numberline {2.6}{\ignorespaces Parâmetros de configuração do AODV (RFC 3561)}}{14}{quadro.2.6}%
+\addvspace {10\p@ }
+\contentsline {quadro}{\numberline {3.1}{\ignorespaces Etapas do Design Science Research segundo \citeauthor {peffers2007} (\citeyear {peffers2007})}}{17}{quadro.3.1}%
+\contentsline {quadro}{\numberline {3.2}{\ignorespaces Mapeamento das fases do trabalho às etapas da DSR}}{19}{quadro.3.2}%
+\contentsline {quadro}{\numberline {3.2}{\ignorespaces Mapeamento das fases do trabalho às etapas da DSR}}{20}{quadro.3.2}%
+\contentsline {quadro}{\numberline {3.3}{\ignorespaces Configuração dos cenários experimentais}}{24}{quadro.3.3}%
+\contentsline {quadro}{\numberline {3.4}{\ignorespaces Parâmetros dos experimentos}}{25}{quadro.3.4}%
+\contentsline {quadro}{\numberline {3.5}{\ignorespaces Métricas de avaliação de desempenho}}{26}{quadro.3.5}%
+\addvspace {10\p@ }
+\contentsline {quadro}{\numberline {4.1}{\ignorespaces Estruturas de dados utilizadas no AODV-EN}}{33}{quadro.4.1}%
+\contentsline {quadro}{\numberline {4.1}{\ignorespaces Estruturas de dados utilizadas no AODV-EN}}{34}{quadro.4.1}%
+\contentsline {quadro}{\numberline {4.2}{\ignorespaces Mensagens utilizadas pelo AODV-EN}}{36}{quadro.4.2}%
+\contentsline {quadro}{\numberline {4.3}{\ignorespaces Principais adaptações do AODV para o contexto do ESP-NOW}}{41}{quadro.4.3}%
+\addvspace {10\p@ }
+\contentsline {quadro}{\numberline {5.1}{\ignorespaces Ledger de execuções em hardware (C1-3n, 6 seeds por algoritmo)}}{46}{quadro.5.1}%
+\addvspace {10\p@ }

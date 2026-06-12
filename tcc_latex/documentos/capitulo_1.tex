@@ -25,11 +25,11 @@ Bluetooth integradas, elevado poder de processamento e custo acessível.
 Características que o tornam ideal para prototipagem e implantação de
 soluções IoT em escala. A comunicação em redes IoT frequentemente
 enfrenta desafios relacionados à cobertura, escalabilidade e
-resiliência. Topologias centralizadas, como a estrela (A*), apresentam
+resiliência. Topologias centralizadas, como a estrela, apresentam
 limitações significativas: a dependência de um ponto de acesso único
 constitui um gargalo de desempenho e um ponto único de falha,
 comprometendo a robustez do sistema \cite{chaizeng2021}. Como
-alternativa, às Redes Mesh Sem Fio (\emph{Wireless Mesh Networks} --
+alternativa, as Redes Mesh Sem Fio (\emph{Wireless Mesh Networks} --
 WMNs) emergem como uma solução promissora, oferecendo características de
 auto-organização (\emph{self-configuration}), auto-recuperação
 (\emph{self-healing}) e comunicação ponto-a-ponto entre os nós
@@ -112,9 +112,9 @@ intermitente, e por sua ampla documentação e validação na literatura
 acadêmica, facilitando comparações e extensões futuras. As principais
 adaptações propostas para adequar o AODV às restrições do ESP-NOW
 incluem: (i) gerenciamento dinâmico de \emph{peers} utilizando política
-LRU (\emph{Least Recently Used}), permitindo que o algoritmo opere
-dentro do limite de 20 \emph{peers} simultâneos através da substituição
-inteligente de entradas menos utilizadas; (ii) disseminação das
+LRU (\emph{Least Recently Used}), com cache de 8 entradas simultâneas
+(configurável), permitindo que o protocolo alcance nós em número
+superior ao limite do cache ao longo do tempo; (ii) disseminação das
 mensagens RREQ (\emph{Route Request}) por \emph{flooding} controlado
 sobre \emph{broadcast} de enlace do ESP-NOW (FF:FF:FF:FF:FF:FF), com
 supressão de duplicatas por cache de identificadores e limite de

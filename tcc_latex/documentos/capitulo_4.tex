@@ -11,8 +11,11 @@ progressiva, partindo da visão geral da arquitetura até os mecanismos
 internos de descoberta de rotas, encaminhamento de dados, manutenção de
 rotas e tratamento de falhas. Ao final, são discutidas as principais
 adaptações realizadas em relação ao AODV original, considerando as
-restrições específicas do ESP-NOW. \#\# Visão Geral da Arquitetura do
-AODV-EN A arquitetura do AODV-EN foi concebida em camadas, de modo a
+restrições específicas do ESP-NOW.
+
+\section{Visão Geral da Arquitetura do AODV-EN}\label{visao-geral-da-arquitetura-do-aodv-en}
+
+A arquitetura do AODV-EN foi concebida em camadas, de modo a
 separar as responsabilidades entre aplicação, interface pública de
 integração, núcleo do protocolo, adaptador de transporte e meio de
 comunicação ESP-NOW. Essa separação reduz o acoplamento entre os
@@ -25,8 +28,42 @@ núcleo do protocolo, pelo adaptador de transporte e pelo meio de
 comunicação ESP-NOW.
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth,keepaspectratio]{figuras/image3.png}
-\caption{Figura 3 -- Arquitetura geral do AODV-EN}
+\resizebox{0.98\textwidth}{!}{%
+\begin{tikzpicture}[
+  font=\scriptsize,
+  lbox/.style={rectangle, draw=black!55, rounded corners=3pt, align=center,
+               inner sep=5pt, minimum height=1cm},
+  appbox/.style={lbox, fill=gray!12, draw=gray!50, text width=2.45cm},
+  intbox/.style={lbox, fill=blue!12, draw=blue!45, text width=2.65cm},
+  corebox/.style={lbox, fill=blue!8, draw=blue!45, text width=3.35cm},
+  diagbox/.style={lbox, fill=violet!10, draw=violet!45, text width=2.45cm},
+  hwbox/.style={lbox, fill=orange!14, draw=orange!50, text width=2.55cm},
+  arr/.style={->, >=Stealth, thick},
+  darr/.style={<->, >=Stealth, thick}
+]
+\node[appbox] (app) {Camada de\\Aplicação};
+\node[intbox, right=0.85cm of app] (iface) {Interface de\\Integração};
+\node[corebox, right=0.95cm of iface] (core)
+  {\textbf{Núcleo AODV-EN}\\[2pt]
+   Descoberta de rotas\\
+   Encaminhamento de dados\\
+   Manutenção e falhas};
+\node[diagbox, right=0.95cm of core] (diag)
+  {Diagnóstico\\[2pt]Logs e métricas\\Ferramentas de análise};
+\node[hwbox, below=1.15cm of iface, xshift=1.0cm] (adapt)
+  {Adaptador\\ESP-NOW};
+\node[hwbox, right=0.85cm of adapt] (radio)
+  {Rádio Wi-Fi\\ESP-NOW};
+
+\draw[arr] (app)--(iface);
+\draw[arr] (iface)--(core);
+\draw[arr] (core)--(diag);
+\draw[arr] (iface.south) to[out=-90,in=180] (adapt.west);
+\draw[arr] (core.south) to[out=-90,in=40] (adapt.north east);
+\draw[darr] (adapt)--(radio);
+\end{tikzpicture}
+}
+\caption{Arquitetura geral do AODV-EN}
 \end{figure}
 A camada de aplicação é responsável por acionar o envio de dados e
 registrar eventos de execução. A interface pública disponibiliza as
@@ -36,6 +73,139 @@ descoberta de rotas, manutenção de tabelas, tratamento de falhas e
 encaminhamento de pacotes. O adaptador ESP-NOW, por sua vez, encapsula
 os detalhes de transmissão e recepção na camada de enlace.
 
+\section{Decisões de Projeto do AODV-EN}\label{decisoes-de-projeto-do-aodv-en}
+
+A adaptação do protocolo AODV para operação sobre ESP-NOW requer
+decisões de projeto em três aspectos fundamentais: gerenciamento do
+limite de \emph{peers}, substituição do mecanismo de \emph{broadcast} e
+definição de métrica de roteamento adequada.
+
+\subsection{Gerenciamento de peers com política
+LRU}\label{gerenciamento-de-peers-com-poluxedtica-lru}
+
+O ESP-NOW suporta até 20 \emph{peers} registrados por dispositivo.
+A implementação do AODV-EN utiliza um cache de \emph{peers} com
+capacidade padrão de 8 entradas (parâmetro \texttt{AODV\_EN\_PEER\_CACHE\_SIZE},
+configurável em tempo de compilação), valor escolhido para reduzir
+o consumo de memória em módulos ESP32 com SRAM limitada. Quando o
+cache está cheio e uma nova comunicação é necessária, aplica-se a
+política LRU (\emph{Least Recently Used}): o \emph{peer} menos
+recentemente utilizado é removido para dar lugar ao novo. Essa abordagem
+baseia-se no princípio de localidade temporal --- nós comunicados
+recentemente têm maior probabilidade de serem comunicados novamente ---
+e permite que o protocolo opere com um número de nós maior que o limite
+simultâneo do cache ao longo do tempo.
+
+\subsection{Flooding controlado sobre broadcast de
+enlace}\label{flooding-controlado-sobre-broadcast-de-enlace}
+
+A disseminação de mensagens RREQ no AODV original utiliza
+\emph{broadcast} IP. Embora o ESP-NOW não ofereça confirmação de entrega
+para quadros de \emph{broadcast}, ele permite enviar para o endereço de
+\emph{broadcast} de enlace (FF:FF:FF:FF:FF:FF), o que reproduz fielmente
+a semântica de difusão do AODV: cada nó retransmite uma única vez cada
+RREQ novo, com supressão de duplicatas por par (originador,
+identificador) e limite de propagação por TTL.
+
+Considerou-se, em uma etapa intermediária do projeto, substituir essa
+difusão por \emph{flooding} controlado via transmissões unicast
+sequenciais para cada vizinho conhecido, aproveitando a confirmação de
+enlace do unicast ESP-NOW. Essa alternativa foi, contudo, descartada
+após avaliação experimental: o unicast ESP-NOW carrega um mecanismo de
+retransmissão automática em nível de MAC (confirmação CTS-ACK, com até
+várias retransmissões por quadro) que o \emph{broadcast} não possui.
+Esse mecanismo descaracteriza a comparação com o algoritmo de referência
+baseado em \emph{flooding} --- inflando artificialmente a confiabilidade
+medida --- e exige a manutenção de uma tabela de vizinhos para o
+\emph{fanout}, afastando-se da definição canônica de \emph{flooding}
+presente na literatura \cite{ni1999} e da própria RFC 3561. Optou-se,
+portanto, pela disseminação por \emph{broadcast} de enlace, tanto para o
+RREQ do AODV-EN quanto para o algoritmo de referência, garantindo
+simetria metodológica na avaliação.
+
+\subsection{Métrica híbrida de
+roteamento}\label{muxe9trica-huxedbrida-de-roteamento}
+
+O protocolo AODV original utiliza a contagem de saltos (\emph{hop
+count}) como métrica única de roteamento, priorizando rotas com menor
+distância lógica. No entanto, essa abordagem desconsidera aspectos
+relacionados à qualidade dos enlaces sem fio, os quais são
+particularmente relevantes em redes ad-hoc e sensores.
+
+Nesse contexto, diferentes trabalhos propõem o uso de métricas híbridas
+que combinam informações topológicas e indicadores de qualidade de
+enlace, como a intensidade do sinal recebido (\emph{Received Signal
+Strength Indicator}--RSSI). \citeonline{couto2003} demonstraram, por
+meio da métrica ETX (\emph{Expected Transmission Count}), que o número
+de saltos puro frequentemente seleciona rotas de baixa qualidade em
+redes 802.11 reais, motivando métricas compostas. \citeonline{draves2004}
+estenderam esse conceito com WCETT (\emph{Weighted Cumulative Expected
+Transmission Time}), normalizando a contribuição de qualidade de enlace
+para compatibilidade com métricas de distância. Considerando essa
+perspectiva, o AODV-EN fundamenta-se em uma métrica composta que integra
+o número de saltos e uma penalidade de qualidade de enlace, expressa pela
+Equação~\ref{eq:custo}:
+
+\begin{equation}\label{eq:custo}
+  \text{Custo}(\text{rota}) = \alpha \times \text{HopCount} + \beta \times \text{Penalidade}(\overline{\text{RSSI}})
+\end{equation}
+
+\noindent onde $\alpha$ e $\beta$ são pesos configuráveis (padrão: $\alpha = 8$, $\beta = 1$),
+\emph{HopCount} é o número de saltos até o destino e
+$\text{Penalidade}(\overline{\text{RSSI}})$ é uma função normalizada
+no intervalo $[0, 100]$ definida pela Equação~\ref{eq:penalidade}:
+
+\begin{equation}\label{eq:penalidade}
+  \text{Penalidade}(\overline{\text{RSSI}}) =
+  \operatorname{clamp}\!\left(
+    \frac{(\text{RSSI}_\text{best} - \overline{\text{RSSI}}) \times 100}
+         {\text{RSSI}_\text{best} - \text{RSSI}_\text{worst}},\;0,\;100
+  \right)
+\end{equation}
+
+\noindent com $\text{RSSI}_\text{best} = -55\,\text{dBm}$ e
+$\text{RSSI}_\text{worst} = -90\,\text{dBm}$ como valores de referência.
+O RSSI médio $\overline{\text{RSSI}}$ é calculado por média móvel
+exponencial (EWMA, fator~$3/4$), conforme a Equação~\ref{eq:ewma}.
+O uso de EWMA para suavização de métricas de qualidade de enlace é
+prática estabelecida em protocolos sem fio, como o padrão IEEE 802.11
+(\emph{Minstrel}) e redes 6LoWPAN \cite{rfc6551}, pois o RSSI
+instantâneo apresenta alta variância devida a \emph{fading} e
+interferência:
+
+\begin{equation}\label{eq:ewma}
+  \overline{\text{RSSI}}_n = \frac{3 \times \overline{\text{RSSI}}_{n-1} + \text{RSSI}_n}{4}
+\end{equation}
+
+\noindent Quanto melhor o sinal ($\overline{\text{RSSI}}$ mais próximo de $-55\,\text{dBm}$),
+menor a penalidade e menor o custo da rota. Essa abordagem possibilita
+a seleção de rotas que otimizem simultaneamente o comprimento do caminho
+e a confiabilidade esperada das transmissões.
+
+\subsection{Estimativa de consumo
+energético}\label{estimativa-de-consumo-energuxe9tico}
+
+A avaliação do consumo energético em algoritmos de roteamento para redes
+de sensores sem fio é comumente realizada a partir de modelos analíticos
+baseados no perfil de consumo dos dispositivos empregados
+\cite{karlwillig2005}. O modelo seminal de \citeonline{heinzelman2000},
+desenvolvido no contexto de redes de sensores para o protocolo LEACH,
+formaliza a energia de transmissão em função da distância e do tamanho
+da mensagem. De modo geral, a energia consumida durante a transmissão de
+um pacote pode ser expressa como o produto entre a potência de
+transmissão e o tempo de envio, conforme:
+
+\begin{equation}\label{eq:energia_tx}
+  E_{tx} = P_{tx} \times t_{tx} = (V \times I_{tx}) \times t_{tx}
+\end{equation}
+
+\noindent onde $E_{tx}$ representa a energia consumida por transmissão,
+$P_{tx}$ a potência elétrica durante o envio, $V$ a tensão de
+operação e $I_{tx}$ a corrente elétrica associada ao modo de
+transmissão. Esses modelos permitem estimar o impacto energético das
+comunicações e comparar diferentes protocolos ou estratégias de
+roteamento sob condições semelhantes de operação \cite{karlwillig2005}.
+
 \section{Estrutura Modular da
 Implementação}\label{estrutura-modular-da-implementauxe7uxe3o}
 
@@ -44,24 +214,56 @@ interfaces explícitas, buscando separar a lógica central do protocolo
 das estruturas auxiliares e dos detalhes específicos do transporte. Essa
 organização contribui para a manutenção do código, facilita a validação
 isolada de componentes e permite maior rastreabilidade entre as decisões
-de projeto e sua materialização no firmware. A interface pública da
-pilha é concentrada nos módulos aodv\_en.h e aodv\_en.c, responsáveis
-por expor funções de inicialização, envio, recepção, atualização
-temporal e consulta de estatísticas. O núcleo do protocolo é
-implementado principalmente no módulo aodv\_en\_node.c, que coordena os
-processos de descoberta de rotas, encaminhamento de dados, manutenção de
-estados e tratamento de mensagens. Os demais módulos implementam
-estruturas de apoio, como tabela de rotas, tabela de vizinhos, cache de
-RREQ, gerenciamento de peers e manipulação de endereços MAC. A Figura 4
-apresenta a organização modular da implementação, evidenciando a relação
-entre a aplicação, a fachada pública da pilha, o núcleo do protocolo, os
-módulos auxiliares e o adaptador ESP-NOW.
+de projeto e sua materialização no firmware. Em nível lógico, a solução
+é dividida em uma interface pública da pilha, um núcleo de roteamento,
+estruturas auxiliares de estado, um adaptador de transporte e o meio
+ESP-NOW. A interface pública expõe operações de inicialização, envio,
+recepção, atualização temporal e consulta de estatísticas. O núcleo de
+roteamento coordena os processos de descoberta de rotas, encaminhamento
+de dados, manutenção de estados e tratamento de mensagens. As estruturas
+auxiliares mantêm informações de rotas, vizinhos, requisições já
+processadas, pares de comunicação e endereços MAC. A Figura 4 apresenta
+essa organização em forma de pseudocódigo arquitetural, sem depender dos
+nomes físicos dos arquivos do firmware.
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth,keepaspectratio]{figuras/image4.png}
-\caption{Figura 4 -- Estrutura modular da implementação do AODV-EN}
-\end{figure}
+\resizebox{0.98\textwidth}{!}{%
+\begin{tikzpicture}[
+  font=\scriptsize,
+  mbox/.style={rectangle, draw=black!60, rounded corners=3pt, align=center,
+               inner sep=5pt, minimum height=0.9cm},
+  appbox/.style={mbox, fill=violet!20, draw=violet!50, text width=2.35cm},
+  facbox/.style={mbox, fill=cyan!22, draw=cyan!55, text width=2.55cm},
+  corebox/.style={mbox, fill=cyan!18, draw=cyan!50, text width=2.95cm},
+  modbox/.style={mbox, fill=orange!12, draw=orange!40, text width=3.0cm, minimum height=2.9cm},
+  espbox/.style={mbox, fill=teal!12, draw=teal!45, text width=2.65cm},
+  hwbox/.style={mbox, fill=gray!15, draw=gray!50, text width=2.2cm},
+  arr/.style={->, >=Stealth, thick}
+]
+\node[appbox] (app) {Aplicação\\e testes};
+\node[facbox, right=0.65cm of app] (fac) {Interface\\pública};
+\node[corebox, right=0.75cm of fac] (core)
+  {Núcleo do\\protocolo\\{\footnotesize descobrir, rotear, manter}};
+\node[modbox, right=0.8cm of core] (state)
+  {\textbf{Estruturas auxiliares}\\[3pt]
+   Tabela de rotas\\
+   Tabela de vizinhos\\
+   Cache de RREQ\\
+   Pares ESP-NOW\\
+   Endereços MAC};
+\node[espbox, below=1.0cm of core] (esp) {Adaptador\\de transporte};
+\node[hwbox, right=0.85cm of esp] (hw) {ESP-NOW};
 
+\draw[arr] (app)--(fac);
+\draw[arr] (fac)--(core);
+\draw[arr] (core)--(state);
+\draw[arr] (fac.south) to[out=-90,in=180] (esp.west);
+\draw[arr] (core)--(esp);
+\draw[arr] (esp)--(hw);
+\end{tikzpicture}
+}
+\caption{Estrutura modular da implementação do AODV-EN}
+\end{figure}
 \section{Estruturas de Dados
 Utilizadas}\label{estruturas-de-dados-utilizadas}
 
@@ -72,13 +274,12 @@ estruturas armazenam o estado local de cada nó e permitem a execução dos
 mecanismos de descoberta, seleção, manutenção e invalidação de rotas. O
 Quadro 12 apresenta uma síntese das principais estruturas utilizadas na
 implementação do AODV-EN e sua função no funcionamento do protocolo.
-\textbf{Quadro 12 -- Estruturas de dados utilizadas no AODV-EN}
-
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\caption{Estruturas de dados utilizadas no AODV-EN}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Estrutura
@@ -108,9 +309,12 @@ Permite operar dentro das limitações de peers simultâneos do ESP-NOW \\
 
 \subsection{Tabela de Rotas}\label{tabela-de-rotas}
 
-\begin{verbatim}
-A tabela de rotas mantém, para cada destino conhecido, informações como próximo salto, número de saltos, número de sequência, estado da rota, métrica de custo e tempo de expiração. Essa estrutura é essencial para o encaminhamento de pacotes, pois permite identificar se existe uma rota válida para determinado destino e qual vizinho deve ser utilizado como próximo salto.
-\end{verbatim}
+A tabela de rotas mantém, para cada destino conhecido, informações como
+próximo salto, número de saltos, número de sequência, estado da rota,
+métrica de custo e tempo de expiração. Essa estrutura é essencial para
+o encaminhamento de pacotes, pois permite identificar se existe uma rota
+válida para determinado destino e qual vizinho deve ser utilizado como
+próximo salto.
 
 A atualização das entradas considera critérios de frescor da informação,
 qualidade da rota e validade temporal, preservando o princípio do AODV
@@ -124,8 +328,9 @@ estabilidade do protocolo.
 
 A tabela de vizinhos registra os nós alcançáveis diretamente por um
 determinado nó da rede. Para cada vizinho, são armazenadas informações
-como endereço MAC, estado do enlace, último RSSI observado, RSSI médio,
-instante da última comunicação e eventos de falha de enlace.
+como endereço MAC, estado do enlace, último RSSI observado, RSSI médio
+ponderado (EWMA, fator~$3/4$), instante da última comunicação e eventos
+de falha de enlace.
 
 Essa estrutura subsidia tanto o encaminhamento local quanto o cálculo da
 métrica híbrida de roteamento. Ao considerar informações de RSSI, o
@@ -157,11 +362,14 @@ restrição pode limitar a escalabilidade da rede quando há múltiplos nós
 participantes.
 
 Para contornar essa limitação, o AODV-EN separa a vizinhança lógica
-mantida pelo protocolo da tabela física de peers utilizada pelo ESP-NOW.
-Quando necessário, aplica-se uma política LRU (Least Recently Used),
-substituindo pares menos recentemente utilizados e permitindo que o
-protocolo opere com um número de nós maior que o limite simultâneo de
-peers registrados. Essa estratégia preserva a compatibilidade com o
+mantida pelo protocolo da tabela física de \emph{peers} utilizada pelo
+ESP-NOW. O cache de \emph{peers} da implementação mantém até
+\texttt{AODV\_EN\_PEER\_CACHE\_SIZE} = 8 entradas simultâneas (valor
+padrão, configurável). Quando o cache está cheio e uma nova comunicação
+é necessária, aplica-se a política LRU (\emph{Least Recently Used}),
+substituindo o par menos recentemente utilizado. Entradas podem ser
+marcadas como \emph{pinned} para impedir remoção (usado para nós fixos
+como o coordenador). Essa estratégia preserva a compatibilidade com o
 ESP-NOW sem comprometer a dinâmica de descoberta e manutenção de rotas.
 
 \section{Mensagens do Protocolo}\label{mensagens-do-protocolo}
@@ -178,15 +386,15 @@ erro. Entretanto, foram incorporadas adaptações necessárias ao contexto
 do ESP-NOW, como o uso de endereçamento por MAC, limitação de tamanho de
 payload, controle de TTL e suporte à confirmação em nível de aplicação.
 O Quadro 13 apresenta uma síntese das mensagens utilizadas pelo AODV-EN
-e suas respectivas funções no protocolo. \textbf{Quadro 13 -- Mensagens
-utilizadas pelo AODV-EN}
+e suas respectivas funções no protocolo.
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\caption{Mensagens utilizadas pelo AODV-EN}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Mensagem
@@ -254,8 +462,11 @@ descoberta de rota. Após a definição do caminho, os pacotes de dados são
 encaminhados de salto a salto até o destino. Durante a operação da rede,
 mecanismos de manutenção verificam a validade das rotas e a
 conectividade entre vizinhos. Caso ocorra falha de enlace, as rotas
-afetadas são invalidadas e uma nova descoberta pode ser iniciada. \#\#\#
-Descoberta de Rotas A descoberta de rotas é iniciada quando um nó de
+afetadas são invalidadas e uma nova descoberta pode ser iniciada.
+
+\subsection{Descoberta de Rotas}\label{descoberta-de-rotas}
+
+A descoberta de rotas é iniciada quando um nó de
 origem precisa enviar dados para um destino e não possui uma rota válida
 em sua tabela de roteamento. Nessa situação, o nó originador emite uma
 mensagem RREQ contendo informações como endereço de origem, endereço de
@@ -275,10 +486,43 @@ de descoberta de rotas no AODV-EN, destacando a propagação da mensagem
 RREQ e o retorno da mensagem RREP pelo caminho reverso.
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth,keepaspectratio]{figuras/image5.png}
-\caption{Figura 5 -- Fluxo de descoberta de rotas no AODV-EN}
+\begin{tikzpicture}[font=\footnotesize, node distance=0.8cm]
+% Lifeline X positions
+\def\xO{0}   % Origem
+\def\xI{3.5} % Intermediário 1
+\def\xJ{7}   % Intermediário 2
+\def\xD{10.5}% Destino
+\def\yTop{0}
+\def\yBot{-9.5}
+% Actor boxes
+\foreach \x/\lbl in {\xO/{Nó de\\origem}, \xI/{Nó\\intermediário}, \xJ/{Nó\\intermediário}, \xD/{Nó de\\destino}}{
+  \node[rectangle, draw, fill=gray!12, rounded corners=2pt, align=center, text width=2.4cm, minimum height=0.8cm, font=\footnotesize] at (\x,0) {\lbl};
+  \node[rectangle, draw, fill=gray!12, rounded corners=2pt, align=center, text width=2.4cm, minimum height=0.8cm, font=\footnotesize] at (\x,\yBot) {\lbl};
+  \draw[dashed, gray!60] (\x,-0.4) -- (\x,\yBot+0.4);
+}
+% Messages (y going negative)
+% RREQ: O→I
+\draw[->, >=Stealth, thick, teal] (\xO,-1.2) -- (\xI,-1.2) node[midway, above, font=\scriptsize, teal] {Envia RREQ};
+\node[align=center, font=\scriptsize, text width=2.6cm] at (\xI,-1.8) {Verifica duplicata e\\cria rota reversa};
+% RREQ: I→J
+\draw[->, >=Stealth, thick, teal] (\xI,-2.6) -- (\xJ,-2.6) node[midway, above, font=\scriptsize, teal] {Retransmite RREQ};
+\node[align=center, font=\scriptsize, text width=2.6cm] at (\xJ,-3.2) {Verifica duplicata e\\cria rota reversa};
+% RREQ: J→D
+\draw[->, >=Stealth, thick, teal] (\xJ,-4.0) -- (\xD,-4.0) node[midway, above, font=\scriptsize, teal] {Retransmite RREQ};
+\node[align=center, font=\scriptsize, text width=2.2cm] at (\xD,-4.6) {Reconhece-se\\como destino};
+% RREP: D→J (dashed)
+\draw[->, >=Stealth, thick, dashed, blue!60] (\xD,-5.4) -- (\xJ,-5.4) node[midway, above, font=\scriptsize, blue!70] {Envia RREP};
+% RREP: J→I (dashed)
+\draw[->, >=Stealth, thick, dashed, blue!60] (\xJ,-6.4) -- (\xI,-6.4) node[midway, above, align=center, font=\scriptsize, blue!70] {Encaminha RREP\\pelo caminho reverso};
+% RREP: I→O (dashed)
+\draw[->, >=Stealth, thick, dashed, blue!60] (\xI,-7.4) -- (\xO,-7.4) node[midway, above, align=center, font=\scriptsize, blue!70] {Encaminha RREP\\pelo caminho reverso};
+\node[align=center, font=\scriptsize, text width=2.6cm] at (\xO,-8.2) {Atualiza rota direta\\para o destino};
+\end{tikzpicture}
+\caption{Fluxo de descoberta de rotas no AODV-EN}
 \end{figure}
-\#\#\# Encaminhamento de Dados Após a descoberta de uma rota válida, o
+\subsection{Encaminhamento de Dados}\label{encaminhamento-de-dados}
+
+Após a descoberta de uma rota válida, o
 encaminhamento dos dados ocorre de forma salto a salto. O nó de origem
 consulta sua tabela de rotas para identificar o próximo salto em direção
 ao destino e transmite a mensagem DATA ao vizinho correspondente. Cada
@@ -313,8 +557,11 @@ caminhos indisponíveis. A manutenção de rotas também está relacionada ao
 controle de estabilidade. Ao atualizar uma rota existente, o protocolo
 considera critérios como número de sequência, métrica, contagem de
 saltos e tempo de expiração, evitando substituições frequentes quando a
-nova rota não apresenta melhoria significativa. \#\#\# Tratamento de
-Falhas O tratamento de falhas é acionado quando o protocolo identifica
+nova rota não apresenta melhoria significativa.
+
+\subsection{Tratamento de Falhas}\label{tratamento-de-falhas}
+
+O tratamento de falhas é acionado quando o protocolo identifica
 indisponibilidade de um enlace ou impossibilidade de encaminhar dados
 por uma rota previamente considerada válida. Essa detecção pode ocorrer
 por ausência de resposta, falha de transmissão, expiração de vizinhança
@@ -333,10 +580,45 @@ AODV-EN, desde a detecção da falha até a tentativa de restabelecimento
 da comunicação.
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth,keepaspectratio]{figuras/image6.png}
-\caption{Figura 6 -- Fluxo de tratamento de falhas e reconvergência no AODV-EN}
+\begin{tikzpicture}[
+  font=\footnotesize,
+  node distance=0.55cm,
+  proc/.style={rectangle, draw=black!70, rounded corners=3pt, text width=4.2cm, align=center, minimum height=0.9cm, inner sep=4pt, fill=gray!8},
+  dec/.style={diamond, draw=black!70, text width=2.8cm, align=center, inner sep=2pt, fill=yellow!15, aspect=2.2},
+  term/.style={proc, fill=green!12, draw=green!50},
+  arr/.style={->, >=Stealth, thick}
+]
+\node[proc] (start) {DATA em rota ativa};
+\node[dec, below=of start] (d1) {Falha de enlace detectada?};
+\node[proc, below=of d1] (inv) {Invalida rotas afetadas};
+\node[proc, below=of inv] (rerr) {Propaga mensagem RERR};
+\node[dec, below=of rerr] (d2) {Há dados pendentes?};
+\node[term, below left=0.8cm and 1.8cm of d2] (wait) {Aguarda novas\\solicitações de envio};
+\node[proc, below=0.8cm of d2] (rreq) {Inicia nova descoberta\\via RREQ};
+\node[dec, below=of rreq] (d3) {Nova rota encontrada?};
+\node[proc, below left=0.8cm and 1.8cm of d3] (hold) {Mantém dados pendentes\\até expiração};
+\node[proc, below=0.8cm of d3] (upd) {Atualiza tabela de rotas};
+\node[proc, below=of upd] (res) {Reenvia dados pendentes};
+\node[term, below=of res] (end) {Retoma comunicação};
+
+\draw[arr] (start)--(d1);
+\draw[arr] (d1)--node[right, font=\scriptsize]{Sim}(inv);
+\draw[arr] (d1.east) to[out=0,in=0] node[right, font=\scriptsize]{Não}(start.east);
+\draw[arr] (inv)--(rerr);
+\draw[arr] (rerr)--(d2);
+\draw[arr] (d2.west) to[out=180,in=90] node[above left, font=\scriptsize]{Não}(wait.north);
+\draw[arr] (d2)--node[right, font=\scriptsize]{Sim}(rreq);
+\draw[arr] (rreq)--(d3);
+\draw[arr] (d3.west) to[out=180,in=90] node[above left, font=\scriptsize]{Não}(hold.north);
+\draw[arr] (d3)--node[right, font=\scriptsize]{Sim}(upd);
+\draw[arr] (upd)--(res);
+\draw[arr] (res)--(end);
+\end{tikzpicture}
+\caption{Fluxo de tratamento de falhas e reconvergência no AODV-EN}
 \end{figure}
-\#\# Adaptações do AODV para ESP-NOW A adaptação do AODV para operação
+\section{Adaptações do AODV para ESP-NOW}\label{adaptacoes-do-aodv-para-esp-now}
+
+A adaptação do AODV para operação
 sobre ESP-NOW exigiu modificações relacionadas ao endereçamento, à
 disseminação de mensagens, ao gerenciamento de peers e à métrica de
 seleção de rotas. Essas adaptações foram necessárias porque o ESP-NOW
@@ -349,14 +631,12 @@ manutenção de tabelas de roteamento e tratamento de falhas, mas
 incorpora mecanismos específicos para viabilizar sua execução em
 dispositivos ESP32 utilizando ESP-NOW. O Quadro 14 sintetiza as
 principais adaptações realizadas no AODV-EN em relação ao AODV original.
-\textbf{Quadro 14 -- Principais adaptações do AODV para o contexto do
-ESP-NOW}
-
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\caption{Principais adaptações do AODV para o contexto do ESP-NOW}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Aspecto
@@ -400,8 +680,11 @@ representados por endereços MAC, preservando a semântica de roteamento
 do AODV, mas adequando-a ao modelo de comunicação do ESP-NOW. A
 utilização de endereçamento por MAC também simplifica a integração com o
 mecanismo de envio do ESP-NOW, uma vez que a transmissão unicast exige a
-indicação direta do endereço MAC do peer de destino. \#\#\# Flooding
-Controlado sobre Broadcast de Enlace Uma das principais decisões de
+indicação direta do endereço MAC do peer de destino.
+
+\subsection{Flooding Controlado sobre Broadcast de Enlace}\label{flooding-controlado-sobre-broadcast-de-enlace-2}
+
+Uma das principais decisões de
 projeto na adaptação do AODV ao ESP-NOW está relacionada à disseminação
 das mensagens RREQ. No AODV original, a descoberta de rotas é realizada
 por meio da difusão da requisição de rota pela rede, utilizando
@@ -424,8 +707,11 @@ confiabilidade medida, subcontaria as transmissões reais (uma
 transmissão lógica corresponderia a N quadros no ar) e descaracterizaria
 a comparação com o flooding canônico. Optou-se, assim, pela disseminação
 por broadcast de enlace, com confirmação realizada fim-a-fim por
-mensagens ACK em nível de aplicação. \#\#\# Gerenciamento Dinâmico de
-Peers O ESP-NOW impõe restrições quanto ao número de peers que podem ser
+mensagens ACK em nível de aplicação.
+
+\subsection{Gerenciamento Dinâmico de Peers}\label{gerenciamento-dinamico-de-peers}
+
+O ESP-NOW impõe restrições quanto ao número de peers que podem ser
 registrados simultaneamente para comunicação. Essa limitação afeta
 diretamente a construção de redes mesh, pois o número total de nós
 participantes pode ser superior ao número de peers mantidos fisicamente
@@ -440,7 +726,10 @@ substituindo o peer menos recentemente utilizado por um novo peer
 necessário à comunicação. Essa estratégia permite que o protocolo opere
 dinamicamente em redes com mais nós do que o limite simultâneo de peers,
 preservando a compatibilidade com o ESP-NOW e reduzindo a necessidade de
-configuração manual da rede. \#\#\# Métrica Híbrida com Hop Count e RSSI
+configuração manual da rede.
+
+\subsection{Métrica Híbrida com Hop Count e RSSI}\label{metrica-hibrida-com-hop-count-e-rssi-2}
+
 O AODV original utiliza, de forma predominante, a contagem de saltos
 como critério de seleção de rotas. Essa abordagem favorece caminhos mais
 curtos, mas pode desconsiderar a qualidade dos enlaces sem fio. Em redes
@@ -449,24 +738,41 @@ número de saltos podem apresentar baixa qualidade de sinal, maior
 instabilidade ou maior probabilidade de perda de pacotes. Para
 considerar esse aspecto, o AODV-EN utiliza uma métrica híbrida que
 combina a distância lógica da rota, representada pelo número de saltos,
-com uma penalidade associada à qualidade do sinal recebido. A formulação
-geral da métrica pode ser expressa por:
+com uma penalidade associada à qualidade do sinal recebido. A formulação geral da métrica é dada pela Equação~\ref{eq:custo_impl}:
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.85\textwidth,keepaspectratio]{figuras/image7.png}
-\caption{Figura 7 - Fórmula do custo}
-\end{figure}
-Nessa formulação, α e β representam pesos configuráveis, HopCount
-corresponde ao número de saltos até o destino e Penalidade(RSSI)
-representa uma função de custo associada à qualidade média do enlace.
-Quanto menor o número de saltos e melhor a qualidade do sinal, menor
-tende a ser o custo da rota. Essa adaptação permite que a seleção de
+\begin{equation}\label{eq:custo_impl}
+  \text{Custo}(\text{rota}) = \alpha \times \text{HopCount} + \beta \times \text{Penalidade}(\overline{\text{RSSI}})
+\end{equation}
+
+\noindent onde $\alpha = 8$ e $\beta = 1$ são os pesos padrão (configuráveis por
+\texttt{AODV\_EN\_ROUTE\_METRIC\_HOP\_WEIGHT} e
+\texttt{AODV\_EN\_ROUTE\_METRIC\_RSSI\_WEIGHT}). A função
+$\text{Penalidade}(\overline{\text{RSSI}})$ retorna um valor inteiro
+no intervalo $[0, 100]$, conforme a Equação~\ref{eq:penalidade_impl}:
+
+\begin{equation}\label{eq:penalidade_impl}
+  \text{Penalidade}(\overline{\text{RSSI}}) =
+  \operatorname{clamp}\!\left(
+    \frac{(\text{RSSI}_\text{best} - \overline{\text{RSSI}}) \times 100}
+         {\text{RSSI}_\text{best} - \text{RSSI}_\text{worst}},\;0,\;100
+  \right)
+\end{equation}
+
+\noindent com $\text{RSSI}_\text{best} = -55\,\text{dBm}$ e
+$\text{RSSI}_\text{worst} = -90\,\text{dBm}$. O valor $\overline{\text{RSSI}}$
+é atualizado por média móvel exponencial (EWMA, fator~$3/4$) a cada
+mensagem recebida do vizinho. Penalidade~$= 0$ indica sinal ótimo
+(acima de $-55\,\text{dBm}$); Penalidade~$= 100$ indica sinal mínimo
+(abaixo de $-90\,\text{dBm}$). Quanto menor o número de saltos e melhor
+o sinal, menor o custo da rota. Essa adaptação permite que a seleção de
 rotas considere não apenas o caminho mais curto, mas também a robustez
 dos enlaces envolvidos, contribuindo para maior estabilidade da
 comunicação em ambientes sem fio sujeitos a interferências, obstáculos e
-variações de sinal. \#\# Considerações sobre a Implementação A
-implementação do AODV-EN buscou preservar os princípios fundamentais do
+variações de sinal.
+
+\section{Considerações sobre a Implementação}\label{consideracoes-sobre-a-implementacao}
+
+A implementação do AODV-EN buscou preservar os princípios fundamentais do
 protocolo AODV, especialmente a descoberta de rotas sob demanda, a
 manutenção de tabelas de roteamento, o uso de mensagens de controle e o
 tratamento de falhas de enlace. Entretanto, devido às particularidades
