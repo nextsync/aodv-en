@@ -1,0 +1,31 @@
+% -----------------------------------------------------------------------------
+% Conteudo AODV-EN. Template base: Prof. Wesley Pacheco Calixto (IFG).
+% -----------------------------------------------------------------------------
+\addcontentsline{toc}{section}{Abstract}
+
+\section*{Abstract}
+
+Low-cost wireless mesh networks built on top of the ESP-NOW protocol lack native support
+for multi-hop routing, which limits their range and scalability. This work proposes,
+implements, and evaluates AODV-EN, an adaptation of the Ad-hoc On-Demand Distance Vector
+protocol (AODV, RFC 3561) to operate over ESP-NOW on ESP32 modules, featuring MAC-based
+addressing, route request dissemination through controlled flooding over link-layer
+broadcast, route maintenance with sequence numbers, and end-to-end acknowledgment.
+Following the Design Science Research paradigm, the protocol core was implemented in C as
+a reusable component and compared against a flooding-based reference algorithm, measuring
+Packet Delivery Ratio (PDR), end-to-end latency, Normalized Routing Load (NRL), and
+estimated energy consumption. In the hardware scenario (three ESP32 nodes, six
+repetitions), both algorithms showed equivalent reliability (PDR of 98.93\% for AODV-EN
+and 98.77\% for flooding), with AODV-EN providing lower and more predictable latency
+(stable 60.0 ms versus 62 to 100 ms) and about 21\% lower estimated energy consumption,
+at the cost of a normalized routing load of 0.77. Simulation analysis showed that the
+channel-occupancy disadvantage of flooding grows with network scale, with an efficiency
+crossover around 9 to 11 nodes. We conclude that AODV-EN's reactive routing becomes
+advantageous as the network grows in size and diameter, enabling standardized, low-cost,
+and energy-efficient mesh networks over ESP-NOW.
+
+\vspace{1cm}
+
+\noindent
+\textbf{Keywords:} mesh networks; ESP-NOW; ESP32; AODV; ad-hoc routing;
+Internet of Things.

@@ -1,0 +1,74 @@
+\babel@toc {brazilian}{}\relax 
+\contentsline {section}{Resumo}{ii}{Item.3}%
+\contentsline {section}{Abstract}{iii}{Item.3}%
+\contentsline {chapter}{\numberline {1}INTRODUÇÃO}{1}{chapter.1}%
+\contentsline {section}{\numberline {1.1}OBJETIVOS}{3}{section.1.1}%
+\contentsline {section}{\numberline {1.2}OBJETIVO GERAL}{3}{section.1.2}%
+\contentsline {section}{\numberline {1.3}OBJETIVOS ESPECÍFICOS}{4}{section.1.3}%
+\contentsline {chapter}{\numberline {2}REFERENCIAL TEÓRICO}{5}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Internet das Coisas e Redes de Sensores Sem Fio}{5}{section.2.1}%
+\contentsline {section}{\numberline {2.2}O Microcontrolador ESP32}{7}{section.2.2}%
+\contentsline {section}{\numberline {2.3}O Protocolo ESP-NOW}{8}{section.2.3}%
+\contentsline {subsection}{\numberline {2.3.1}Características técnicas}{8}{subsection.2.3.1}%
+\contentsline {subsection}{\numberline {2.3.2}Desempenho e alcance}{9}{subsection.2.3.2}%
+\contentsline {subsection}{\numberline {2.3.3}Limitações para comunicação multi-hop}{10}{subsection.2.3.3}%
+\contentsline {section}{\numberline {2.4}Redes Mesh e Protocolos de Roteamento Ad-Hoc}{10}{section.2.4}%
+\contentsline {subsection}{\numberline {2.4.1}Conceitos fundamentais de redes mesh}{10}{subsection.2.4.1}%
+\contentsline {subsection}{\numberline {2.4.2}Classificação dos protocolos de roteamento}{11}{subsection.2.4.2}%
+\contentsline {subsection}{\numberline {2.4.3}Soluções existentes de mesh para ESP32}{12}{subsection.2.4.3}%
+\contentsline {section}{\numberline {2.5}O Protocolo AODV}{12}{section.2.5}%
+\contentsline {subsection}{\numberline {2.5.1}Mensagens de controle}{12}{subsection.2.5.1}%
+\contentsline {subsection}{\numberline {2.5.2}Processo de descoberta de rotas}{13}{subsection.2.5.2}%
+\contentsline {subsection}{\numberline {2.5.3}Números de sequência e prevenção de loops}{13}{subsection.2.5.3}%
+\contentsline {subsection}{\numberline {2.5.4}Manutenção de rotas e tratamento de falhas}{13}{subsection.2.5.4}%
+\contentsline {subsection}{\numberline {2.5.5}Parâmetros de configuração}{14}{subsection.2.5.5}%
+\contentsline {section}{\numberline {2.6}Considerações para o Projeto do AODV-EN}{14}{section.2.6}%
+\contentsline {subsection}{\numberline {2.6.1}Gerenciamento de peers com política LRU}{14}{subsection.2.6.1}%
+\contentsline {subsection}{\numberline {2.6.2}Flooding controlado sobre broadcast de enlace}{15}{subsection.2.6.2}%
+\contentsline {subsection}{\numberline {2.6.3}Métrica híbrida de roteamento}{15}{subsection.2.6.3}%
+\contentsline {subsection}{\numberline {2.6.4}Estimativa de consumo energético}{16}{subsection.2.6.4}%
+\contentsline {chapter}{\numberline {3}METODOLOGIA}{17}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Caracterização da Pesquisa}{17}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Design Science Research}{18}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Fundamentos da DSR}{18}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}Justificativa da escolha da DSR}{19}{subsection.3.2.2}%
+\contentsline {section}{\numberline {3.3}Mapeamento das Fases do Trabalho às Etapas da DSR}{20}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}Fase 1: Revisão Bibliográfica}{22}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.3.2}Fase 2: Projeto do Algoritmo AODV-EN}{22}{subsection.3.3.2}%
+\contentsline {subsection}{\numberline {3.3.3}Fase 3: Implementação e Montagem do Ambiente de Testes}{24}{subsection.3.3.3}%
+\contentsline {subsection}{\numberline {3.3.4}Fase 4: Execução dos Experimentos e Coleta de Dados}{24}{subsection.3.3.4}%
+\contentsline {subsection}{\numberline {3.3.5}Fase 5: Análise e Discussão dos Resultados}{25}{subsection.3.3.5}%
+\contentsline {section}{\numberline {3.4}Planejamento Experimental}{25}{section.3.4}%
+\contentsline {subsection}{\numberline {3.4.1}Cenários experimentais}{25}{subsection.3.4.1}%
+\contentsline {subsection}{\numberline {3.4.2}Parâmetros dos experimentos}{26}{subsection.3.4.2}%
+\contentsline {section}{\numberline {3.5}}{27}{section.3.5}%
+\contentsline {section}{\numberline {3.6}}{27}{section.3.6}%
+\contentsline {section}{\numberline {3.7}}{27}{section.3.7}%
+\contentsline {section}{\numberline {3.8}}{27}{section.3.8}%
+\contentsline {section}{\numberline {3.9}}{27}{section.3.9}%
+\contentsline {section}{\numberline {3.10}}{27}{section.3.10}%
+\contentsline {section}{\numberline {3.11}Métricas de Avaliação}{27}{section.3.11}%
+\contentsline {section}{\numberline {3.12}Algoritmo de Referência para Comparação: Flooding}{29}{section.3.12}%
+\contentsline {subsection}{\numberline {3.12.1}Especificação do algoritmo Flooding}{29}{subsection.3.12.1}%
+\contentsline {subsection}{\numberline {3.12.2}Justificativa da escolha do Flooding como algoritmo de referência}{29}{subsection.3.12.2}%
+\contentsline {section}{\numberline {3.13}Coleta e Análise dos Dados}{30}{section.3.13}%
+\contentsline {chapter}{\numberline {4}PROJETO E IMPLEMENTAÇÃO DO ALGORITMO AODV-EN}{31}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Estrutura Modular da Implementação}{32}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Estruturas de Dados Utilizadas}{33}{section.4.2}%
+\contentsline {subsection}{\numberline {4.2.1}Tabela de Rotas}{34}{subsection.4.2.1}%
+\contentsline {subsection}{\numberline {4.2.2}Tabela de Vizinhos}{34}{subsection.4.2.2}%
+\contentsline {subsection}{\numberline {4.2.3}Cache de RREQ}{34}{subsection.4.2.3}%
+\contentsline {subsection}{\numberline {4.2.4}Gerenciamento de Peers}{35}{subsection.4.2.4}%
+\contentsline {section}{\numberline {4.3}Mensagens do Protocolo}{35}{section.4.3}%
+\contentsline {section}{\numberline {4.4}Funcionamento do Algoritmo}{37}{section.4.4}%
+\contentsline {subsection}{\numberline {4.4.1}Manutenção de Rotas}{38}{subsection.4.4.1}%
+\contentsline {subsection}{\numberline {4.4.2}Endereçamento por MAC}{41}{subsection.4.4.2}%
+\contentsline {chapter}{\numberline {5}RESULTADOS E DISCUSSÃO}{44}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Ambiente das Coletas e Validação Funcional}{44}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Resultados de Hardware}{45}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Discussão por Métrica}{47}{section.5.3}%
+\contentsline {section}{\numberline {5.4}Análise de Escalabilidade por Simulação}{48}{section.5.4}%
+\contentsline {section}{\numberline {5.5}Conformidade com a RFC 3561}{49}{section.5.5}%
+\contentsline {section}{\numberline {5.6}Escopo Implementado e Limitações}{50}{section.5.6}%
+\contentsline {chapter}{\numberline {6}CONCLUSÃO}{51}{chapter.6}%
+\contentsline {chapter}{REFERÊNCIAS}{53}{chapter.6}%

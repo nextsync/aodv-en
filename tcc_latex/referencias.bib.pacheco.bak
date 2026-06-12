@@ -1,0 +1,1105 @@
+@book{ekman2003,
+  author    = {Ekman, P. and Friesen, W. V.},
+  title     = {Unmasking the Face: A Guide to Recognizing Emotions from Facial Cues},
+  year      = {2003},
+  publisher = {Ishk}
+}
+
+@article{serengil2024lightface,
+  title     = {A Benchmark of Facial Recognition Pipelines and Co-Usability Performances of Modules},
+  author    = {Serengil, Sefik and Ozpinar, Alper},
+  journal   = {Journal of Information Technologies},
+  volume    = {17},
+  number    = {2},
+  pages     = {95-107},
+  year      = {2024},
+  doi       = {10.17671/gazibtd.1399077},
+  url       = {https://dergipark.org.tr/en/pub/gazibtd/issue/84331/1399077},
+  publisher = {Gazi University}
+}
+
+@misc{Spotify,
+  author = {https://support.spotify.com/br-pt/article/what-is-spotify},
+  title = {Acesso em: 27 jun},
+  year = {2024},
+  language = {pt}
+}
+
+@misc{Technocrat,
+  author = {TECHNOCRAT}, 
+  title = {Acesso em: 27 jun},
+  year = {2023},
+  language = {en},
+url     = {https://medium.com/coderhack-com/introduction-to-librosa-912c2c109f41}
+}
+
+ @article{ramos_bueno_2012,  title={A percepção de emoções em trechos de música ocidental erudita},  ISSN={1517-7599},  url={https://doi.org/10.1590/S1517-75992012000200003},  DOI={10.1590/S1517-75992012000200003},  number={26},  journal={Per Musi},  publisher={Escola de Música da UFMG},  author={Ramos, Danilo and Bueno, José Lino Oliveira},  year={2012},  month={Jul},  pages={21–30} }
+
+@article{article,
+author = {Martelli, Jéssica and Parizzi, Betania and Freire, Marina},
+year = {2022},
+month = {12},
+pages = {59-81},
+title = {Efeitos psicofisiológicos da música: Uma revisão de literatura e análise de dois vídeos},
+volume = {10},
+journal = {Percepta - Revista de Cognição Musical},
+doi = {10.34018/2318-891X.10(1)59-81}
+}
+
+@article{Pereira_2008, title={“As cores da voz”: expressão das emoções no timbre da voz cantada}, volume={1}, url={https://revistas.ucp.pt/index.php/cadernosdesaude/article/view/2777}, DOI={10.34632/cadernosdesaude.2008.2777}, abstractNote={&amp;lt;p&amp;gt;A expressão das emoções na voz cantada faz-se segundo um código com vários parâmetros tais como: tempo, vibrato, ritmo, afinação, amplitude e timbre. O objectivo deste estudo é compreender como é que o timbre expressa as emoções do performer. Doze cantores profissionais foram gravados a cantar peças musicais eruditas com um conteúdo emocional específico – Tristeza, Alegria, Raiva e Medo – e um vocalizo (Neutro). Os dados consistiram em 432 vogais extraídas das gravações aceites perceptivamente por um júri composto por sete estudantes de canto. Os resultados mostraram que as frequências dos formantes mudam de acordo com as emoções: Raiva e Alegria têm frequência de ocorrência dos formantes mais altas do que Tristeza e Medo. Esta investigação mostrou, também, que os formantes têm funções especializadas: F2 e F1 discriminam vogais, F4, F3 e F5 discriminam indivíduos e F5 e F1 discriminam emoções. Os resultados apontaram para o facto de, independentemente do tipo de voz, cada emoção ter a sua própria assinatura tímbrica, visível no espectro, com uma conexão específica com um formante: Raiva/F5, Tristeza/F4 e Alegria/F3. Este último ponto necessita de investigação futura.&amp;lt;/p&amp;gt;}, number={2}, journal={Cadernos de Saúde}, author={Pereira, Ana Leonor}, year={2008}, month={jun.}, pages={147–166} }
+
+@article{rachman,
+author = {Rachman, Fika and Sarno, Riyanarto and Fatichah, Chastine},
+year = {2018},
+month = {06},
+pages = {1720},
+title = {Music Emotion Classification based on Lyrics-Audio using Corpus based Emotion},
+volume = {8},
+journal = {International Journal of Electrical and Computer Engineering (IJECE)},
+doi = {10.11591/ijece.v8i3.pp1720-1730}
+}
+
+
+@article{russell1980,
+  author  = {Russell, J. A.},
+  title   = {A Circumplex Model of Affect},
+  journal = {Journal of Personality and Social Psychology},
+  year    = {1980},
+  volume  = {39},
+  number  = {6},
+  pages   = {1161}
+}
+
+@article{marengoni2010,
+author = {Marengoni, Maurício and Stringhini, Denise},
+year = {2010},
+month = {03},
+pages = {},
+title = {Tutorial: Introdução à Visão Computacional usando OpenCV},
+volume = {16},
+journal = {Revista de Informática Teórica e Aplicada; Vol. 16, No 1 (2009); 125-160},
+doi = {10.22456/2175-2745.11477}
+}
+
+@inproceedings{sefidcon2020,
+  author    = {Sefidcon, M. and Seidl, C.},
+  title     = {DeepFace: A Lightweight, Fast, and Open Source Library for Real-time Facial Analysis},
+  booktitle = {Proceedings of the 2020 IEEE International Conference on Big Data and Smart Computing (ICBDSC)},
+  year      = {2020}
+}
+
+
+@article{neuropsicologia_musica_2022,
+  title   = {A neuropsicologia da música e seus possíveis entrelaçamentos},
+  year    = {2022},
+  journal = {Anais da Jornada Científica dos Campos Gerais},
+  volume  = {20},
+  number  = {1},
+  url     = {https://iessa.edu.br/revista/index.php/jornada/article/view/2234}
+}
+
+@article{ilari_2006,
+  author  = {Ilari, Beatriz},
+  title   = {Música, comportamento social e relações interpessoais},
+  journal = {Psicologia em Estudo},
+  volume  = {11},
+  number  = {1},
+  pages   = {191--198},
+  month   = {apr},
+  year    = {2006},
+  publisher = {FapUNIFESP (SciELO)},
+  doi     = {10.1590/s1413-73722006000100022}
+}
+
+@article{james_2019,
+  author  = {James, H. Immanuel and Arnold, J. James Anto and Ruban, J. Maria Masilla and Tamilarasan, M. and Saranya, R.},
+  title   = {Emotion based music recommendation system},
+  journal = {International Research Journal Of Engineering And Technology (IRJET)},
+  address = {Tamilnadu},
+  volume  = {6},
+  number  = {3},
+  pages   = {2096--2101},
+  month   = {mar},
+  year    = {2019},
+  url     = {https://www.irjet.net/},
+  note    = {Accessed: 2024-09-26}
+}
+
+@article{neves_2018,
+  author  = {Neves, Maura Assad Pimenta and Souza, Vera Lúcia Trevisan de},
+  title   = {Música e psicologia na escola: mobilizando afetos na classe de recuperação},
+  journal = {Psicologia Escolar e Educacional},
+  volume  = {22},
+  number  = {1},
+  pages   = {17--25},
+  month   = {apr},
+  year    = {2018},
+  publisher = {FapUNIFESP (SciELO)},
+  doi     = {10.1590/2175-35392018019065}
+}
+
+@phdthesis{oliveira_2010,
+  author       = {Oliveira, Luis Felipe},
+  title        = {A emergência do significado em música},
+  school       = {Universidade Estadual de Campinas, Instituto de Artes},
+  address      = {Campinas, SP},
+  year         = {2010},
+  note         = {Orientador: Prof. Dr. Jonatas Manzolli; Coorientador: Prof. Dr. Willem F.G. Haselager}
+}
+
+@article{santos_2012,
+  author  = {Santos, Regina Antunes Teixeira dos},
+  title   = {Psicologia da música: aportes teóricos e metodológicos por mais de um século},
+  journal = {Música em Perspectiva},
+  volume  = {5},
+  number  = {1},
+  pages   = {65--90},
+  year    = {2012},
+  month   = {dec},
+  publisher = {Universidade Federal do Paraná},
+  doi     = {10.5380/mp.v5i1.30143}
+}
+
+@book{freire_2011,
+  author    = {Freire, Vanda},
+  title     = {Música e sociedade - uma perspectiva histórica e uma reflexão aplicada ao ensino superior de música},
+  year      = {2011},
+  publisher = {Associação Brasileira de Educação Musical (ABEM)}
+}
+
+
+@article{strecker2023a,
+  author = {STRECKER, Helena},
+  title = {Personalização algorítmica no Spotify e a premissa de que somos o que ouvimos},
+  volume = {v. 4, n. 2},
+  year = {2023},
+  url = {https://revista.internetlab.org.br/personalizacao-algoritmica-no-spotify-e-a-premissa-de-que-somos-o-que-ouvimos/},
+  language = {pt},
+  journal = {Internet & Sociedade}
+}
+
+@book{Ricci2011,
+  title={Recommender Systems Handbook},
+  author={Ricci, Francesco and Rokach, Lior and Shapira, Bracha},
+  year={2011},
+  publisher={Springer}
+}
+@article{Bonnin2014,
+  title={Automated generation of music playlists: Survey and experiments},
+  author={Bonnin, Geoffray and Jannach, Dietmar},
+  journal={ACM Computing Surveys},
+  volume={47},
+  number={2},
+  pages={26:1--26:35},
+  year={2014}
+}
+
+@article{Sefidcon2020,
+  title={DeepFace: A Lightweight Face Recognition and Facial Analysis Framework},
+  author={Sefidcon, F. and Kavasidis, I. and Razzaghi, A.},
+  journal={Journal of Open Source Software},
+  volume={5},
+  number={52},
+  pages={2686},
+  year={2020}
+}
+
+@article{Bradski2000,
+  title={The OpenCV Library},
+  author={Bradski, Gary},
+  journal={Dr. Dobb's Journal of Software Tools},
+  volume={25},
+  number={11},
+  pages={120--126},
+  year={2000}
+}
+
+@misc{Technocrat2023,
+  title={Librosa in Python: A Comprehensive Guide},
+  author={Technocrat, C.},
+  year={2023},
+  howpublished={\url{https://medium.com/@codertechnocrat/librosa-in-python-a-comprehensive-guide-28df5291263d}},
+  note={Acessado em: 27 de Junho de 2025}
+}
+
+
+@article{Kaminskas2016,
+  title={A survey on music recommender systems},
+  author={Kaminskas, Marius and Bridge, Derek},
+  journal={ACM Computing Surveys},
+  volume={49},
+  number={2},
+  pages={34:1--34:41},
+  year={2016}
+}
+
+@article{Hu2022,
+  title={Emotion-aware music recommender systems: A survey},
+  author={Hu, Xiao and Lee, Jiyoung},
+  journal={ACM Transactions on Intelligent Systems and Technology},
+  volume={13},
+  number={4},
+  pages={45:1--45:25},
+  year={2022}
+}
+@article{Kim2019,
+  title={Deep learning for music emotion recognition: A survey},
+  author={Kim, Jaewoo and Choi, Keunhyoung and Fazekas, George and Sandler, Mark},
+  journal={Frontiers in Psychology},
+  volume={10},
+  pages={766},
+  year={2019}
+}
+
+@article{Schedl2018,
+  title={Current challenges and visions in music recommender systems research},
+  author={Schedl, Markus and Ferwerda, Bruce and Yang, Yi-Hsuan},
+  journal={International Journal of Multimedia Information Retrieval},
+  volume={7},
+  pages={95-116},
+  year={2018},
+  publisher={Springer}
+}
+
+@article{Celma2008,
+  title={Music recommendation and discovery in the long tail},
+  author={Celma, Oscar and Herrera, Perfecto},
+  journal={PhD Thesis},
+  year={2008}
+}
+
+@book{Juslin2010,
+  title={Handbook of Music and Emotion},
+  author={Juslin, Patrik and Sloboda, John},
+  year={2010},
+  publisher={Oxford University Press}
+}
+@article{marques2022a,
+  author = {Marques Paes, V. and Polimeno, C. and Soares Souza, C. and Sousa Costa, J. and Andrade, R. and Gaspar, R.},
+  year = {2022},
+  title = {Experiência do usuário e design de interação: : uma análise bibliométrica de publicações acadêmicas},
+  volume = {19},
+  doi = {10.51358/id.v19i1.906.},
+  note = {Acesso em: 11 de fevereiro de 2025.},
+  language = {pt},
+  journal = {InfoDesign - Journal of Information Design},
+  number = {1}
+}
+@incollection{estrada2022a,
+  author = {ESTRADA, Beatriz Duque},
+  title = {Recomendação musical em decorrência do mapeamento facial},
+  year = {2022},
+  note = {20 f. TCC (Graduação},
+  language = {pt},
+  booktitle = {- Faculdade de Computação e Informática, Universidade Presbiteriana Mackenzie},
+  address = {Higienópolis}
+}
+@book{pereira2017a,
+  author = {PEREIRA, Bruno Laporais},
+  title = {Recomendação online de músicas usando feedback implícito},
+  year = {2017},
+  pages = {103},
+  publisher = {Universidade Federal de Minas Gerais},
+  language = {pt},
+  address = {Belo Horizonte}
+}
+@article{bastos2023a,
+  author = {Bastos, Rita Maria Cupertino},
+  year = {2023},
+  title = {Florianópolis},
+  note = {Disponível em:},
+  url = {https://proceedings.science/sbsr/sbsr-2023/trabalhos/potencialidades-e-aplicacoes-do-uso-de-deep-learning-no-sensoriamento-remoto-em?lang=pt-br},
+  language = {pt},
+  journal = {Anais eletrônicos..., INPE}
+}
+@misc{oliveira2019a,
+  author = {Oliveira, Danielle Sales de},
+  title = {Sistema de recomendação baseado em filtragem colaborativa em uma base de dados de feedback implícito},
+  year = {2019},
+  pages = {32},
+  note = {TCC (Graduação) -},
+  publisher = {Curso de Ciências da Computação, Universidade Federal de Pernambuco},
+  language = {pt},
+  address = {Recife}
+}
+@misc{spadini-a,
+  author = {SPADINI, Allan Segovia},
+  year = {2019},
+  title = {Sistemas de Recomendação: o que são e como são usados},
+  language = {pt},
+  address = {Disponível em}
+}
+
+@misc{https2024a,
+  author = {https://www.alura.com.br/artigos/sistemas-de-recomendacoes?utm_source=chatgpt.com.},
+  title = {Acesso em: 05 fev},
+  year = {2024},
+  language = {pt}
+}
+
+@article{m-a,
+  author = {M, Paixão G.M. and BC, Santos and de, Araujo R.M. and MH, Ribeiro and de, Moraes J.L. and AL, Ribeiro},
+  title = {Machine Learning na Medicina: Revisão e Aplicabilidade},
+  volume = {2022Jan;118(1):95–102},
+  note = {Available from:},
+  language = {pt},
+  journal = {Arq Bras Cardiol [Internet}
+}
+@misc{unknown-a,
+  doi = {10.36660/abc.20200596}
+}
+@misc{lima2015a,
+  author = {Lima, Adriano Alves de},
+  title = {Classificação automática de gêneros musicais em bases de letras de músicas em diferentes idiomas utilizando métodos de combinação de classificadores},
+  year = {2015},
+  note = {73 f. Dissertação (Mestrado em Informática) - Universidade Tecnológica Federal do Paraná, Cornélio Procópio, 2016.},
+  language = {pt}
+}
+@misc{saias-a,
+  author = {Saias, José and Maia, Miguel and Rato, Luis and Gonçalves, Teresa},
+  year = {2018},
+  title = {Machine Learning: Um Estudo Sobre Conceitos},
+  note = {Tarefas E Algoritmos Relacionados Com Predição E Recomendação. 2018.},
+  language = {pt}
+}
+@misc{almeida2024a,
+  author = {Almeida, Rodrigo Micael Lopes},
+  title = {Banco de Filtros em Oitavas em Fingerprinting de Áudio},
+  year = {2024},
+  note = {Dissertação de Mestrado.},
+  language = {pt}
+}
+@article{ludermir2021a,
+  author = {LUDERMIR, Teresa Bernarda},
+  title = {Inteligência Artificial e Aprendizado de Máquina: estado atual e tendências. Estudos Avançados},
+  volume = {v. 35, n. 101},
+  pages = {85–94,},
+  year = {2021},
+  note = {FapUNIFESP (SciELO). Acesso em:},
+  language = {pt},
+  journal = {S.L}
+}
+@misc{unknown-b,
+  url = {http://dx.doi.org/10.1590/s0103-4014.2021.35101.007.},
+  doi = {10.1590/s0103-4014.2021.35101.007.}
+}
+@article{paix2022a,
+  author = {PAIXÃO, Gabriela Miana de Mattos},
+  title = {Machine Learning na Medicina: Revisão e Aplicabilidade},
+  volume = {v. 118},
+  pages = {95–102,},
+  year = {2022},
+  language = {pt},
+  journal = {Arquivos brasileiros de cardiologia}
+}
+@incollection{ponti2017a,
+  author = {Ponti, Moacir Antonelli and Costa, Gabriel B.Paranhos da},
+  title = {Como funciona o Deep Learning},
+  pages = {63–93,},
+  year = {2017},
+  language = {pt},
+  booktitle = {Arxiv, São Carlos}
+}
+@article{silva-a,
+  author = {Silva, Matheus Alves Sousa e and Carvalho, Rafael Lima de},
+  title = {Sistemas de recomendação de música usando a plataforma JINA.AI},
+  volume = {v. 4, n. 2},
+  year = {2023},
+  pages = {63–68,},
+  note = {16 out. 2023. Universidade Federal do Tocantins.},
+  url = {http://dx.doi.org/10.20873/uft.2675-3588.2023.v4n2.p63-68.},
+  doi = {10.20873/uft.2675-3588.2023.v4n2.p63-68.},
+  language = {pt},
+  journal = {Academic Journal On Computing, Engineering And Applied Mathematics, [S.L}
+}
+
+@article{e-a,
+  author = {Estadão},
+  year = {2019},
+  title = {Spotify cresce base de assinantes abaixo da expectativa},
+  url = {https://link.estadao.com.br/noticias/empresas,spotify-cresce-base-de-assinantes-para-108-milhoes-de-pessoas,70002949026},
+  note = {Acesso em: 09 mar de 2020.},
+  language = {pt},
+  journal = {Disponível em}
+}
+
+@article{Adomavicius2005,
+  author    = {Gediminas Adomavicius and Alexander Tuzhilin},
+  title     = {Toward the Next Generation of Recommender Systems: A Survey of the State-of-the-Art and Possible Extensions},
+  journal   = {IEEE Transactions on Knowledge and Data Engineering},
+  volume    = {17},
+  number    = {6},
+  pages     = {734--749},
+  year      = {2005},
+  doi       = {10.1109/TKDE.2005.99}
+}
+
+@book{Ricci2011,
+  editor    = {Francesco Ricci and Lior Rokach and Bracha Shapira and Paul B. Kantor},
+  title     = {Recommender Systems Handbook},
+  publisher = {Springer},
+  year      = {2011},
+  doi       = {10.1007/978-0-387-85820-3}
+}
+
+@article{Koelsch2014,
+  author    = {Stefan Koelsch},
+  title     = {Brain correlates of music-evoked emotions},
+  journal   = {Nature Reviews Neuroscience},
+  volume    = {15},
+  number    = {3},
+  pages     = {170--180},
+  year      = {2014},
+  doi       = {10.1038/nrn3666}
+}
+
+@book{Picard1997,
+  author    = {Rosalind W. Picard},
+  title     = {Affective Computing},
+  publisher = {MIT Press},
+  year      = {1997}
+}
+
+@article{Calvo2010,
+  author    = {Rafael A. Calvo and Sidney D'Mello},
+  title     = {Affect Detection: An Interdisciplinary Review of Models, Methods, and Their Applications},
+  journal   = {IEEE Transactions on Affective Computing},
+  volume    = {1},
+  number    = {1},
+  pages     = {18--37},
+  year      = {2010},
+  doi       = {10.1109/T-AFFC.2010.1}
+}
+
+@book{Jannach2010,
+  author    = {Dietmar Jannach and Markus Zanker and Alexander Felfernig and Gerhard Friedrich},
+  title     = {Recommender Systems: An Introduction},
+  publisher = {Cambridge University Press},
+  year      = {2010}
+}
+
+@inproceedings{Tkalcic2011,
+  author    = {Marko Tkalčič and Andrej Košir and Jurij Tasič},
+  title     = {Affective recommender systems: The role of emotions in recommender systems},
+  booktitle = {Proceedings of Decisions@RecSys 2011: Workshop on Human Decision Making in Recommender Systems (RecSys 2011 Workshops)},
+  pages     = {9--13},
+  year      = {2011}
+}
+
+@inproceedings{Arapakis2009,
+  author    = {Ilias Arapakis and Yashar Moshfeghi and Hideo Joho and Ryen W. White and Daniele Hannah and Joemon M. Jose},
+  title     = {Enriching user profiling with affective features for the improvement of a multimodal recommender system},
+  booktitle = {Proceedings of the ACM Int. Conf. on Image and Video Retrieval (CIVR)},
+  pages     = {216--223},
+  year      = {2009},
+  doi       = {10.1145/1646396.1646433}
+}
+
+@article{Niu2013,
+  author    = {Jing Niu and Xin Zhao and Lei Zhu and Hui Li},
+  title     = {{AffiVR}: An affect-based internet video recommendation system},
+  journal   = {Neurocomputing},
+  volume    = {120},
+  pages     = {422--433},
+  year      = {2013},
+  doi       = {10.1016/j.neucom.2012.07.050}
+}
+
+@article{Soleymani2012,
+  author    = {Mohammad Soleymani and Maja Pantic and Thierry Pun},
+  title     = {Multimodal emotion recognition in response to videos},
+  journal   = {IEEE Transactions on Affective Computing},
+  volume    = {3},
+  number    = {2},
+  pages     = {211--223},
+  year      = {2012},
+  doi       = {10.1109/T-AFFC.2012.15}
+}
+
+@article{Wang2022,
+  author    = {Dandan Wang and Xiaoming Zhao},
+  title     = {Affective video recommender systems: A survey},
+  journal   = {Frontiers in Neuroscience},
+  volume    = {16},
+  pages     = {984404},
+  year      = {2022},
+  doi       = {10.3389/fnins.2022.984404}
+}
+
+@article{Mizgajski2019,
+  author    = {Jan Mizgajski and Miko{\l}aj Morzy},
+  title     = {Affective recommender systems in online news industry: How emotions influence reading choices},
+  journal   = {User Modeling and User-Adapted Interaction},
+  volume    = {29},
+  number    = {5},
+  pages     = {345--379},
+  year      = {2019},
+  doi       = {10.1007/s11257-018-9213-x}
+}
+
+@article{Breitfuss2021,
+  author    = {Andreas Breitfuss and Kaoutar Errou and Asya Kurteva and Anna Fensel},
+  title     = {Representing emotions with knowledge graphs for movie recommendations},
+  journal   = {Future Generation Computer Systems},
+  volume    = {125},
+  pages     = {715--725},
+  year      = {2021},
+  doi       = {10.1016/j.future.2021.06.001}
+}
+
+
+@article{t-a,
+  author = {TECHTUDO},
+  year = {2018},
+  title = {A história do Spotify e a revolução do streaming na música},
+  url = {https://www.tecmundo.com.br/mercado/131633-historia-spotify-revolucao-do-streamingmusica-video.htm},
+  note = {Acesso em: 09 mar de 2020.},
+  language = {pt},
+  journal = {Disponível em}
+}
+@article{moschetta2018a,
+  author = {MOSCHETTA, Pedro Henrique and VIEIRA, Jorge},
+  title = {Música na era do streaming: curadoria e descoberta musical no Spotify},
+  volume = {20, n. 49},
+  pages = {–},
+  year = {2018},
+  language = {pt},
+  journal = {Sociologias, Porto Alegre, ano}
+}
+@misc{habbema2023a,
+  author = {HABBEMA, Hugo},
+  title = {Processamento de dados em escala com Google Dataflow},
+  year = {2023},
+  note = {Disponível em:},
+  url = {https://medium.com/@habbema/processamento-de-dados-em-escala-com-google-dataflow-61d3e2cc064d.},
+  language = {pt}
+}
+@misc{dias2021a,
+  author = {DIAS, Rodrigo Fernando},
+  title = {Spark Streaming},
+  year = {2021},
+  note = {Disponível em:},
+  url = {https://www.alura.com.br/artigos/spark-streaming?srsltid=AfmBOop3-o0az8BsLpCpkUrt643TraFblauIet2oeXQCFaW6ny7P_4uF.},
+  language = {pt}
+}
+
+@inproceedings{song2012a,
+  author = {SONG, Y. and DIXON, S. and PEARCE, M.},
+  title = {A survey of music recommendation systems and future perspectives},
+  year = {2012},
+  volume = {v. 4},
+  pages = {395–410},
+  language = {en},
+  booktitle = {9th international symposium on computer music modeling and retrieval. [S.l.: s.n}
+}
+@article{bauer2017a,
+  author = {BAUER, C. and KHOLODYLO, M. and STRAUSS, C.},
+  title = {Music recommender systems challenges and opportunities for non-superstar artists},
+  pages = {48,},
+  year = {2017},
+  language = {en},
+  journal = {Bled eConference}
+}
+@incollection{schedl2015a,
+  author = {SCHEDL, M. and KNEES, P. and MCFEE, B. and BOGDANOV, D. and KAMINSKAS, M.},
+  title = {Music recommender systems},
+  publisher = {Springer},
+  year = {2015},
+  pages = {453–492},
+  language = {no},
+  booktitle = {Recommender systems handbook},
+  address = {S.l}
+}
+@inproceedings{shardanand1995a,
+  author = {SHARDANAND, Upendra and MAES, Pattie},
+  title = {Social information filtering: algorithms for automating “word of mouth”},
+  year = {1995},
+  publisher = {Estados Unidos da América},
+  pages = {210–217},
+  language = {en},
+  booktitle = {CONFERENCE ON HUMAN FACTORS IN COMPUTING SYSTEMS},
+  address = {Denver, Colorado}
+}
+@misc{lamere2014a,
+  author = {LAMERE, P.spotipy},
+  year = {2014},
+  note = {Disponível em:},
+  url = {https://spotipy.readthedocs.io},
+  language = {pt}
+}
+
+@misc{muniz-a,
+  author = {Muniz, Harlem},
+  year = {2022},
+  title = {Apache Kafka: O que é e como funciona? 2022},
+  note = {Disponível em:},
+  url = {https://blog.dp6.com.br/apache-kafka-o-que-%C3%A9-e-como-funciona-300a5736e388.},
+  language = {pt}
+}
+@misc{ferrareli2020a,
+  author = {FERRARELI, Camila Melo},
+  year = {2020},
+  pages = {12},
+  publisher = {Universidade Feevale, Novo Hamburgo},
+  language = {eo},
+  type = {f.,}
+}
+
+@incollection{ferreira2023a,
+  author = {Ferreira, Renata da Silva},
+  title = {Sentimentos de Alegria e Tristeza na Música Brasileira: Uma análise exploratória com Inteligência Artificial},
+  year = {2023},
+  note = {22 f. TCC (Graduação},
+  language = {pt},
+  booktitle = {- Curso de Engenharia da Computação, Instituto Federal da Paraíba},
+  address = {Campina Grande}
+}
+@article{musicais2011a,
+  author = {MUSICAIS, A.N.A.I.S.D.O.S.É.T.I.M.O.E.N.C.O.N.T.R.O.N.A.C.I.O.N.A.L.D.E.C.O.G.N.I.Ç.Ã.O.E.A.R.T.E.S.},
+  volume = {7},
+  year = {2011},
+  title = {A percepção das emoções musicais na Hierarquia Modal},
+  language = {pt},
+  journal = {SIMCAM}
+}
+@book{blacking1974a,
+  author = {Blacking, John},
+  title = {How Musical is Man?},
+  publisher = {University Of Washington Press},
+  year = {1974},
+  language = {en},
+  address = {Seattle}
+}
+@article{blood2001a,
+  author = {Blood, A.J. and Zatorre, R.J.},
+  year = {2001},
+  title = {Intensely pleasurable responses to music correlate with activity in brain regions implicated in reward and emotion},
+  volume = {98},
+  pages = {11818–11823},
+  language = {en},
+  journal = {Proceedings of the National Academy of Sciences},
+  number = {20}
+}
+@article{carvalho2019a,
+  author = {CARVALHO, Felipe Nogueira de O.P.A.P.E.L.D.O.C.O.N.T.E.X.T.O.N.A.P.E.R.C.E.P.Ç.Ã.O.D.E.E.M.O.Ç.Õ.E.S.Perspectiva Filosófica},
+  volume = {v. 46, n. 2},
+  pages = {116–142,},
+  year = {2019},
+  language = {ms},
+  journal = {Pernambuco}
+}
+@article{fernandes2014a,
+  author = {FERNANDES, Alexandre and MARQUES, Teresa Garcia},
+  title = {Impacto da expressão facial na percepção de tempo: papel da valência e da activação. Psicologia},
+  volume = {v. 24, n. 2},
+  pages = {61–88,},
+  year = {2014-01-06},
+  note = {Associação Portuguesa de Psicologia.},
+  url = {http://dx.doi.org/10.17575/rpsicol.v24i2.305.},
+  doi = {10.17575/rpsicol.v24i2.305.},
+  language = {pt},
+  journal = {S.L}
+}
+@article{iazzetta2001a,
+  author = {Iazzetta, Fernando},
+  title = {O QUE É A MÚSICA (HOJE). In: I FÓRUM CATARINENSE DE MUSICOTERAPIA},
+  local = {Florianópolis: Departamento de Música},
+  year = {2001},
+  pages = {1–5},
+  language = {pt},
+  journal = {Eca-Usp}
+}
+@article{janata2009a,
+  author = {Janata, P.},
+  year = {2009},
+  title = {The neural architecture of music-evoked autobiographical memories},
+  volume = {19},
+  pages = {2579–2594},
+  language = {en},
+  journal = {Cerebral Cortex},
+  number = {11}
+}
+@book{koelsch2014a,
+  author = {Koelsch, S.},
+  year = {2014},
+  publisher = {Brain and Music. Wiley},
+  language = {en}
+}
+@incollection{kristensen2011a,
+  author = {KRISTENSEN, Christian Haag and GOMES, Carlos Falcão de Azevedo and JUSTO, Alice Reuwsaat and VIEIRA, Karin},
+  title = {Normas brasileiras para o Affective Norms for English Words},
+  volume = {v. 33, n. 3},
+  pages = {135–146,},
+  year = {2011},
+  note = {FapUNIFESP (SciELO).},
+  url = {http://dx.doi.org/10.1590/s2237-60892011000300003.},
+  doi = {10.1590/s2237-60892011000300003.},
+  language = {en},
+  booktitle = {Trends In Psychiatry And Psychotherapy, [S.L}
+}
+@book{levitin2006a,
+  author = {Levitin, D.J.},
+  year = {2006},
+  title = {This is Your Brain on Music: The Science of a Human Obsession},
+  publisher = {Dutton},
+  language = {en}
+}
+@article{peretz2003a,
+  author = {Peretz, I. and Zatorre, R.J.},
+  year = {2003},
+  title = {The cognitive neuroscience of music},
+  volume = {7},
+  pages = {382–390},
+  language = {en},
+  journal = {Trends in Cognitive Sciences},
+  number = {7}
+}
+@article{pinto2001a,
+  author = {Pinto, Tiago de Oliveira},
+  title = {Som e música. Questões de uma antropologia sonora},
+  volume = {v. 44, n. 1},
+  pages = {222–286,},
+  year = {2001},
+  note = {FapUNIFESP (SciELO).},
+  url = {http://dx.doi.org/10.1590/s0034-77012001000100007.},
+  doi = {10.1590/s0034-77012001000100007.},
+  language = {pt},
+  journal = {Revista de Antropologia, [S.L}
+}
+@incollection{russell1997a,
+  author = {Russell, James A.},
+  title = {Reading emotions from and into faces: resurrecting a dimensional-contextual perspective},
+  pages = {295–320,},
+  year = {1997},
+  publisher = {Cambridge University Press},
+  url = {http://dx.doi.org/10.1017/cbo9780511659911.015.},
+  doi = {10.1017/cbo9780511659911.015.},
+  language = {en},
+  booktitle = {The Psychology Of Facial Expression, [S.L}
+}
+@article{salimpoor2011a,
+  author = {Salimpoor, V.N. and Benovoy, M. and Larcher, K. and Dagher, A. and Zatorre, R.J.},
+  year = {2011},
+  title = {Anatomically distinct dopamine release during anticipation and experience of peak emotion to music},
+  volume = {14},
+  pages = {257–262},
+  language = {en},
+  journal = {Nature Neuroscience},
+  number = {2}
+}
+@article{zatorre2005a,
+  author = {Zatorre, R.J.},
+  year = {2005},
+  title = {Music, the brain, and health: A window on the neuroscience of emotion},
+  volume = {28},
+  pages = {627–630},
+  language = {en},
+  journal = {The Behavioral and Brain Sciences},
+  number = {5}
+}
+@article{adomavicius2005a,
+  author = {ADOMAVICIUS, G. and TUZHILIN, A.},
+  title = {Toward the Next Generation of Recommender Systems: A Survey of the State-of-the-Art and Possible Extensions},
+  volume = {17–6},
+  year = {2005-06},
+  pages = {734–749},
+  language = {en},
+  journal = {IEEE Transactions on Knowledge and Data Engineering}
+}
+@misc{burke2002a,
+  author = {Burke, R.},
+  title = {Hybrid recommender systems: Survey and experiments, User Modeling and User-Adapted Interaction},
+  volume = {12–4},
+  year = {2002},
+  pages = {331–370},
+  language = {en}
+}
+@incollection{cazella2010a,
+  author = {Cazella, S.C. and Nunes, M.A.S.N. and Reategui, E.},
+  title = {A Ciência da Opinião: Estado da Arte em Sistemas de Recomendação},
+  editor = {Carvalho, André Ponce and Kowaltowski, Tomasz},
+  publisher = {PucRIO},
+  year = {2010},
+  volume = {v. 1},
+  pages = {161–216},
+  language = {pt},
+  booktitle = {Jornada de Atualização de Informática-JAI 2010- CSBC2010},
+  address = {Rio de Janeiro}
+}
+@misc{fontes2022a,
+  author = {FONTES, Flaviano Dias},
+  title = {Deejai: uma plataforma open source para recomendação de músicas para grupos de usuários de serviços de streaming},
+  year = {2022},
+  language = {pt}
+}
+
+@article{isinkaye2015a,
+  author = {Isinkaye, F.O. and Folajimi, Y.O. and Ojokoh, B.A.},
+  title = {Recommendation systems: Principles, methods and evaluation},
+  volume = {v. 16, n. 3},
+  pages = {261–273,},
+  year = {2015},
+  language = {en},
+  journal = {Egyptian informatics journal, Elsevier}
+}
+@article{lakshmi2014a,
+  author = {LAKSHMI, S.S. and LAKSHMI, T.A.},
+  title = {Recommendation systems: Issues and challenges},
+  volume = {v. 5, n. 4},
+  pages = {5771–5772,},
+  year = {2014},
+  language = {en},
+  journal = {International Journal ofComputer Science and Information Technologies, Citeseer}
+}
+
+@article{goldberg1992a,
+  author = {Goldberg, D. and NICHOLS, D. and OKI, B.M. and TERRY, D.},
+  title = {Using Collaborative Filtering to Weave an Information Tapestry},
+  volume = {35–12},
+  year = {1992},
+  pages = {61–70},
+  language = {en},
+  journal = {Communications of the ACM}
+}
+@article{patel2017a,
+  author = {Patel, B. and Desai, P. and Panchal, U.},
+  title = {Methods of recommender system: A review},
+  publisher = {S.l},
+  year = {2017},
+  pages = {1–4},
+  language = {en},
+  booktitle = {IEEE. 2017 International Conference on Innovations in Information, Embedded and Communication Systems (ICIIECS}
+}
+@article{resnick1997a,
+  author = {Resnick, P. and Varian, H.R.},
+  title = {Recommender Systems},
+  volume = {40–3},
+  year = {1997-03},
+  pages = {56–58},
+  language = {en},
+  journal = {Communications of the ACM}
+}
+@article{schafer1999a,
+  author = {Schafer, J.Ben},
+  title = {Recommender systems in e-commerce},
+  volume = {1},
+  publisher = {ACM},
+  year = {1999},
+  pages = {158–166},
+  language = {fr},
+  journal = {ACM CONFERENCE ON ELECTRONIC COMMERCE},
+  number = {},
+  address = {Denver, Colorado}
+}
+@article{shardanand1995a:,
+  author = {SHARDANAND, Upendra and MAES, Pattie},
+  title = {Social information filtering: algorithms for automating “word of mouth”},
+  publisher = {Estados Unidos da América},
+  year = {1995},
+  pages = {210–217},
+  language = {en},
+  booktitle = {CONFERENCE ON HUMAN FACTORS IN COMPUTING SYSTEMS, 1995},
+  address = {Denver, Colorado}
+}
+@article{shardanand1995b:,
+  author = {Shardanand, Upendra and Maes, Pattie},
+  title = {Social information filtering: algorithms for automating “word of mouth”},
+  publisher = {Estados Unidos da América},
+  year = {1995},
+  pages = {210–217},
+  language = {en},
+  booktitle = {CONFERENCE ON HUMAN FACTORS IN COMPUTING SYSTEMS, 1995},
+  address = {Denver, Colorado}
+}
+@article{camilo2018a,
+  author = {CAMILO, Naara Macedo},
+  title = {Mapeamento sistemático de características musicais para reconhecimento automático de emoções / Naara Macedo Camilo},
+  year = {2018},
+  note = {CD-ROM : il.; 4 3⁄4 pol. ( 55 f.).},
+  language = {pt},
+  journal = {}
+}
+@misc{schindler2018a,
+  author = {SCHINDLER, A. and LÜTHI, L. and WIDMER, G.},
+  title = {A data-driven approach to mid-level perceptual musical feature modeling},
+  note = {arXiv preprint arXiv:1806.04903,},
+  year = {2018},
+  arxiv = {1806.04903},
+  language = {en}
+}
+@book{zhang2016a,
+  author = {Zhang, Jianglong and HUANG, Xianglin and YANG, Lifang and NIE, Liqiang},
+  title = {Bridge the semantic gap between pop music acoustic feature and emotion: build an interpretable model},
+  publisher = {S.L},
+  volume = {v. 208},
+  pages = {333–341,},
+  year = {2016},
+  url = {http://dx.doi.org/10.1016/j.neucom.2016.01.099.},
+  doi = {10.1016/j.neucom.2016.01.099.},
+  language = {en},
+  address = {Neurocomputing}
+}
+@misc{zhao2022a,
+  author = {ZHAO, R. and LIU, J.},
+  title = {Song emotion recognition: A performance comparison between audio features and artificial neural networks},
+  note = {arXiv preprint arXiv:2209.12045,},
+  year = {2022},
+  arxiv = {2209.12045},
+  language = {en}
+}
+@article{brainer2023a,
+  author = {Brainer, A.C. and Auriani, M.},
+  year = {2023},
+  title = {BIG DATA E A MÚSICA: O IMPACTO NA CRIAÇÃO E DISTRIBUIÇÃO DA INDÚSTRIA FONOGRÁFICA BASEADO NAS TENDÊNCIAS TECNOLÓGICAS},
+  volume = {28},
+  note = {Recuperado de},
+  url = {https://revistas.belasartes.br/revistabelasartes/article/view/390},
+  language = {pt},
+  journal = {Revista Belas Artes},
+  number = {3}
+}
+@article{galv-a,
+  author = {GALVÃO, Noemi Dreyer and MARIN, Heimar de Fátima},
+  title = {Técnica de Mineração de Dados: uma revisão da literatura},
+  volume = {v. 1, n. 1},
+  year = {2009},
+  pages = {1–5},
+  note = {abr. 2009. Disponível em: . Acesso em: 22 jun. 2015},
+  language = {pt},
+  journal = {Scielo, São Paulo}
+}
+@article{longo2007a,
+  author = {LONGO, Waldimir Pirró e},
+  title = {Alguns impactos sociais do desenvolvimento científico e tecnológico},
+  volume = {v. 8, n. 1},
+  pages = {01–20,},
+  year = {2007},
+  note = {Mensal. Disponível em: . Acesso em: 08 abr. 2015.},
+  language = {pt},
+  journal = {Datagramazero: Revista de Ciência da Informação, São Paulo}
+}
+@article{taurion-a,
+  author = {Taurion, T227b},
+  year = {2013},
+  title = {Cezar Big Data/Cezar Taurion - Rio de Janeiro Brasport, 2013. ePUB ISBN: 978-85-7452-608-9 1},
+  volume = {2},
+  publisher = {Título},
+  language = {pt},
+  journal = {Big Data},
+  address = {Negócios I}
+}
+@article{calvo2010a,
+  author = {Calvo, R.A. and D'Mello, S.},
+  year = {2010},
+  title = {Affect detection: An interdisciplinary review of models, methods, and their applications},
+  volume = {1},
+  pages = {18–37},
+  language = {en},
+  journal = {IEEE Transactions on Affective Computing},
+  number = {1}
+}
+@book{jannach2010a,
+  author = {Jannach, D. and Zanker, M. and Felfernig, A. and Friedrich, G.},
+  year = {2010},
+  title = {Recommender Systems: An Introduction},
+  publisher = {Cambridge University Press},
+  language = {en}
+}
+@book{koelsch2014b,
+  author = {Koelsch, S.},
+  year = {2014},
+  publisher = {Brain and Music. Wiley},
+  language = {en}
+}
+@book{picard1997a,
+  author = {Picard, R.W.},
+  year = {1997},
+  title = {Affective Computing},
+  publisher = {MIT Press},
+  language = {de}
+}
+@book{ricci2011a,
+  author = {Ricci, F. and Rokach, L. and Shapira, B.},
+  year = {2011},
+  title = {Introduction to Recommender Systems},
+  publisher = {Springer},
+  language = {en}
+}
+@article{schubert1999a,
+  author = {Schubert, E.},
+  year = {1999},
+  title = {Measuring emotion continuously: Validity and reliability of the two-dimensional emotion space},
+  journal = {Australian Journal of Psychology},
+  language = {en},
+  pages = {154-165}
+}
+@article{rodrigues2008a,
+  author = {Rodrigues, V.},
+  year = {2008},
+  title = {Timbre, Tempo e Espaço na música de Victorio},
+  journal = {XVIII Congresso da Associação Nacional de Pesquisa e Pós-Graduação (ANPPOM)},
+  language = {pt},
+  address = {Salvador}
+}
+@misc{jacques-dalcroze2023a,
+  author = {Jaques-Dalcroze, É.},
+  title = {O ritmo, a música e a educação [recurso eletrônico]},
+  publisher = {Ed. UFRJ},
+  note = {Émile Jaques-Dalcroze ; organização Lilia Justi, Rodrigo Batalha ; tradução, Rodrigo Batalha ... [e outros]},
+  pages = {333–341,},
+  year = {2023},
+  language = {en},
+  address = {Rio de Janeiro}
+}
+@thesis{moreira2017a,
+  author    = {Moreira, Paulo Sergio da Conceição},
+  title     = {MINERAÇÃO DE DADOS APLICADA À CLASSIFICAÇÃO AUTOMÁTICA DE GÊNEROS MUSICAIS},
+  year      = {2017},
+  school    = {Curso de Curso de Gestão da Informação, Universidade Federal do Paraná},
+  type      = {Trabalho de Conclusão de Curso},
+  address = {Paraná}
+}
+@article{moreira2019a,
+  author  = {MOREIRA, Paulo Sergio da Conceição and TSUNODA, Denise Fukumi},
+  title   = {Mineração de dados aplicada à classificação automática de gêneros musicais},
+  journal = {Revista Brasileira de Computação Aplicada},
+  publisher = {UPF Editora},
+  year    = {2019},
+  volume  = {11},
+  number  = {3},
+  pages   = {47-58},
+  doi     = {10.5335}
+}
+@article{assunccao2023arquitetura,
+  title={Uma arquitetura para sistemas de recomenda{\c{c}}{\~a}o de m{\'u}sica baseado em contexto da intera{\c{c}}{\~a}o e experi{\^e}ncia do usu{\'a}rio},
+  author={Assun{\c{c}}{\~a}o, Willian Garcias de},
+  year={2023}
+}
+@article{paes2022experiencia,
+  title={Experi{\^e}ncia do usu{\'a}rio e design de intera{\c{c}}{\~a}o:: uma an{\'a}lise bibliom{\'e}trica de publica{\c{c}}{\~o}es acad{\^e}micas},
+  author={Paes, Vanessa Marques and Polimeno, Claudia and Souza, Cora Soares and de Sousa Costa, Jessica Priscila and de Andrade, Renata Maciel and Gaspar, Ricardo},
+  journal={InfoDesign-Journal of Information Design},
+  volume={19},
+  number={1},
+  year={2022}
+}
+@article{milano2010,
+    author = {Milano, Danilo de; Honorato, Luciano Barrozo.},
+    title = {VISÃO COMPUTACIONAL},
+    school = {Unicamp – Universidade Estadual de Campinas},
+    adress = {Limeira},
+    year = {2010}
+}
+@article{alves2024a,
+  author = {Alves, André Gabriel and Guizzo, Michele Alda Rosso and Lorandi, Alexandra and Behar, Patricia Alejandra},
+  year = {2024},
+  title = {Sistema de Identificação de Expressões Faciais Básicas em um Editor de Texto Coletivo},
+  journal = {Risti - Revista Ibérica de Sistemas e Tecnologias de Informação},
+  number = {54},
+  pages = {88--103},
+  month = {jun},
+  day = {30},
+  publisher = {AISTI},
+  url = {http://dx.doi.org/10.17013/risti.54.88-103},
+  language = {pt}
+}

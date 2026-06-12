@@ -1,0 +1,607 @@
+% -----------------------------------------------------------------------------
+% Conteudo AODV-EN. Template base: Prof. Wesley Pacheco Calixto (IFG).
+% -----------------------------------------------------------------------------
+\chapter{REFERENCIAL TEÓRICO}\label{referencial-teuxf3rico}
+
+Este capítulo apresenta os fundamentos teóricos que embasam o
+desenvolvimento da pesquisa. Inicialmente, são discutidos os conceitos
+de Internet das Coisas e de Redes de Sensores Sem Fio, situando o
+contexto tecnológico do estudo. Em seguida, são apresentadas as
+características do microcontrolador ESP32 e do protocolo ESP-NOW,
+utilizados na implementação do artefato. Posteriormente, abordam-se os
+conceitos de redes mesh e a classificação dos protocolos de roteamento
+ad-hoc. Por fim, é analisado o protocolo AODV, que fundamenta a
+adaptação proposta e o desenvolvimento do protocolo AODV-EN.
+
+\section{Internet das Coisas e Redes de Sensores Sem
+Fio}\label{internet-das-coisas-e-redes-de-sensores-sem-fio}
+
+A Internet das Coisas (\emph{Internet of Things} -- IoT) representa um
+paradigma tecnológico no qual objetos físicos dotados de capacidade
+computacional, sensores e conectividade de rede integram-se ao ambiente
+de forma ubíqua, coletando e compartilhando dados sem intervenção humana
+direta \cite{priyadarshi2025}. Essa visão, antecipada por Mark Weiser em
+1991 sob o conceito de Computação Ubíqua, materializa-se atualmente em
+bilhões de dispositivos conectados mundialmente, permeando setores como
+saúde, agricultura, indústria, cidades inteligentes e automação
+residencial. As Redes de Sensores Sem Fio (\emph{Wireless Sensor
+Networks} -- WSNs) constituem uma das principais infraestruturas para
+implementação de aplicações IoT. Uma WSN é composta por um conjunto de
+nós sensores distribuídos espacialmente, capazes de monitorar fenômenos
+físicos ou ambientais, como temperatura, umidade, pressão, movimento ou
+luminosidade e transmitir os dados coletados através de enlaces sem fio
+até uma estação base ou gateway \cite{chaizeng2021}. Os nós sensores são
+tipicamente dispositivos de recursos limitados, com restrições de
+processamento, memória, energia e largura de banda de comunicação. O
+projeto de WSNs deve considerar um conjunto de requisitos críticos que
+influenciam diretamente a viabilidade e eficácia das aplicações. O
+Quadro 1 sintetiza os principais requisitos e suas implicações para o
+projeto de redes de sensores.
+
+\textbf{Quadro 1 -- Requisitos críticos para projeto de Redes de
+Sensores Sem Fio}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\centering\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
+  >{\centering\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+Requisito
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Descrição e Implicações
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Baixo custo & Implantações em larga escala requerem dispositivos
+economicamente acessíveis. O custo por nó deve permitir a instalação de
+dezenas a centenas de dispositivos sem inviabilizar o projeto. \\
+Baixo consumo energético & Muitas aplicações exigem operação por meses
+ou anos com baterias de capacidade limitada. O consumo deve ser
+minimizado em todos os subsistemas: processamento, comunicação e
+sensoriamento. \\
+Confiabilidade & A rede deve garantir a entrega dos dados coletados
+mesmo em condições adversas, como interferência eletromagnética,
+obstáculos físicos ou falha de nós individuais. \\
+Escalabilidade & A arquitetura deve suportar o crescimento do número de
+nós sem degradação significativa de desempenho ou necessidade de
+reconfiguração manual. \\
+Auto-organização & Os nós devem ser capazes de estabelecer e manter a
+topologia da rede de forma autônoma, adaptando-se a mudanças no ambiente
+ou na composição da rede. \\
+\end{longtable}
+}
+
+Fonte: Adaptado de Priyadarshi et al.~(2025) e Chai e Zeng (2021).
+
+A comunicação sem fio é o componente de maior consumo energético em um
+nó sensor típico, podendo representar até 70\% do consumo total do
+dispositivo \cite{priyadarshi2025}. Dessa forma, a escolha do protocolo
+de comunicação e a estratégia de roteamento adotada impactam diretamente
+a vida útil da rede. Protocolos que minimizam o número de transmissões,
+utilizam modos de baixo consumo durante períodos de inatividade e
+otimizam o tamanho das mensagens de controle contribuem
+significativamente para a extensão da autonomia dos dispositivos.
+
+\section{O Microcontrolador ESP32}\label{o-microcontrolador-esp32}
+
+O ESP32 é um \emph{System-on-Chip} (SoC) desenvolvido pela Espressif
+Systems, projetado para aplicações de Internet das Coisas que demandam
+conectividade sem fio integrada, desempenho computacional elevado e
+eficiência energética. Desde seu lançamento em 2016, o ESP32 tornou-se
+uma das plataformas mais populares para prototipagem e desenvolvimento
+de soluções IoT, sendo utilizado tanto em projetos acadêmicos quanto em
+produtos comerciais \cite{becker2025}. A arquitetura do ESP32 baseia-se
+em um processador dual-core Xtensa LX6, operando em frequências de até
+240 MHz, complementado por coprocessador de ultra-baixo consumo (ULP),
+memória SRAM de 520 KB e suporte a memória flash externa de até 16 MB. O
+SoC integra interfaces Wi-Fi 802.11 b/g/n e Bluetooth 4.2 (incluindo
+BLE), além de um amplo conjunto de periféricos como conversores
+analógico-digitais (ADC), conversores digital-analógicos (DAC),
+interfaces SPI, I²C, I²S, UART, PWM, sensores de toque capacitivo e
+sensor de efeito Hall.
+
+\textbf{Quadro 2 -- Especificações técnicas do microcontrolador ESP32}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}cl@{}}
+\toprule\noalign{}
+Característica & Especificação \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Processador & Dual-core Xtensa LX6, até 240 MHz \\
+Coprocessador & ULP (Ultra Low Power) para operação em deep sleep \\
+Memória SRAM & 520 KB \\
+Flash externa & Até 16 MB (tipicamente 4 MB em módulos DevKit) \\
+Conectividade Wi-Fi & IEEE 802.11 b/g/n, 2.4 GHz, até 150 Mbps \\
+Conectividade Bluetooth & Bluetooth 4.2 BR/EDR e BLE \\
+Tensão de operação & 3.0 V -- 3.6 V (típico 3.3 V) \\
+GPIOs & 34 pinos programáveis \\
+Interfaces & SPI, I²C, I²S, UART, PWM, ADC (12-bit), DAC (8-bit) \\
+\end{longtable}
+}
+
+Fonte: \citeonline{espressif2024}.
+
+Uma característica diferencial do ESP32 para aplicações IoT é seu
+suporte a múltiplos modos de operação com diferentes perfis de consumo
+energético. O Quadro 3 apresenta os modos de energia disponíveis e seus
+respectivos consumos típicos, conforme especificado no \emph{datasheet}
+do fabricante.
+
+\textbf{Quadro 3 -- Modos de operação e consumo energético do ESP32}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Modo de Operação
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Consumo Típico
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Descrição
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Active (Wi-Fi TX) & 160 -- 260 mA & Transmissão ativa de dados via
+Wi-Fi \\
+Active (CPU @ 240 MHz) & 30 -- 68 mA & CPU operando em máxima
+frequência, rádio desligado \\
+Active (CPU @ 80 MHz) & 20 -- 25 mA & CPU operando em frequência
+reduzida, rádio desligado \\
+Modem Sleep & 3 -- 20 mA & CPU ativa, rádio Wi-Fi/BT desligado \\
+Light Sleep & 0.8 mA & CPU pausada, RAM preservada, despertar rápido
+(\textless1 ms) \\
+Deep Sleep & 10 -- 150 µA & CPU desligada, apenas RTC ativo, despertar
+por timer ou GPIO \\
+Hibernation & 5 µA & Apenas RTC timer ativo, memória não preservada \\
+\end{longtable}
+}
+
+Fonte: \citeonline{espressif2024}.
+
+A disponibilidade de módulos de desenvolvimento (DevKit) a preços
+acessíveis, tipicamente entre R\$ 25,00 e R\$ 40,00 no mercado
+brasileiro, democratiza o acesso à tecnologia e viabiliza a construção
+de redes de sensores com dezenas de nós a custos compatíveis com
+aplicações em países em desenvolvimento.
+
+\section{O Protocolo ESP-NOW}\label{o-protocolo-esp-now}
+
+O ESP-NOW é um protocolo de comunicação sem fio proprietário
+desenvolvido pela Espressif Systems, projetado para permitir a troca
+direta de mensagens curtas entre dispositivos ESP32 e ESP8266 sem a
+necessidade de estabelecimento prévio de conexão Wi-Fi ou associação a
+um ponto de acesso. O protocolo opera na camada de enlace do padrão IEEE
+802.11, utilizando \emph{action frames} do tipo \emph{vendor-specific}
+para transmissão de dados \cite{becker2025}.
+
+\subsection{Características
+técnicas}\label{caracteruxedsticas-tuxe9cnicas}
+
+O ESP-NOW opera na frequência de 2.4 GHz, com taxa de transmissão de 1
+Mbit/s e largura de banda de canal de 20 MHz. O protocolo implementa um
+mecanismo de acesso ao meio baseado em CSMA (\emph{Carrier Sense
+Multiple Access}) do tipo \emph{p-persistent}, com \emph{slots}
+temporais de aproximadamente 481 µs. O suporte a retransmissões
+automáticas permite até 31 tentativas por pacote em caso de falha na
+entrega, aumentando a confiabilidade da comunicação \cite{becker2025}.
+Cada mensagem ESP-NOW pode transportar até 250 bytes de \emph{payload}
+útil, com um \emph{overhead} de cabeçalho de aproximadamente 43 bytes. O
+protocolo suporta criptografia opcional utilizando o algoritmo AES-128
+no modo CCMP, permitindo comunicação segura quando necessário. A
+identificação dos dispositivos é realizada através de seus endereços MAC
+de 6 bytes.
+
+\textbf{Quadro 4 -- Características técnicas do protocolo ESP-NOW}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\centering\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
+  >{\centering\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+Parâmetro
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Valor
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Padrão base & IEEE 802.11b (action frames vendor-specific) \\
+Frequência de operação & 2.4 GHz (canais 1-14) \\
+Taxa de transmissão & 1 Mbit/s \\
+Payload máximo & 250 bytes \\
+Overhead de cabeçalho & \textasciitilde43 bytes \\
+Mecanismo de acesso ao meio & CSMA p-persistent (slot \textasciitilde481
+µs) \\
+Retransmissões automáticas & Até 31 tentativas por pacote \\
+Criptografia & AES-128 CCMP (opcional) \\
+Número máximo de peers & 20 peers (com criptografia) / 10 peers (sem
+criptografia) \\
+\end{longtable}
+}
+
+Fonte: Becker et al.~(2025); \citeonline{espressif2024}.
+
+\subsection{Desempenho e alcance}\label{desempenho-e-alcance}
+
+Estudos experimentais recentes fornecem caracterização detalhada do
+desempenho do ESP-NOW em diferentes condições. \citeonline{becker2025},
+em experimentos de campo conduzidos em 246 posições distintas em
+ambientes abertos (fazenda) e florestais, reportaram latência base de
+transmissão entre 2.700 e 2.800 µs (aproximadamente 2,8 ms), podendo
+alcançar até 60 ms em cenários com múltiplas retransmissões. Em termos
+de confiabilidade, foi observado \emph{Packet Delivery Ratio} (PDR)
+superior a 99\% em distâncias de até 55 metros em linha de visada, com
+alcance máximo de aproximadamente 70 metros antes da perda total de
+conectividade. Em ambiente interno, \citeonline{urazayev2023} avaliaram
+o desempenho do ESP-NOW considerando a presença de paredes e obstáculos.
+Os resultados demonstraram que o ESP-NOW apresenta alcance interno de 15
+a 90 metros dependendo das condições, com PDR 15\% superior e consumo
+energético 30\% inferior quando comparado a soluções baseadas em Wi-Fi
+TCP convencional. Os autores destacam que fatores ambientais como
+reflexões e obstáculos afetam significativamente o desempenho, e que
+pequenas variações na posição do receptor podem causar grandes
+alterações na qualidade do enlace.
+
+\subsection{Limitações para comunicação
+multi-hop}\label{limitauxe7uxf5es-para-comunicauxe7uxe3o-multi-hop}
+
+Apesar de suas vantagens, o ESP-NOW apresenta limitações estruturais que
+restringem sua aplicação direta em redes de maior escala. A primeira e
+mais significativa limitação é a ausência de suporte nativo a roteamento
+multi-hop. O protocolo foi concebido exclusivamente para comunicações
+ponto-a-ponto ou em topologia estrela, não oferecendo mecanismos para
+encaminhamento de pacotes através de nós intermediários
+\cite{becker2025}. A segunda limitação refere-se ao número máximo de
+\emph{peers} simultâneos, cada dispositivo ESP32 pode manter no máximo
+20 \emph{peers} registrados em sua tabela de pares quando utilizada
+criptografia, ou 10 \emph{peers} sem criptografia. Essa restrição,
+imposta por limitações de memória do hardware, impede a escalabilidade
+direta da rede e exige estratégias de gerenciamento dinâmico de
+\emph{peers} para contorná-la. A terceira limitação relaciona-se à
+ausência de mecanismo de \emph{broadcast} nativo eficiente. Embora seja
+possível enviar mensagens para o endereço de \emph{broadcast}
+(FF:FF:FF:FF:FF:FF), essa abordagem não oferece confirmação de entrega e
+apresenta menor confiabilidade, dificultando sua utilização para
+disseminação de mensagens de controle em protocolos de descoberta de
+rotas.
+
+\section{Redes Mesh e Protocolos de Roteamento
+Ad-Hoc}\label{redes-mesh-e-protocolos-de-roteamento-ad-hoc}
+
+\subsection{Conceitos fundamentais de redes
+mesh}\label{conceitos-fundamentais-de-redes-mesh}
+
+As Redes Mesh Sem Fio (\emph{Wireless Mesh Networks} -- WMNs) constituem
+uma arquitetura de rede descentralizada na qual cada nó pode funcionar
+simultaneamente como origem, destino e roteador de dados, estabelecendo
+múltiplos caminhos de comunicação entre os participantes
+\cite{chaizeng2021}. Diferentemente das topologias centralizadas, como a
+estrela, onde todos os nós dependem de um ponto de acesso único, as
+redes mesh distribuem a responsabilidade de encaminhamento entre todos
+os participantes, eliminando pontos únicos de falha e aumentando a
+resiliência do sistema. A comunicação em múltiplos saltos
+(\emph{multi-hop}) é uma característica fundamental das redes mesh:
+quando o destino está fora do alcance direto de transmissão do nó de
+origem, pacotes de dados são encaminhados através de nós intermediários
+que atuam como \emph{relays}. Essa abordagem permite estender
+significativamente o alcance efetivo da rede sem aumentar a potência de
+transmissão individual dos dispositivos, característica particularmente
+valiosa para redes de sensores alimentadas por bateria. As WMNs podem
+ser classificadas em três categorias principais conforme sua
+arquitetura: (i) \emph{Infrastructure WMN}, onde roteadores mesh formam
+a infraestrutura de backbone da rede; (ii) \emph{Client WMN}, onde os
+próprios dispositivos clientes participam do roteamento; e (iii)
+\emph{Hybrid WMN}, que combina características de ambas as abordagens.
+Para redes de sensores com ESP32, a arquitetura \emph{Client WMN} é
+tipicamente mais adequada, pois todos os nós possuem capacidade
+computacional similar e podem contribuir para o roteamento
+\cite{chaizeng2021}.
+
+\subsection{Classificação dos protocolos de
+roteamento}\label{classificauxe7uxe3o-dos-protocolos-de-roteamento}
+
+Os protocolos de roteamento para redes ad-hoc e mesh podem ser
+classificados em três categorias principais conforme sua estratégia de
+descoberta e manutenção de rotas: proativos (\emph{table-driven}),
+reativos (\emph{on-demand}) e híbridos. Os protocolos proativos, como o
+\emph{Optimized Link State Routing} (OLSR) e o
+\emph{Destination-Sequenced Distance-Vector} (DSDV), mantêm tabelas de
+roteamento constantemente atualizadas através da troca periódica de
+informações de topologia entre todos os nós da rede. Essa abordagem
+oferece baixa latência na descoberta de rotas --- uma vez que a
+informação já está disponível quando necessária --- mas impõe
+\emph{overhead} de controle constante, mesmo quando não há tráfego de
+dados, o que pode ser problemático para redes de sensores com recursos
+energéticos limitados. Os protocolos reativos, como o \emph{Ad-hoc
+On-Demand Distance Vector} (AODV) e o \emph{Dynamic Source Routing}
+(DSR), descobrem rotas apenas quando há necessidade efetiva de
+comunicação. Quando um nó precisa enviar dados para um destino
+desconhecido, inicia um processo de descoberta de rota através da
+disseminação de mensagens de requisição pela rede. Essa abordagem
+elimina o \emph{overhead} de manutenção em períodos de inatividade,
+sendo mais adequada para redes com padrões de tráfego esporádicos ou
+imprevisíveis, características comuns em aplicações de sensoriamento. Os
+protocolos híbridos, como o \emph{Zone Routing Protocol} (ZRP), combinam
+características de ambas as abordagens: utilizam roteamento proativo
+dentro de zonas locais e roteamento reativo para comunicação entre
+zonas. Essa estratégia busca balancear as vantagens de ambas as
+abordagens, mas introduz complexidade adicional na implementação.
+
+\textbf{Quadro 5 -- Comparativo entre categorias de protocolos de
+roteamento ad-hoc}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Característica
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Proativo
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Reativo
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Híbrido
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Exemplos & OLSR, DSDV & AODV, DSR & ZRP \\
+Descoberta de rotas & Antecipada (sempre) & Sob demanda & Combinada \\
+Latência inicial & Baixa & Alta (descoberta) & Média \\
+Overhead de controle & Constante (alto) & Variável (baixo) & Moderado \\
+Uso de memória & Alto & Baixo/médio & Médio \\
+Adequação para WSNs & Limitada & Boa & Moderada \\
+\end{longtable}
+}
+
+Fonte: Adaptado de Chai e Zeng (2021) e Priyadarshi et al.~(2025).
+
+\subsection{Soluções existentes de mesh para
+ESP32}\label{soluuxe7uxf5es-existentes-de-mesh-para-esp32}
+
+O ecossistema ESP32 oferece algumas soluções de rede mesh, cada uma com
+características distintas. O ESP-WIFI-MESH (também conhecido como
+ESP-MDF) é a solução oficial da Espressif, implementando uma arquitetura
+de árvore auto-organizada sobre a pilha Wi-Fi convencional. Embora
+ofereça recursos avançados de gerenciamento de rede, o ESP-WIFI-MESH
+impõe consumo energético elevado devido à utilização contínua do rádio
+Wi-Fi para manutenção da topologia \cite{sestak2022}. A biblioteca
+PainlessMesh, desenvolvida pela comunidade open-source, oferece uma
+alternativa simplificada para criação de redes mesh com ESP32 e ESP8266.
+Similar ao ESP-WIFI-MESH, a PainlessMesh opera sobre a pilha Wi-Fi,
+herdando as mesmas limitações de consumo energético. Conforme observado
+por \citeonline{sestak2022}, o uso do Wi-Fi padrão para manutenção da
+topologia mesh resulta em \emph{overhead} significativo de processamento
+e energia, comprometendo a aplicabilidade dessas soluções em
+dispositivos alimentados por baterias. Abordagens alternativas têm
+explorado a construção de redes mesh diretamente sobre o ESP-NOW.
+\citeonline{cujilema2023} propuseram o algoritmo BRAM-NOW para criação
+de redes mesh seguras, demonstrando latência média de 75 ms e taxa de
+perda de pacotes de 9,25\% em ambiente residencial. Entretanto, essa
+abordagem não se fundamenta em protocolos de roteamento padronizados,
+limitando sua comparabilidade com outras soluções e dificultando
+extensões futuras.
+
+\section{O Protocolo AODV}\label{o-protocolo-aodv}
+
+O \emph{Ad-hoc On-Demand Distance Vector} (AODV) é um protocolo de
+roteamento reativo especificado na RFC 3561 \cite{perkins2003},
+projetado para redes ad-hoc móveis (MANETs) com populações de dezenas a
+milhares de nós. O protocolo oferece rápida adaptação a condições
+dinâmicas de enlace, baixo \emph{overhead} de processamento e memória, e
+utilização eficiente da rede, características que o tornam adequado para
+adaptação em redes de sensores com recursos limitados.
+
+\subsection{Mensagens de controle}\label{mensagens-de-controle}
+
+O AODV define quatro tipos de mensagens de controle para descoberta e
+manutenção de rotas: a) RREQ (\emph{Route Request}): mensagem de
+requisição de rota, disseminada por \emph{broadcast} quando um nó
+precisa descobrir um caminho para um destino desconhecido. Contém:
+endereço IP de origem, número de sequência de origem, endereço IP de
+destino, último número de sequência conhecido do destino, identificador
+único da requisição (RREQ ID) e contador de saltos; b) RREP (\emph{Route
+Reply}): mensagem de resposta, enviada em unicast de volta à origem
+quando o destino ou um nó intermediário com rota válida recebe um RREQ.
+Contém: endereço IP de destino, número de sequência de destino, endereço
+IP de origem, contador de saltos e tempo de vida da rota; c) RERR
+(\emph{Route Error}): mensagem de erro de rota, enviada quando uma
+quebra de enlace é detectada. Notifica os nós afetados sobre destinos
+que se tornaram inalcançáveis através do enlace interrompido; d)
+RREP-ACK (\emph{Route Reply Acknowledgment}): mensagem de confirmação
+opcional, utilizada para detectar enlaces unidirecionais quando
+necessário.
+
+\subsection{Processo de descoberta de
+rotas}\label{processo-de-descoberta-de-rotas}
+
+Quando um nó de origem necessita enviar dados para um destino para o
+qual não possui rota válida em sua tabela de roteamento, inicia o
+processo de descoberta de rota através da difusão de uma mensagem RREQ.
+Antes da transmissão, o nó incrementa seu próprio número de sequência e
+armazena o par (endereço de origem, RREQ ID) em um buffer temporal para
+evitar reprocessamento de requisições duplicadas. Ao receber um RREQ,
+cada nó intermediário: (i) cria ou atualiza uma entrada de rota reversa
+para a origem; (ii) incrementa o contador de saltos; (iii) verifica se é
+o destino ou se possui rota válida para o destino com número de
+sequência adequado; (iv) caso positivo, gera e envia um RREP em unicast;
+caso negativo, retransmite o RREQ para seus vizinhos (exceto aquele de
+quem recebeu). A mensagem RREP é transmitida em unicast através do
+caminho reverso estabelecido durante a propagação do RREQ. À medida que
+o RREP percorre esse caminho, cada nó intermediário cria ou atualiza uma
+entrada de rota direta para o destino, estabelecendo o próximo salto
+(\emph{next hop}) como o vizinho de quem recebeu o RREP. Quando o RREP
+alcança a origem, a rota bidirecional está estabelecida e a transmissão
+de dados pode iniciar.
+
+\subsection{Números de sequência e prevenção de
+loops}\label{nuxfameros-de-sequuxeancia-e-prevenuxe7uxe3o-de-loops}
+
+Uma característica distintiva do AODV é a utilização de números de
+sequência de destino para garantir a ausência de loops de roteamento
+(\emph{loop freedom}). Cada nó mantém seu próprio número de sequência,
+incrementando-o antes de originar uma nova requisição de rota ou
+resposta. Os números de sequência permitem distinguir informações de
+roteamento atualizadas de informações obsoletas: entre duas rotas para
+um mesmo destino, é sempre selecionada aquela com maior número de
+sequência; em caso de empate, seleciona-se a rota com menor número de
+saltos \cite{perkins2003}.
+
+\subsection{Manutenção de rotas e tratamento de
+falhas}\label{manutenuxe7uxe3o-de-rotas-e-tratamento-de-falhas}
+
+O AODV monitora a conectividade com os próximos saltos das rotas ativas
+através de dois mecanismos complementares: (i) mensagens HELLO
+periódicas, que são RREPs com TTL=1 enviadas a cada HELLO\_INTERVAL
+(tipicamente 1 segundo); e (ii) detecção de falha de enlace na camada de
+enlace, quando disponível (por exemplo, ausência de ACK em transmissões
+IEEE 802.11). Quando uma quebra de enlace é detectada, o nó que
+identifica a falha invalida todas as rotas que utilizam o enlace
+interrompido e gera uma mensagem RERR listando os destinos afetados. A
+mensagem RERR é propagada para os precursores --- nós que utilizam o
+remetente como próximo salto para os destinos afetados --- permitindo
+que invalidem suas respectivas entradas de rota. Opcionalmente, o nó que
+detecta a falha pode tentar reparo local da rota antes de propagar o
+RERR.
+
+\subsection{Parâmetros de
+configuração}\label{paruxe2metros-de-configurauxe7uxe3o}
+
+A RFC 3561 define valores padrão para diversos parâmetros configuráveis
+que influenciam o comportamento e desempenho do protocolo. O Quadro 6
+apresenta os principais parâmetros e seus valores padrão, que podem ser
+ajustados conforme as características específicas da rede.
+
+\textbf{Quadro 6 -- Parâmetros de configuração do AODV (RFC 3561)}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}lll@{}}
+\toprule\noalign{}
+Parâmetro & Valor Padrão & Descrição \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+ACTIVE\_ROUTE\_TIMEOUT & 3.000 ms & Tempo de vida de rota ativa \\
+HELLO\_INTERVAL & 1.000 ms & Intervalo entre mensagens HELLO \\
+ALLOWED\_HELLO\_LOSS & 2 & Perdas de HELLO antes de assumir falha \\
+NET\_DIAMETER & 35 & Número máximo de saltos na rede \\
+NODE\_TRAVERSAL\_TIME & 40 ms & Tempo estimado de travessia por nó \\
+RREQ\_RETRIES & 2 & Tentativas de descoberta de rota \\
+RREQ\_RATELIMIT & 10 & Máximo de RREQs por segundo \\
+TTL\_START & 1 & TTL inicial para expanding ring search \\
+TTL\_INCREMENT & 2 & Incremento de TTL a cada tentativa \\
+TTL\_THRESHOLD & 7 & TTL máximo antes de usar NET\_DIAMETER \\
+\end{longtable}
+}
+
+Fonte: RFC 3561 \cite{perkins2003}.
+
+\section{Considerações para o Projeto do
+AODV-EN}\label{considerauxe7uxf5es-para-o-projeto-do-aodv-en}
+
+A adaptação do protocolo AODV para operação sobre ESP-NOW (AODV-EN)
+requer a consideração de três aspectos fundamentais: gerenciamento do
+limite de \emph{peers}, substituição do mecanismo de \emph{broadcast} e
+definição de métrica de roteamento adequada.
+
+\subsection{Gerenciamento de peers com política
+LRU}\label{gerenciamento-de-peers-com-poluxedtica-lru}
+
+O limite de 20 \emph{peers} simultâneos imposto pelo ESP-NOW exige uma
+estratégia de gerenciamento dinâmico para permitir a comunicação com um
+número potencialmente maior de nós ao longo do tempo. A política LRU
+(\emph{Least Recently Used}) é proposta como mecanismo de substituição:
+quando a tabela de \emph{peers} está cheia e uma nova comunicação é
+necessária, o \emph{peer} menos recentemente utilizado é removido para
+dar lugar ao novo. Essa abordagem baseia-se no princípio de localidade
+temporal: nós comunicados recentemente têm maior probabilidade de serem
+comunicados novamente.
+
+\subsection{Flooding controlado sobre broadcast de
+enlace}\label{flooding-controlado-sobre-broadcast-de-enlace}
+
+A disseminação de mensagens RREQ no AODV original utiliza
+\emph{broadcast} IP. Embora o ESP-NOW não ofereça confirmação de entrega
+para quadros de \emph{broadcast}, ele permite enviar para o endereço de
+\emph{broadcast} de enlace (FF:FF:FF:FF:FF:FF), o que reproduz fielmente
+a semântica de difusão do AODV: cada nó retransmite uma única vez cada
+RREQ novo, com supressão de duplicatas por par (originador,
+identificador) e limite de propagação por TTL.
+
+Considerou-se, em uma etapa intermediária do projeto, substituir essa
+difusão por \emph{flooding} controlado via transmissões unicast
+sequenciais para cada vizinho conhecido, aproveitando a confirmação de
+enlace do unicast ESP-NOW. Essa alternativa foi, contudo, descartada
+após avaliação experimental: o unicast ESP-NOW carrega um mecanismo de
+retransmissão automática em nível de MAC (confirmação CTS-ACK, com até
+várias retransmissões por quadro) que o \emph{broadcast} não possui.
+Esse mecanismo descaracteriza a comparação com o algoritmo de referência
+baseado em \emph{flooding} --- inflando artificialmente a confiabilidade
+medida --- e exige a manutenção de uma tabela de vizinhos para o
+\emph{fanout}, afastando-se da definição canônica de \emph{flooding}
+presente na literatura \cite{ni1999} e da própria RFC 3561. Optou-se,
+portanto, pela disseminação por \emph{broadcast} de enlace, tanto para o
+RREQ do AODV-EN quanto para o algoritmo de referência, garantindo
+simetria metodológica na avaliação.
+
+\subsection{Métrica híbrida de
+roteamento}\label{muxe9trica-huxedbrida-de-roteamento}
+
+O protocolo AODV original utiliza a contagem de saltos (\emph{hop
+count}) como métrica única de roteamento, priorizando rotas com menor
+distância lógica. No entanto, essa abordagem desconsidera aspectos
+relacionados à qualidade dos enlaces sem fio, os quais são
+particularmente relevantes em redes ad-hoc e sensores.
+
+Nesse contexto, diferentes trabalhos propõem o uso de métricas híbridas
+que combinam informações topológicas e indicadores de qualidade de
+enlace, como a intensidade do sinal recebido (\emph{Received Signal
+Strength Indicator}--RSSI). Considerando essa perspectiva, o AODV-EN
+fundamenta-se em uma métrica composta que integra o número de saltos e a
+qualidade média dos enlaces ao longo da rota, podendo ser expressa por:
+
+\textbf{\emph{Custo(rota) = α × HopCount + β × (1 / RSSI\_médio)}}
+
+Onde α e β são pesos configuráveis que permitem balancear a importância
+relativa da distância lógica (número de saltos) e da qualidade dos
+enlaces. Essa abordagem possibilita a seleção de rotas que otimizem
+simultaneamente o comprimento do caminho e a confiabilidade esperada das
+transmissões.
+
+\subsection{Estimativa de consumo
+energético}\label{estimativa-de-consumo-energuxe9tico}
+
+A avaliação do consumo energético em algoritmos de roteamento para redes
+de sensores sem fio é comumente realizada a partir de modelos analíticos
+baseados no perfil de consumo dos dispositivos empregados. De modo
+geral, a energia consumida durante a transmissão de um pacote pode ser
+expressa como o produto entre a potência de transmissão e o tempo de
+envio, conforme:
+
+\textbf{\emph{E\_tx = P\_tx × t\_tx = (V × I\_tx) × t\_tx}}
+
+Onde que \emph{E\_tx} representa a energia consumida por transmissão,
+\emph{P\_tx} a potência elétrica durante o envio, \emph{V} a tensão de
+operação e \emph{I\_tx} a corrente elétrica associada ao modo de
+transmissão. Esses modelos permitem estimar o impacto energético das
+comunicações e comparar diferentes protocolos ou estratégias de
+roteamento sob condições semelhantes de operação.

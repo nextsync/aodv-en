@@ -1,0 +1,33 @@
+% -----------------------------------------------------------------------------
+% Conteudo AODV-EN. Template base: Prof. Wesley Pacheco Calixto (IFG).
+% -----------------------------------------------------------------------------
+\addcontentsline{toc}{section}{Resumo}
+
+\section*{Resumo}
+
+As redes mesh sem fio de baixo custo construídas sobre o protocolo ESP-NOW carecem de
+suporte nativo a roteamento multi-hop, o que limita seu alcance e escalabilidade. Este
+trabalho propõe, implementa e avalia o AODV-EN, uma adaptação do protocolo Ad-hoc
+On-Demand Distance Vector (AODV, RFC 3561) para operação sobre ESP-NOW em módulos ESP32,
+contemplando endereçamento por MAC, disseminação de requisições de rota por
+\emph{flooding} controlado sobre \emph{broadcast} de enlace, manutenção de rotas com
+números de sequência e confirmação fim-a-fim. Adotando o paradigma \emph{Design Science
+Research}, o núcleo do protocolo foi implementado em linguagem C como componente
+reutilizável e comparado a um algoritmo de referência baseado em \emph{flooding},
+medindo-se \emph{Packet Delivery Ratio} (PDR), latência fim-a-fim, \emph{Normalized
+Routing Load} (NRL) e consumo energético estimado. No cenário avaliado em hardware (três
+ESP32, seis repetições), os dois algoritmos apresentaram confiabilidade equivalente
+(PDR de 98,93\% para o AODV-EN e 98,77\% para o \emph{flooding}), com vantagem do AODV-EN
+em latência (60,0 ms estáveis contra 62 a 100 ms) e em consumo energético estimado
+(aproximadamente 21\% inferior), ao custo de uma carga de controle normalizada de 0,77.
+A análise por simulação evidenciou que a desvantagem de ocupação de canal do
+\emph{flooding} cresce com a escala da rede, com cruzamento de eficiência em torno de
+9 a 11 nós. Conclui-se que o roteamento reativo do AODV-EN é vantajoso à medida que a
+rede cresce em tamanho e diâmetro, viabilizando redes mesh padronizadas, de baixo custo
+e eficientes em energia sobre ESP-NOW.
+
+\vspace{1cm}
+
+\noindent
+\textbf{Palavras-chave:} redes mesh; ESP-NOW; ESP32; AODV; roteamento ad-hoc;
+Internet das Coisas.

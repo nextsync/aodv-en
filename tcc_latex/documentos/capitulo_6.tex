@@ -1,0 +1,57 @@
+% -----------------------------------------------------------------------------
+% Conteudo AODV-EN. Template base: Prof. Wesley Pacheco Calixto (IFG).
+% -----------------------------------------------------------------------------
+\chapter{CONCLUSÃO}
+
+Este trabalho propôs, implementou e avaliou o AODV-EN, uma adaptação do protocolo
+AODV (RFC 3561) para redes mesh multi-hop construídas sobre o protocolo ESP-NOW em
+módulos ESP32. O núcleo reativo do protocolo --- descoberta de rotas sob demanda,
+tabelas de rota com números de sequência, lista de precursores, fila de dados
+pendentes, confirmação fim-a-fim e invalidação de rotas por falha de enlace --- foi
+implementado como componente reutilizável em linguagem C, independente do ESP-IDF,
+e validado tanto em simulação quanto em hardware com três dispositivos ESP32.
+
+Quanto ao objetivo geral, o trabalho demonstrou a viabilidade de prover roteamento
+multi-hop sobre o ESP-NOW por meio de uma adaptação fiel do AODV, contornando a
+ausência de roteamento nativo, o limite de \emph{peers} e as restrições de difusão do
+protocolo. Em relação aos objetivos específicos, foram analisadas as limitações
+técnicas do ESP-NOW (Capítulo 2), projetadas e implementadas as adaptações necessárias
+(Capítulos 4 e 5), e avaliado o desempenho do algoritmo frente a um algoritmo de
+referência baseado em \emph{flooding} (Capítulo 6).
+
+A avaliação experimental, conduzida no cenário reduzido C1-3n com seis repetições por
+algoritmo, indicou confiabilidade equivalente entre as abordagens (PDR de 98,93\% para
+o AODV-EN contra 98,77\% para o \emph{flooding}), com vantagem do AODV-EN em latência
+--- menor e mais previsível (60,0 ms estáveis contra 62 a 100 ms do \emph{flooding}) ---
+e em consumo energético estimado (cerca de 21\% inferior). O \emph{flooding}, por não
+manter plano de roteamento, apresentou carga de controle normalizada nula, mas a um
+custo estrutural de ocupação de canal: aproximadamente 1,89 vez mais recepções
+agregadas na rede. A análise de escalabilidade por simulação confirmou que essa
+desvantagem do \emph{flooding} cresce com o tamanho e o diâmetro da rede, com
+cruzamento de eficiência em torno de 9 a 11 nós e impossibilidade de alcance além do
+limite de TTL. Conclui-se, portanto, que o roteamento reativo do AODV-EN paga um
+\emph{overhead} de controle aproximadamente constante para evitar o custo de
+disseminação que cresce com a rede, tornando-se progressivamente mais vantajoso à
+medida que a malha se expande.
+
+Um resultado metodológico relevante decorreu da revisão da estratégia de disseminação:
+a avaliação preliminar de um transporte por unicast sequencial revelou um viés
+introduzido pelo mecanismo de retransmissão automática do unicast ESP-NOW, ausente no
+\emph{broadcast}. A adoção da difusão por \emph{broadcast} de enlace, tanto para o
+RREQ do AODV-EN quanto para o algoritmo de referência, restabeleceu a simetria
+metodológica da comparação e alinhou o \emph{baseline} à definição canônica de
+\emph{flooding} da literatura.
+
+Como limitações, destacam-se a amostragem reduzida (seis repetições em um único cenário,
+aquém das trinta repetições e dos cenários C2 a C4 planejados), a topologia de
+concentrador com aproximadamente um salto, a quantização da latência pelo laço da
+aplicação e o caráter estimado do consumo energético. As adaptações de gerenciamento de
+\emph{peers} por política LRU e de métrica híbrida (saltos combinados com RSSI),
+embora projetadas, permanecem como trabalho futuro de implementação.
+
+Como desdobramentos, propõem-se: a ampliação do número de repetições e a cobertura dos
+demais cenários experimentais; a separação física dos nós para exercitar múltiplos
+saltos reais; a medição física de energia com instrumentação dedicada; e a
+implementação efetiva da política LRU de \emph{peers} e da métrica híbrida de
+roteamento. Tais extensões consolidariam o AODV-EN como uma alternativa padronizada,
+de baixo custo e eficiente em energia para redes mesh sobre ESP-NOW.

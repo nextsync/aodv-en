@@ -1,0 +1,289 @@
+% -----------------------------------------------------------------------------
+% Conteudo AODV-EN. Template base: Prof. Wesley Pacheco Calixto (IFG).
+% -----------------------------------------------------------------------------
+\chapter{RESULTADOS E DISCUSSÃO}\label{resultados-e-discussuxe3o}
+
+Este capítulo apresenta os resultados obtidos com a implementação e a
+avaliação experimental do algoritmo AODV-EN, comparando-o ao algoritmo
+de referência baseado em \emph{flooding}. Inicialmente, descreve-se o
+ambiente de coleta e a validação funcional do protótipo. Em seguida,
+apresentam-se os resultados de hardware para as quatro métricas
+definidas na metodologia (PDR, latência, NRL e consumo energético
+estimado), seguidos da análise de escalabilidade obtida por simulação.
+Por fim, discutem-se a conformidade da implementação com a RFC 3561 e as
+limitações do estudo.
+
+\section{Ambiente das Coletas e Validação
+Funcional}\label{ambiente-das-coletas-e-validauxe7uxe3o-funcional}
+
+A avaliação experimental foi conduzida em uma versão reduzida do cenário
+C1 (denominada C1-3n), composta por três módulos ESP32 dispostos em
+concentrador (\emph{hub}), com aproximadamente um salto de separação.
+Embora o planejamento experimental (Seção 4.4) preveja cenários de até
+cinco saltos e trinta repetições, a disponibilidade de hardware no
+momento das coletas limitou a campanha de hardware a três dispositivos;
+os cenários de maior diâmetro e escala foram avaliados por simulação
+(Seção 6.4). Em todos os experimentos, os parâmetros foram mantidos
+idênticos para os dois algoritmos: \emph{payload} de 32 bytes, taxa de
+um pacote por segundo, duas origens (N2 e N3) transmitindo para um
+destino comum (N1) e janela de 60 segundos por execução, com
+reinicialização limpa dos dispositivos a cada repetição para zerar os
+contadores cumulativos.
+
+Antes das coletas em hardware, o núcleo do protocolo foi validado por
+meio de um conjunto de simulações determinísticas, executadas
+diretamente a partir do código-fonte do componente, com rádio em memória
+e relógio virtual. Essas simulações exercitam o ciclo completo de
+descoberta (RREQ → RREP), encaminhamento de dados, confirmação fim-a-fim
+(ACK) e propagação de erro de rota (RERR), além de cenários em grade de
+até centenas de nós, garantindo que a lógica de roteamento se comporte
+corretamente independentemente do hardware.
+
+Para a coleta e a observação em tempo real dos experimentos, foi
+desenvolvida uma ferramenta de monitoramento que lê as portas seriais
+dos nós, interpreta os registros emitidos pelo \emph{firmware} e
+apresenta, em um painel web, a topologia da malha, as tabelas de rotas,
+os vizinhos com respectivo RSSI, os fluxos de dados e um console de
+eventos. A ferramenta reconhece tanto o AODV-EN --- exibindo rotas
+válidas, reversas e inválidas e as arestas de vizinhança --- quanto o
+algoritmo de \emph{flooding} --- exibindo os fluxos de dados
+origem-destino com o número de saltos percorridos. Um modo de reprodução
+(\emph{replay}) permite reexecutar registros previamente capturados com
+o ritmo temporal original, recurso utilizado para validar a interface
+contra dados reais dos dois algoritmos.
+
+\section{Resultados de Hardware}\label{resultados-de-hardware}
+
+O Quadro 15 apresenta o \emph{ledger} das execuções em hardware, com as
+quatro métricas por repetição (\emph{seed}) para cada algoritmo. Os
+valores do \emph{flooding} correspondem à campanha com transporte por
+\emph{broadcast} puro; os do AODV-EN, à campanha reativa com
+\emph{broadcast} de RREQ e métrica de saltos.
+
+\textbf{Quadro 15 -- Ledger de execuções em hardware (C1-3n, 6 seeds por
+algoritmo)}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+Algoritmo
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Seed
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+PDR (\%)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Latência one-way (ms)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+NRL
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Energia (J, est.)
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+AODV-EN & 1 & 98,57 & 60,0 & 0,7785 & 12,41 \\
+AODV-EN & 2 & 100,0 & 60,0 & 0,7821 & 12,41 \\
+AODV-EN & 3 & 100,0 & 60,0 & 0,7844 & 12,45 \\
+AODV-EN & 4 & 98,33 & 60,0 & 0,7418 & 8,49 \\
+AODV-EN & 5 & 98,33 & 60,0 & 0,7814 & 8,52 \\
+AODV-EN & 6 & 98,33 & 60,0 & 0,7744 & 8,45 \\
+Flooding & 1 & 100,0 & 61,9 & 0,0 & 12,66 \\
+Flooding & 2 & 100,0 & 88,3 & 0,0 & 12,66 \\
+Flooding & 3 & 100,0 & 65,5 & 0,0 & 12,66 \\
+Flooding & 4 & 95,59 & 100,0 & 0,0 & 12,65 \\
+Flooding & 5 & 98,53 & 100,0 & 0,0 & 12,66 \\
+Flooding & 6 & 98,53 & 85,9 & 0,0 & 12,66 \\
+\end{longtable}
+}
+
+Fonte: Elaborado pelos autores.
+
+O Quadro 16 consolida a comparação, apresentando média e desvio padrão
+de cada métrica para os dois algoritmos.
+
+\textbf{Quadro 16 -- Comparação AODV-EN vs.~Flooding (média ± desvio
+padrão de 6 seeds)}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}lccc@{}}
+\toprule\noalign{}
+Métrica & AODV-EN & Flooding (broadcast) & Δ (flood − aodv) \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+PDR (\%) & 98,93 ± 0,84 & 98,77 ± 1,72 & −0,15 \\
+Latência one-way (ms) & 60,0 ± 0,0 & 83,6 ± 16,5 & +23,6 \\
+NRL (controle/dados) & 0,774 ± 0,02 & 0,0 & −0,774 \\
+Energia (J, estimada) & 10,45 ± 2,16 & 12,66 ± 0,01 & +2,20 \\
+\end{longtable}
+}
+
+Fonte: Elaborado pelos autores.
+
+A Figura 8 apresenta graficamente as quatro métricas, com barras de erro
+correspondentes ao desvio padrão entre as seis repetições.
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio,alt={Figura 8 -- Métricas de hardware (PDR, latência, NRL e energia): AODV-EN vs.~Flooding, média de 6 seeds com barra de desvio.}]{figuras/fig_hw_metrics.png}}
+\caption{Figura 8 -- Métricas de hardware (PDR, latência, NRL e
+energia): AODV-EN vs.~Flooding, média de 6 seeds com barra de desvio.}
+\end{figure}
+
+\textbf{Figura 8 -- Comparação das quatro métricas no hardware (3 ESP32,
+hub), média de 6 seeds}
+
+A Figura 9 detalha o custo de ocupação de canal, apresentando o total de
+transmissões (TX) e recepções (RX) agregadas na rede de três nós.
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio,alt={Figura 9 -- Transmissões e recepções agregadas da rede de 3 nós (média de 6 seeds).}]{figuras/fig_hw_channel.png}}
+\caption{Figura 9 -- Transmissões e recepções agregadas da rede de 3 nós
+(média de 6 seeds).}
+\end{figure}
+
+\textbf{Figura 9 -- Custo de canal: TX e RX agregados da rede}
+
+\section{Discussão por Métrica}\label{discussuxe3o-por-muxe9trica}
+
+\textbf{Confiabilidade (PDR).} Os dois algoritmos apresentaram entrega
+estatisticamente equivalente no regime de um salto: 98,93\% para o
+AODV-EN e 98,77\% para o \emph{flooding}, diferença inferior a um desvio
+padrão. As perdas do AODV-EN concentram-se no primeiro pacote de cada
+fluxo, durante a descoberta inicial de rota --- comportamento esperado
+de um protocolo reativo, mitigado, mas não eliminado, pela fila de dados
+pendentes. As perdas do \emph{flooding} distribuem-se como perdas de
+canal do \emph{broadcast}, que não dispõe de confirmação de enlace. Cabe
+registrar que, em uma campanha preliminar na qual o \emph{flooding}
+utilizou transporte por unicast sequencial, o algoritmo aparentava
+vantagem de PDR (99,45\%); tal vantagem decorria, em boa parte, do
+mecanismo de retransmissão automática do unicast ESP-NOW, e não de
+mérito do algoritmo. Com o transporte simétrico por \emph{broadcast},
+essa diferença desaparece.
+
+\textbf{Latência fim-a-fim.} O AODV-EN apresentou latência menor e
+estável (60,0 ms, sem dispersão), enquanto o \emph{flooding} variou de
+61,9 a 100,0 ms (média 83,6 ms; desvio padrão 16,5 ms). A estabilidade
+do AODV-EN decorre do uso de uma rota fixa após a descoberta; a
+dispersão do \emph{flooding} reflete a ausência de confirmação de enlace
+--- sem retransmissão automática, parte das confirmações (ACK) flodadas
+de volta apenas se completa pela retransmissão seguinte ou retorna por
+um caminho de dois saltos. Os valores são quantizados pelo laço de 100
+ms da aplicação. A Figura 10 evidencia essa diferença de dispersão entre
+as repetições.
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio,alt={Figura 10 -- Latência one-way por seed (AODV-EN vs.~Flooding).}]{figuras/fig_latency_seeds.png}}
+\caption{Figura 10 -- Latência one-way por seed (AODV-EN vs.~Flooding).}
+\end{figure}
+
+\textbf{Figura 10 -- Latência one-way por seed}
+
+\textbf{Carga de roteamento normalizada (NRL).} O AODV-EN apresentou NRL
+de 0,774 (mensagens HELLO, RREQ e RREP por dado entregue), enquanto o
+\emph{flooding}, por não possuir plano de roteamento, apresentou NRL
+nulo. Esse resultado não deve, isoladamente, ser interpretado como
+ausência de custo: o \emph{flooding} não paga \emph{overhead} de
+controle, mas seu custo migra para a ocupação de canal e para o consumo
+energético.
+
+\textbf{Consumo energético e ocupação de canal.} Com a metodologia
+simétrica, o \emph{flooding} apresentou consumo aproximadamente 21\%
+superior ao do AODV-EN (12,66 J contra 10,45 J), e o contraste mais
+expressivo manifesta-se nas recepções: 1.066 contra 564 quadros
+agregados na rede (fator de 1,89). Cada disseminação é re-flodada por
+todos os nós, e cada quadro no ar é recebido por todos os vizinhos ao
+alcance --- no concentrador de três nós, a razão entre recepções e
+transmissões do \emph{flooding} é de 1,98, exatamente os dois vizinhos
+que escutam cada \emph{broadcast}. Trata-se do custo estrutural do
+\emph{flooding}, que cresce com a densidade e a escala da rede.
+
+\section{Análise de Escalabilidade por
+Simulação}\label{anuxe1lise-de-escalabilidade-por-simulauxe7uxe3o}
+
+Para avaliar o comportamento dos algoritmos além do concentrador de três
+nós, conduziu-se uma varredura por simulação em grades de 4 a 25 nós,
+medindo o número de transmissões por pacote entregue. A Figura 11
+apresenta o resultado: ambos os algoritmos entregam a totalidade dos
+pacotes dentro do alcance do TTL, mas a razão transmissões-por-entrega
+cruza-se em torno de 9 a 11 nós, acima do qual o roteamento do AODV-EN
+passa a custar menos transmissões por entrega que o \emph{flooding}.
+Além disso, com o TTL limitado a cinco saltos, o \emph{flooding} deixa
+de alcançar destinos em grades de diâmetro superior a cinco ---
+limitação estrutural do alcance fixo ---, enquanto o AODV-EN, por manter
+rotas, continua entregando.
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio,alt={Figura 11 -- Transmissões por pacote entregue em função do número de nós (simulação).}]{figuras/fig_sim_crossover.png}}
+\caption{Figura 11 -- Transmissões por pacote entregue em função do
+número de nós (simulação).}
+\end{figure}
+
+\textbf{Figura 11 -- Crossover de eficiência entre AODV-EN e Flooding em
+escala (simulação)}
+
+Esse resultado confirma a hipótese central do trabalho: o roteamento
+reativo paga um \emph{overhead} de controle aproximadamente constante
+para evitar o custo de disseminação que cresce com a rede. No
+concentrador minúsculo, o AODV-EN já entrega latência mais previsível e
+menor consumo energético; a sua vantagem estrutural amplia-se à medida
+que a rede cresce em tamanho e diâmetro.
+
+\section{Conformidade com a RFC 3561}\label{conformidade-com-a-rfc-3561}
+
+Ao longo do desenvolvimento, o núcleo do protocolo foi submetido a uma
+auditoria de conformidade com a RFC 3561, da qual resultaram ajustes
+pontuais. Destacam-se: (i) a deduplicação de mensagens DATA no destino,
+por par (originador, número de sequência), evitando entregas repetidas
+em caso de retransmissão por expiração de ACK, com reconfirmação
+idempotente; (ii) a contabilização de confirmações apenas quando
+associadas a um envio pendente vivo, eliminando dupla contagem; (iii) o
+processamento de mensagens RERR condicionado a que o próximo salto da
+rota corresponda ao vizinho que emitiu o erro, conforme a Seção 6.11 da
+RFC, com adoção do número de sequência informado; (iv) a manutenção de
+rotas invalidadas por um período de exclusão (\emph{delete period})
+antes de sua remoção, preservando o último número de sequência
+conhecido; e (v) a proteção contra o rebaixamento de uma rota confirmada
+por uma entrada reversa não confirmada. Tais ajustes aproximam a
+implementação do comportamento especificado e aumentam a robustez do
+protocolo em cenários com perda de enlace.
+
+\section{Escopo Implementado e
+Limitações}\label{escopo-implementado-e-limitauxe7uxf5es}
+
+A avaliação reportada refere-se ao núcleo reativo do AODV-EN ---
+descoberta de rotas sob demanda, tabelas de rota com números de
+sequência, precursores, fila de dados pendentes, confirmação fim-a-fim e
+invalidação por falha de enlace --- utilizando disseminação de RREQ por
+\emph{broadcast} e métrica de contagem de saltos. As adaptações de
+gerenciamento de \emph{peers} por política LRU e de métrica híbrida
+(saltos + RSSI), embora projetadas e descritas no Capítulo 5, permanecem
+como trabalho futuro de implementação e não influenciam os resultados
+aqui apresentados.
+
+As principais limitações do estudo são: (i) a amostragem reduzida ---
+seis repetições em um único cenário (C1-3n), aquém das trinta repetições
+e dos cenários C2 a C4 previstos na metodologia, em virtude da
+disponibilidade de hardware; (ii) a topologia de concentrador, com
+aproximadamente um salto, que não exercita o comportamento multi-hop
+real (avaliado por simulação); (iii) a quantização da latência pelo laço
+de 100 ms da aplicação, que limita a granularidade da medida; (iv) o
+caráter estimado do consumo energético, calculado a partir do perfil de
+\emph{datasheet} do ESP32 e não medido com instrumentação física; e (v)
+o fato de as campanhas do AODV-EN e do \emph{flooding} terem sido
+coletadas em momentos distintos, sujeitas a variações nas condições de
+canal. A ampliação do número de repetições e de cenários, a medição
+física de energia e a separação física dos nós para exercitar múltiplos
+saltos reais constituem desdobramentos diretos para trabalhos futuros.
