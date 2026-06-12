@@ -37,7 +37,8 @@ extern "C"
     typedef void (*aodv_en_on_ack_fn)(
         void *user_ctx,
         const uint8_t ack_sender_mac[AODV_EN_MAC_ADDR_LEN],
-        uint32_t sequence_number);
+        uint32_t sequence_number,
+        uint32_t rtt_ms);
 
     typedef struct
     {
@@ -64,6 +65,7 @@ extern "C"
         uint32_t ack_timeout_drops;
         uint32_t link_fail_events;
         uint32_t route_invalidations_link_fail;
+        uint32_t control_tx_frames;
     } aodv_en_stack_stats_t;
 
     typedef struct

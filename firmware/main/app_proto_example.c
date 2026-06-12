@@ -914,11 +914,13 @@ static void app_stack_on_data(
 static void app_stack_on_ack(
     void *user_ctx,
     const uint8_t ack_sender_mac[AODV_EN_MAC_ADDR_LEN],
-    uint32_t sequence_number)
+    uint32_t sequence_number,
+    uint32_t rtt_ms)
 {
     char mac_text[18];
 
     (void)user_ctx;
+    (void)rtt_ms;
     app_format_mac(ack_sender_mac, mac_text, sizeof(mac_text));
     ESP_LOGI(TAG, "ACK received from %s for seq=%" PRIu32, mac_text, sequence_number);
 }
