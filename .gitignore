@@ -61,3 +61,4 @@
 # Playwright MCP artifacts
 /.playwright-mcp/
 /sim/results/campaign_*/
+/results/campaign-prints/

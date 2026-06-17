@@ -28,9 +28,37 @@ from pathlib import Path
 
 ROOT = Path("/Users/huaksonlima/Documents/tcc/aodv-en")
 RESULTS = ROOT / "results"
+PRINTS = RESULTS / "campaign-prints"
 IDFPY = "/Users/huaksonlima/.espressif/python_env/idf6.0_py3.14_env/bin/python"
 METRICS = ROOT / "firmware" / "tools" / "tcc_metrics.py"
 CAPTURE = ROOT / "firmware" / "tools" / "serial_capture.py"
+MONITOR = ROOT / "firmware" / "tools" / "mesh_monitor.py"
+CHROME_CANDIDATES = [
+    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    "/Applications/Chromium.app/Contents/MacOS/Chromium",
+]
+
+
+def find_chrome():
+    for c in CHROME_CANDIDATES:
+        if Path(c).exists():
+            return c
+    return None
+
+
+def shoot_monitor(chrome, http_port, out_png):
+    """Tira um print do monitor (rede real daquela rep) via Chrome headless."""
+    if chrome is None:
+        return False
+    try:
+        subprocess.run(
+            [chrome, "--headless", "--disable-gpu", "--no-sandbox", "--hide-scrollbars",
+             "--virtual-time-budget=4000", "--window-size=1500,760",
+             f"--screenshot={out_png}", f"http://127.0.0.1:{http_port}"],
+            check=True, capture_output=True, text=True, timeout=30)
+        return out_png.exists()
+    except Exception:
+        return False
 
 
 def capture_rep(origin_port, prefix, seconds, baud):
@@ -39,6 +67,28 @@ def capture_rep(origin_port, prefix, seconds, baud):
          "--out-prefix", prefix, f"ORIGIN:{origin_port}"],
         check=True, capture_output=True, text=True)
     return RESULTS / f"{prefix}-ORIGIN.log"
+
+
+def shoot_from_log(log_path, http_port, chrome, png_path):
+    """Reconstroi o estado da rede daquela rep (replay do log no monitor) e tira o print.
+
+    Evita disputar a porta serial: o monitor le o LOG ja capturado, nao a serial.
+    """
+    if chrome is None:
+        return False
+    mon = subprocess.Popen(
+        [IDFPY, str(MONITOR), "--file", str(log_path), "--http-port", str(http_port)],
+        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    try:
+        time.sleep(3)  # replay do log + render
+        ok = shoot_monitor(chrome, http_port, png_path)
+    finally:
+        mon.terminate()
+        try:
+            mon.wait(timeout=5)
+        except Exception:
+            mon.kill()
+    return ok
 
 
 def run_metrics(algo, origin_log, duration_s, scenario, seed):
@@ -74,16 +124,25 @@ def main():
                     help="janela p/ energia/idle no tcc_metrics (default = rep-seconds)")
     ap.add_argument("--settle", type=int, default=8, help="espera entre reps (s)")
     ap.add_argument("--baud", type=int, default=115200)
+    ap.add_argument("--no-prints", action="store_true", help="nao gerar print da rede por rep")
+    ap.add_argument("--monitor-port", type=int, default=8097, help="porta http do monitor p/ os prints")
     args = ap.parse_args()
 
     duration_s = args.duration_s if args.duration_s is not None else float(args.rep_seconds)
     RESULTS.mkdir(parents=True, exist_ok=True)
+    chrome = None if args.no_prints else find_chrome()
+    if chrome:
+        PRINTS.mkdir(parents=True, exist_ok=True)
     per_rep = []
-    print(f"campanha {args.scenario}/{args.algo}: {args.reps} reps x {args.rep_seconds}s")
+    print(f"campanha {args.scenario}/{args.algo}: {args.reps} reps x {args.rep_seconds}s"
+          f"{' (+print da rede por rep)' if chrome else ''}")
 
     for rep in range(1, args.reps + 1):
         prefix = f"camp-{args.scenario}-{args.algo}-r{rep:02d}"
         log = capture_rep(args.origin_port, prefix, args.rep_seconds, args.baud)
+        if chrome:
+            png = PRINTS / f"{prefix}.png"
+            shoot_from_log(log, args.monitor_port, chrome, png)
         m = run_metrics(args.algo, log, duration_s, args.scenario, rep)
         per_rep.append(m)
         print(f"  rep {rep:02d}: PDR={m['pdr_pct']:.1f} "
