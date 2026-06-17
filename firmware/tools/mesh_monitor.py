@@ -25,6 +25,10 @@ try:
 except ImportError:
     serial = None
 
+# Timeouts derivados do intervalo de report (sem numeros magicos):
+# online enquanto < ONLINE_WINDOWS reports ausentes; stale ate STALE_WINDOWS; link ate LINK_WINDOWS.
+CFG = {"report_s": 4.0, "online_windows": 5, "stale_windows": 11, "link_windows": 7}
+
 ANSI = re.compile(r"\x1B\[[0-?]*[ -/]*[@-~]")
 RE_SELF = re.compile(r"(?:RSSISELF self|self_mac)=([0-9A-Fa-f:]{17})")
 RE_NEIGH = re.compile(r"NEIGHREP node=([0-9A-Fa-f:]{17}) hears=(.*)")
@@ -121,21 +125,24 @@ def snapshot():
     with LOCK:
         now = time.monotonic()
         nodes = []
+        on_s = CFG["report_s"] * CFG["online_windows"]
+        st_s = CFG["report_s"] * CFG["stale_windows"]
+        lk_s = CFG["report_s"] * CFG["link_windows"]
         for mac, n in STATE["nodes"].items():
             age = now - n["last_seen"]
             nodes.append({
                 "mac": mac, "label": mac[-5:],
                 "tx": n["tx"], "rx": n["rx"], "control": n["control"], "delivered": n["delivered"],
-                # tolera ate ~K=5 janelas de report (4s) ausentes antes de marcar offline,
+                # janelas de report ausentes toleradas antes de offline (deriva de --report-interval),
                 # absorvendo perdas best-effort do report multi-hop sem falso-offline.
-                "online": age < 22,
-                "stale": 22 <= age < 45,
+                "online": age < on_s,
+                "stale": on_s <= age < st_s,
                 "last_seen_s": round(age, 1),
                 "is_collector": mac == STATE["collector"],
             })
         links = []
         for lk in STATE["links"].values():
-            if (now - lk["last_seen"]) < 30:
+            if (now - lk["last_seen"]) < lk_s:
                 links.append({"a": lk["a"], "b": lk["b"], "rssi": lk["rssi"]})
         rtts = STATE["rtts"]
         rtt_mean = round(sum(rtts) / len(rtts), 1) if rtts else None
@@ -178,7 +185,7 @@ HTML = """<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8">
  <span class="pill" id="upd">—</span>
 </header>
 <main>
- <div class="card"><h2>Topologia (RSSI por enlace)</h2><svg id="g" viewBox="0 0 600 380"></svg>
+ <div class="card"><h2>Topologia (RSSI por enlace)</h2><svg id="g" viewBox="0 0 600 380" preserveAspectRatio="xMidYMid meet"></svg>
    <div style="font-size:11px;color:#64748b;margin-top:6px">verde &ge;-75 firme · amarelo -75..-88 borda · vermelho &lt;-88 fraco</div>
  </div>
  <div>
@@ -199,9 +206,30 @@ HTML = """<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8">
  </div>
 </main>
 <script>
-const W=600,H=380;
 function rssiColor(r){ if(r==null)return '#475569'; if(r>=-75)return '#4ade80'; if(r>=-88)return '#facc15'; return '#f87171'; }
-function place(nodes){ const cx=W/2,cy=H/2,R=130,p={}; nodes.forEach((n,i)=>{const a=-Math.PI/2+2*Math.PI*i/nodes.length; p[n.mac]=[cx+R*Math.cos(a),cy+R*Math.sin(a)];}); return p; }
+// hops por no: BFS sobre os enlaces a partir do coletor (sem hardcode de saltos)
+function hopsFrom(nodes,links,coll){
+ const adj={}; nodes.forEach(n=>adj[n.mac]=[]);
+ links.forEach(l=>{ if(adj[l.a]&&adj[l.b]){adj[l.a].push(l.b);adj[l.b].push(l.a);} });
+ const hp={}; if(coll==null) return hp; hp[coll]=0; let q=[coll];
+ while(q.length){ const u=q.shift(); (adj[u]||[]).forEach(v=>{ if(hp[v]===undefined){hp[v]=hp[u]+1;q.push(v);} }); }
+ return hp;
+}
+// layout em CAMADAS por hops (escala com N e com profundidade; nada fixo)
+function place(nodes,links,coll){
+ const hp=hopsFrom(nodes,links,coll);
+ const byHop={}; let maxHop=0;
+ nodes.forEach(n=>{ const h=(hp[n.mac]!==undefined?hp[n.mac]:99); (byHop[h]=byHop[h]||[]).push(n.mac); if(h!==99&&h>maxHop)maxHop=h; });
+ const cols=Math.max(1,maxHop+1)+ (byHop[99]?1:0);
+ const colW=170, rowH=90;
+ const W=Math.max(600,cols*colW+80), p={}, dims={W:W};
+ let maxRows=1; Object.values(byHop).forEach(a=>{ if(a.length>maxRows)maxRows=a.length; });
+ const H=Math.max(380,maxRows*rowH+60); dims.H=H;
+ const order=Object.keys(byHop).map(Number).sort((a,b)=>a-b);
+ order.forEach((h,ci)=>{ const macs=byHop[h]; const x=60+ci*((W-120)/Math.max(1,cols-1||1));
+   macs.forEach((m,ri)=>{ const y=60+(H-120)*((ri+0.5)/macs.length); p[m]=[x,y,h]; }); });
+ return {p,dims,hp,maxHop};
+}
 async function tick(){
  let s; try{ s=await (await fetch('/state')).json(); }catch(e){ return; }
  document.getElementById('coll').textContent=s.collector?s.collector.slice(-5):'—';
@@ -212,16 +240,23 @@ async function tick(){
  document.getElementById('m-routes').textContent=s.routes.length;
  document.getElementById('m-rtt').textContent=s.rtt_mean??'—';
  document.getElementById('upd').textContent=new Date().toLocaleTimeString();
- const pos=place(s.nodes); let g='';
+ const {p:pos,dims,hp,maxHop}=place(s.nodes,s.links,s.collector);
+ const N=s.node_count;
+ const R=Math.max(9,Math.min(22,260/Math.max(4,N)));      // raio do no escala com N
+ const fz=Math.max(7,Math.min(12,R*0.5));                  // fonte escala com raio
+ const showRssi = s.links.length<=24;                      // suprime texto de RSSI em grafos densos
+ const svg=document.getElementById('g'); svg.setAttribute('viewBox',`0 0 ${dims.W} ${dims.H}`);
+ let g='';
+ // guias de camada (hops)
+ for(let h=0;h<=maxHop;h++){ const anyX=Object.values(pos).find(P=>P[2]===h); if(anyX) g+=`<text x="${anyX[0]}" y="20" fill="#334155" font-size="10" text-anchor="middle">${h===0?'coletor':h+' hop'}</text>`; }
  s.links.forEach(l=>{const A=pos[l.a],B=pos[l.b]; if(!A||!B)return;
-   g+=`<line x1="${A[0]}" y1="${A[1]}" x2="${B[0]}" y2="${B[1]}" stroke="${rssiColor(l.rssi)}" stroke-width="2.5"/>`;
-   g+=`<text x="${(A[0]+B[0])/2}" y="${(A[1]+B[1])/2-4}" fill="${rssiColor(l.rssi)}" font-size="11" text-anchor="middle">${l.rssi??''}</text>`;});
+   g+=`<line x1="${A[0]}" y1="${A[1]}" x2="${B[0]}" y2="${B[1]}" stroke="${rssiColor(l.rssi)}" stroke-width="${Math.max(1.2,R*0.12)}"/>`;
+   if(showRssi) g+=`<text x="${(A[0]+B[0])/2}" y="${(A[1]+B[1])/2-4}" fill="${rssiColor(l.rssi)}" font-size="${fz-1}" text-anchor="middle">${l.rssi??''}</text>`;});
  s.nodes.forEach(n=>{const P=pos[n.mac]; if(!P)return;
-   const col=n.is_collector?'#38bdf8':(n.online?'#4ade80':'#475569');
-   g+=`<circle cx="${P[0]}" cy="${P[1]}" r="22" fill="#0b1220" stroke="${col}" stroke-width="3"/>`;
-   g+=`<text x="${P[0]}" y="${P[1]+4}" fill="#e2e8f0" font-size="11" text-anchor="middle">${n.label}</text>`;
-   if(n.is_collector)g+=`<text x="${P[0]}" y="${P[1]+38}" fill="#38bdf8" font-size="9" text-anchor="middle">coletor</text>`;});
- document.getElementById('g').innerHTML=g;
+   const col=n.is_collector?'#38bdf8':(n.online?(n.stale?'#facc15':'#4ade80'):'#475569');
+   g+=`<circle cx="${P[0]}" cy="${P[1]}" r="${R}" fill="#0b1220" stroke="${col}" stroke-width="${Math.max(1.5,R*0.13)}"><title>${n.label} · ${P[2]===99?'sem rota':P[2]+' hops'} · visto ha ${n.last_seen_s}s</title></circle>`;
+   g+=`<text x="${P[0]}" y="${P[1]+fz*0.35}" fill="#e2e8f0" font-size="${fz}" text-anchor="middle">${n.label}</text>`;});
+ svg.innerHTML=g;
  document.getElementById('nt').innerHTML=s.nodes.map(n=>{const st=n.online?(n.stale?'stale':'online'):'offline';const cls=n.online?(n.stale?'st':'on'):'off';return `<tr><td class="${n.is_collector?'col':''}">${n.label}${n.is_collector?' ★':''}</td><td>${n.tx}</td><td>${n.rx}</td><td>${n.control}</td><td>${n.delivered}</td><td class="${cls}" title="visto ha ${n.last_seen_s}s">${st}</td></tr>`;}).join('');
  document.getElementById('rt').innerHTML=s.routes.length?s.routes.map(r=>`<tr><td>${r.dest.slice(-5)}</td><td>${r.via.slice(-5)}</td><td>${r.hops}</td><td>${r.metric}</td></tr>`).join(''):'<tr><td colspan=4 class=off>sem rotas</td></tr>';
 }
@@ -270,7 +305,10 @@ def main():
     ap.add_argument("--file", help="replay de log (em vez de serial)")
     ap.add_argument("--baud", type=int, default=115200)
     ap.add_argument("--http-port", type=int, default=8090)
+    ap.add_argument("--report-interval", type=float, default=4.0,
+                    help="intervalo (s) do report dos nos; deriva os timeouts online/stale/link")
     args = ap.parse_args()
+    CFG["report_s"] = args.report_interval
 
     if args.file:
         threading.Thread(target=file_replay, args=(args.file,), daemon=True).start()
