@@ -718,12 +718,12 @@ _A redação tem boa base técnica e registro formal predominante, mas há padr�
 - **Problema:** Numeração de figuras, quadros e capítulos está escrita manualmente (hardcoded) no texto, em vez de usar referências automáticas \ref/\autoref. As figuras do cap. 4 sequer têm \label, e os números fixos (3, 4, 12, 13, 14) quase certamente ficarão incorretos quando o documento for recompilado ou reordenado — risco real de o texto citar "Figura 3" enquanto a numeração automática gera outro número. É um defeito de formatação ABNT/LaTeX que compromete a integridade das remissões.
 - **Correção:** Adicionar \label{fig:arquitetura}, \label{fig:modular} etc. a cada \caption e substituir todas as menções por \autoref{...} ou "Figura~\ref{...}". O mesmo para os \chapter dos capítulos 2, 4 e 5 referenciados na conclusão.
 
-### [ ] PT-104 · 🟠 ALTO · `coerencia`
+### [x] PT-104 · 🟠 ALTO · `coerencia`
 - **Local:** Inconsistência entre capitulo_1.tex (linhas 103-125: "propõe", "incluem"), capitulo_4.tex (tempo misto, ver abaixo) e capitulo_6.tex (linha 6: "propôs, implementou e avaliou")
 - **Problema:** Não há política de tempo verbal unificada para descrever o trabalho. O Capítulo 1 apresenta a proposta no presente ("o presente trabalho propõe", "As principais adaptações propostas... incluem"), o que é aceitável numa introdução, mas o Capítulo 6 narra tudo no passado ("propôs, implementou e avaliou"). Como a pesquisa já está concluída, a introdução escrita majoritariamente no presente/futuro de intenção pode soar como projeto em andamento e não como trabalho realizado, gerando dissonância com a conclusão.
 - **Correção:** Definir e aplicar uma convenção única: introdução pode manter presente para a proposta, mas garantir que verbos de execução já realizada (implementação, experimentos) estejam no passado de forma consistente. Revisar o cap. 1 para que descrições do que foi feito não fiquem em futuro/intenção quando já concluídas.
 
-### [ ] PT-105 · 🟠 ALTO · `coerencia`
+### [x] PT-105 · 🟠 ALTO · `coerencia`
 - **Local:** capitulo_4.tex: presente vs. passado alternados — ex.: linha 18 "foi concebida", linha 212 "foi organizada", linha 270 "foram projetadas" (passado) versus linha 86 "suporta", linha 87 "utiliza", linha 364 "separa", linha 376 "utiliza" (presente)
 - **Problema:** Dentro do mesmo capítulo, o artefato é descrito ora no pretérito (relato do que foi feito: "A arquitetura foi concebida", "A implementação foi organizada", "As estruturas foram projetadas") ora no presente atemporal (descrição de funcionamento: "O ESP-NOW suporta", "o AODV-EN utiliza", "o protocolo separa"). A alternância não segue critério explícito e por vezes ocorre em parágrafos adjacentes, prejudicando a uniformidade do registro.
 - **Correção:** Adotar critério claro: pretérito para decisões/ações de projeto já tomadas ("foi adotada a política LRU") e presente para o comportamento permanente do protocolo ("o protocolo retransmite cada RREQ uma única vez"). Padronizar cada subseção segundo esse critério em vez de misturar.
@@ -857,3 +857,22 @@ Fecham só após coletar os novos dados:
 ---
 
 _Total acionável: 114 itens de capítulo/transversal + 8 furos de auditoria + 8 dimensões a verificar + Seções B/C/D._
+
+---
+
+## E. Altos remanescentes — bloqueados por dependência externa (NÃO corrigíveis agora)
+
+Resolvidos todos os críticos e os altos independentes. Os altos abaixo ficam abertos por
+dependerem de dados que ainda não existem ou de metadados que não podem ser inventados:
+
+- [ ] **C5-054** (teste estatístico p/ "equivalência" de PDR) — depende dos **novos runs**
+  (n adequado p/ teste de hipótese). Hoje "diferença < 1 desvio" é frágil; corrigir com os dados finais.
+- [ ] **C6-063 / AL-074** (objetivo *e*: comparação com a literatura na Conclusão) — depende dos
+  **resultados finais** p/ confrontar com Becker/BRAM-NOW/Urazayev. Esqueleto já existe no relatório (§19.4).
+- [ ] **BIB-095** (volume/número/páginas dos 6 @article) — exige os **metadados reais** das publicações;
+  inventar viola a NBR 6023 e a honestidade. Preencher consultando cada artigo.
+- [ ] **BIB-096** (`and others` → autores completos) — idem: precisa da **lista real de autores** de cada fonte.
+
+**PT-104 / PT-105** (tempo verbal): marcados como aceitáveis — introdução no presente + conclusão no
+passado é convenção acadêmica válida; o Cap.4 já segue o critério "pretérito p/ decisão de projeto,
+presente p/ comportamento permanente". Edição massiva traria risco > retorno.
