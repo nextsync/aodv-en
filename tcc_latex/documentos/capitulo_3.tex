@@ -469,6 +469,18 @@ entrega dos pacotes; o NRL mede o overhead de controle introduzido pelo
 protocolo; e o consumo energético estimado permite analisar o impacto
 das transmissões sobre a autonomia dos dispositivos.
 
+O consumo energético é obtido por um modelo analítico, e não por medição
+com instrumentação física. A energia é estimada a partir do número de
+quadros transmitidos e recebidos por cada nó, ponderados pelas correntes
+típicas de operação do ESP32-WROOM-32 informadas em \emph{datasheet}
+($I_\text{tx}$ no modo de transmissão de rádio, $I_\text{rx}$ na recepção
+e $I_\text{idle}$ em repouso), sob tensão nominal de 3,3~V. Trata-se,
+portanto, de uma estimativa fundamentada em valores de referência do
+fabricante --- abordagem usual na literatura de redes de sensores sem
+fio \cite{heinzelman2000} ---, e não de uma medida direta de corrente. A
+medição instrumentada do consumo (por exemplo, com um sensor de corrente
+INA219 em série com a alimentação) é registrada como trabalho futuro.
+
 O Quadro~\ref{quadro:metricas} sintetiza as métricas de avaliação de desempenho adotadas.
 
 {\def\LTcaptype{quadro}

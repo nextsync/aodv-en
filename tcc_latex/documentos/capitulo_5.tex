@@ -273,9 +273,11 @@ e dos cenários C2 a C4 previstos na metodologia, em virtude da
 disponibilidade de hardware; (ii) a topologia de concentrador, com
 aproximadamente um salto, que não exercita o comportamento multi-hop
 real (avaliado por simulação); (iii) a quantização da latência pelo laço
-de 100 ms da aplicação, que limita a granularidade da medida; (iv) o
-caráter estimado do consumo energético, calculado a partir do perfil de
-\emph{datasheet} do ESP32 e não medido com instrumentação física; e (v)
+da aplicação, que limita a granularidade da medida ao período do laço;
+(iv) o caráter estimado do consumo energético, calculado a partir do
+perfil de \emph{datasheet} do ESP32 e não medido com instrumentação
+física --- a medição direta de corrente (por exemplo, com um sensor
+INA219 em série com a alimentação) é registrada como trabalho futuro; e (v)
 o fato de as campanhas do AODV-EN e do \emph{flooding} terem sido
 coletadas em momentos distintos, sujeitas a variações nas condições de
 canal. A ampliação do número de repetições e de cenários, a medição
