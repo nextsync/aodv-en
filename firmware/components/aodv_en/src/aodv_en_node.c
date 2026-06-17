@@ -1423,26 +1423,39 @@ static aodv_en_status_t aodv_en_node_handle_rerr(
     const aodv_en_rerr_msg_t *message,
     uint32_t now_ms)
 {
-    aodv_en_status_t status;
+    aodv_en_route_entry_t *route;
 
-    status = aodv_en_route_invalidate_destination(
-        &node->routes,
-        message->unreachable_destination_mac,
-        now_ms);
+    route = aodv_en_route_find(&node->routes, message->unreachable_destination_mac);
 
-    if (status == AODV_EN_OK)
+    /* RFC 3561 6.11: so processa o RERR se houver rota ativa para o destino
+     * cujo proximo salto e justamente o vizinho que enviou o RERR. Um RERR de
+     * um no que nao e o next_hop nao deve invalidar a rota local. */
+    if (route == NULL ||
+        route->state == AODV_EN_ROUTE_INVALID ||
+        !aodv_en_mac_equal(route->next_hop, link_src_mac))
     {
-        /* RFC 3561: Propagate RERR to precursors of the now-invalidated route, excluding the sender */
-        aodv_en_node_notify_precursors_of_break(
-            node,
-            link_src_mac,
-            message->unreachable_destination_mac,
-            message->unreachable_dest_seq_num,
-            now_ms);
-        return AODV_EN_OK;
+        return AODV_EN_NOOP;
     }
 
-    return AODV_EN_NOOP;
+    /* RFC 3561 6.11: adota o dest_seq_num do RERR antes de invalidar. */
+    if (message->unreachable_dest_seq_num > route->dest_seq_num)
+    {
+        route->dest_seq_num = message->unreachable_dest_seq_num;
+    }
+
+    route->state = AODV_EN_ROUTE_INVALID;
+    route->metric = AODV_EN_ROUTE_METRIC_INFINITY;
+    route->expires_at_ms = now_ms + AODV_EN_ROUTE_DELETE_PERIOD_MS;
+
+    /* Propaga o RERR aos precursores da rota invalidada, exceto o emissor. */
+    aodv_en_node_notify_precursors_of_break(
+        node,
+        link_src_mac,
+        message->unreachable_destination_mac,
+        route->dest_seq_num,
+        now_ms);
+
+    return AODV_EN_OK;
 }
 
 static aodv_en_status_t aodv_en_node_handle_ack(
@@ -1457,15 +1470,20 @@ static aodv_en_status_t aodv_en_node_handle_ack(
     {
         uint32_t rtt_ms = AODV_EN_RTT_UNKNOWN;
 
-        (void)aodv_en_node_pending_ack_consume(node, message->originator_mac, message->ack_for_sequence, now_ms, &rtt_ms);
-        node->stats.ack_received++;
-        if (node->callbacks.ack_received != NULL)
+        /* So contabiliza/notifica ACKs que casam com um pending_ack vivo. ACKs
+         * duplicados (reenvio de DATA cujo primeiro ACK ja foi consumido) nao
+         * inflam ack_received nem disparam callback espurio. */
+        if (aodv_en_node_pending_ack_consume(node, message->originator_mac, message->ack_for_sequence, now_ms, &rtt_ms))
         {
-            node->callbacks.ack_received(
-                node->callbacks.user_ctx,
-                message->originator_mac,
-                message->ack_for_sequence,
-                rtt_ms);
+            node->stats.ack_received++;
+            if (node->callbacks.ack_received != NULL)
+            {
+                node->callbacks.ack_received(
+                    node->callbacks.user_ctx,
+                    message->originator_mac,
+                    message->ack_for_sequence,
+                    rtt_ms);
+            }
         }
         return AODV_EN_OK;
     }
@@ -1480,6 +1498,84 @@ static aodv_en_status_t aodv_en_node_handle_ack(
     aodv_en_mac_copy(forward.header.sender_mac, node->self_mac);
     node->stats.forwarded_frames++;
     return aodv_en_node_emit(node, route->next_hop, (const uint8_t *)&forward, sizeof(forward), false, now_ms);
+}
+
+static bool aodv_en_node_data_seen_contains(
+    const aodv_en_node_t *node,
+    const uint8_t originator_mac[AODV_EN_MAC_ADDR_LEN],
+    uint32_t sequence_number)
+{
+    uint16_t index;
+
+    for (index = 0; index < AODV_EN_DATA_SEEN_SIZE; index++)
+    {
+        const aodv_en_data_seen_entry_t *entry = &node->data_seen[index];
+
+        if (entry->used &&
+            entry->sequence_number == sequence_number &&
+            aodv_en_mac_equal(entry->originator_mac, originator_mac))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+static void aodv_en_node_data_seen_remember(
+    aodv_en_node_t *node,
+    const uint8_t originator_mac[AODV_EN_MAC_ADDR_LEN],
+    uint32_t sequence_number,
+    uint32_t now_ms)
+{
+    aodv_en_data_seen_entry_t *slot = NULL;
+    uint16_t index;
+
+    for (index = 0; index < AODV_EN_DATA_SEEN_SIZE; index++)
+    {
+        aodv_en_data_seen_entry_t *entry = &node->data_seen[index];
+
+        if (!entry->used)
+        {
+            slot = entry;
+            break;
+        }
+
+        /* sem slot livre: recicla o mais antigo (LRU por seen_at_ms). */
+        if (slot == NULL || entry->seen_at_ms < slot->seen_at_ms)
+        {
+            slot = entry;
+        }
+    }
+
+    if (slot == NULL)
+    {
+        return;
+    }
+
+    memset(slot, 0, sizeof(*slot));
+    aodv_en_mac_copy(slot->originator_mac, originator_mac);
+    slot->sequence_number = sequence_number;
+    slot->seen_at_ms = now_ms;
+    slot->used = true;
+}
+
+static void aodv_en_node_data_seen_expire(
+    aodv_en_node_t *node,
+    uint32_t now_ms)
+{
+    uint16_t index;
+
+    for (index = 0; index < AODV_EN_DATA_SEEN_SIZE; index++)
+    {
+        aodv_en_data_seen_entry_t *entry = &node->data_seen[index];
+
+        if (entry->used &&
+            (uint32_t)(now_ms - entry->seen_at_ms) > AODV_EN_DATA_SEEN_TIMEOUT_MS)
+        {
+            memset(entry, 0, sizeof(*entry));
+        }
+    }
 }
 
 static aodv_en_status_t aodv_en_node_handle_data(
@@ -1498,16 +1594,27 @@ static aodv_en_status_t aodv_en_node_handle_data(
 
     if (aodv_en_node_is_self(node, message->destination_mac))
     {
-        node->stats.delivered_frames++;
-        if (node->callbacks.deliver_data != NULL)
+        bool duplicate = aodv_en_node_data_seen_contains(
+            node, message->originator_mac, message->sequence_number);
+
+        if (!duplicate)
         {
-            node->callbacks.deliver_data(
-                node->callbacks.user_ctx,
-                message->originator_mac,
-                message->payload,
-                message->payload_length);
+            aodv_en_node_data_seen_remember(
+                node, message->originator_mac, message->sequence_number, now_ms);
+
+            node->stats.delivered_frames++;
+            if (node->callbacks.deliver_data != NULL)
+            {
+                node->callbacks.deliver_data(
+                    node->callbacks.user_ctx,
+                    message->originator_mac,
+                    message->payload,
+                    message->payload_length);
+            }
         }
 
+        /* Re-confirma mesmo em duplicata: o reenvio do originador acontece
+         * justamente porque o ACK anterior se perdeu. Entrega so uma vez. */
         if ((message->header.flags & AODV_EN_MSG_FLAG_ACK_REQUIRED) != 0u)
         {
             (void)aodv_en_node_send_ack(node, message->originator_mac, message->sequence_number, now_ms);
@@ -1554,12 +1661,25 @@ static bool aodv_en_validate_message_size(
     case AODV_EN_MSG_ACK:
         return frame_len == sizeof(aodv_en_ack_msg_t);
     case AODV_EN_MSG_DATA:
+    {
+        const aodv_en_data_msg_t *data;
+
         if (frame_len < sizeof(aodv_en_data_msg_t))
         {
             return false;
         }
 
-        return (((const aodv_en_data_msg_t *)frame)->payload_length + sizeof(aodv_en_data_msg_t)) == frame_len;
+        data = (const aodv_en_data_msg_t *)frame;
+        /* Limita o payload ao maximo compilado: o buffer de forward tem esse
+         * tamanho; sem isso um frame com payload_length entre o cap e o MTU
+         * estoura a pilha em aodv_en_node_forward_data. */
+        if (data->payload_length > AODV_EN_DATA_PAYLOAD_MAX)
+        {
+            return false;
+        }
+
+        return ((size_t)data->payload_length + sizeof(aodv_en_data_msg_t)) == frame_len;
+    }
     default:
         return false;
     }
@@ -1653,6 +1773,7 @@ void aodv_en_node_tick(
     (void)aodv_en_neighbor_expire(&node->neighbors, now_ms, node->config.neighbor_timeout_ms);
     (void)aodv_en_route_expire(&node->routes, now_ms);
     (void)aodv_en_rreq_cache_expire(&node->rreq_cache, now_ms, node->config.rreq_cache_timeout_ms);
+    aodv_en_node_data_seen_expire(node, now_ms);
     aodv_en_node_retry_route_discovery_for_pending(node, now_ms);
     aodv_en_node_process_pending_ack_retries(node, now_ms);
     aodv_en_node_expire_pending_data(node, now_ms);
