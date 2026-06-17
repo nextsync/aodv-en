@@ -11,7 +11,8 @@
 |---|---|---|
 | **N1** | `28:05:A5:33:EB:80` | origem/ponta |
 | **N2** | `28:05:A5:33:D6:1C` | relay/meio |
-| **N3** | `28:05:A5:34:99:34` | destino/ponta |
+| **N3** | `28:05:A5:34:99:34` | relay/meio |
+| **N4** | `28:05:A5:33:B9:EC` | destino/ponta (cadeia 3 saltos A->B->C->D) |
 
 (Os 10 ESPs finais serão enumerados do mesmo modo. Identificar sempre por MAC.)
 
