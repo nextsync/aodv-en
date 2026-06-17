@@ -379,6 +379,28 @@ mantido fixo, por ser necessário à disseminação de RREQ em qualquer
 instante. Essa estratégia preserva a compatibilidade com o ESP-NOW sem
 comprometer a dinâmica de descoberta e manutenção de rotas.
 
+O Algoritmo~\ref{alg:lru} formaliza a obtenção de um \emph{peer} para
+transmissão: em caso de acerto, atualiza-se a marca temporal de uso; em
+caso de falta com o cache cheio, seleciona-se como vítima o par não-fixo
+menos recentemente utilizado.
+
+\begin{algorithm}[H]
+\caption{Obtenção de \emph{peer} com substituição LRU}\label{alg:lru}
+\begin{algorithmic}[1]
+\Require endereço $m$, instante $t$
+\If{$m \in \mathit{cache}$}
+  \State $\mathit{cache}[m].\mathit{ultimoUso} \gets t$ \Comment{acerto: renova uso}
+  \State \textbf{retornar} \textsc{Ok}
+\EndIf
+\If{$\mathit{cache}$ está cheio}
+  \State $\mathit{vitima} \gets \arg\min_{e\,\in\,\mathit{cache},\ \neg e.\mathit{fixo}} e.\mathit{ultimoUso}$
+  \If{$\mathit{vitima} = \textsc{Nulo}$}\quad \textbf{retornar} \textsc{SemEspaco}\quad\EndIf
+  \State remover $\mathit{vitima}$
+\EndIf
+\State inserir $m$ com $\mathit{ultimoUso} \gets t$;\quad \textbf{retornar} \textsc{Ok}
+\end{algorithmic}
+\end{algorithm}
+
 \section{Mensagens do Protocolo}\label{mensagens-do-protocolo}
 
 O AODV-EN utiliza mensagens de controle e de dados para realizar a
@@ -530,6 +552,34 @@ RREQ e o retorno da mensagem RREP pelo caminho reverso.
 \end{tikzpicture}
 \caption{Fluxo de descoberta de rotas no AODV-EN}\label{fig:descoberta}
 \end{figure}
+
+O Algoritmo~\ref{alg:descoberta} formaliza o tratamento de uma requisição
+de rota (RREQ) recebida por um nó, refletindo a implementação do
+\emph{firmware}: a deduplicação por par (originador, identificador), a
+criação da rota reversa em estado provisório, a resposta apenas pelo nó
+de destino e a redisseminação por \emph{broadcast} nos demais casos.
+
+\begin{algorithm}[H]
+\caption{Tratamento de RREQ recebido em um nó}\label{alg:descoberta}
+\begin{algorithmic}[1]
+\Require RREQ $r$, vizinho de origem do quadro $\mathit{link}$, instante $t$
+\If{$\Call{CacheContem}{r.\mathit{orig}, r.\mathit{rreqId}}$}
+  \State \textbf{descartar} $r$ \Comment{duplicata: garante uma retransmissão por nó}
+  \State \textbf{retornar}
+\EndIf
+\State $\Call{CacheRegistrar}{r.\mathit{orig}, r.\mathit{rreqId}, t}$
+\State $\Call{InserirRota}{\mathit{dest}{=}r.\mathit{orig},\ \mathit{prox}{=}\mathit{link},\ \mathit{seq}{=}r.\mathit{origSeq},\ \mathit{hops}{=}r.\mathit{hops}{+}1,\ \mathit{estado}{=}\textsc{Reversa}}$
+\If{$r.\mathit{dest} = \mathit{self}$}
+  \State $\Call{EnviarRREP}{r.\mathit{orig}}$ \Comment{unicast pela rota reversa}
+\Else
+  \State $r.\mathit{hops} \gets r.\mathit{hops} + 1$;\quad $r.\mathit{ttl} \gets r.\mathit{ttl} - 1$
+  \If{$r.\mathit{ttl} > 0$}
+    \State $\Call{DifundirBroadcast}{r}$ \Comment{exceto o vizinho $\mathit{link}$, via deduplicação}
+  \EndIf
+\EndIf
+\end{algorithmic}
+\end{algorithm}
+
 \subsection{Encaminhamento de Dados}\label{encaminhamento-de-dados}
 
 Após a descoberta de uma rota válida, o
@@ -546,6 +596,35 @@ transmitidos conforme o caminho descoberto. Esse mecanismo permite que a
 aplicação solicite o envio de dados mesmo quando a rota ainda não está
 disponível, preservando a característica reativa do AODV-EN e evitando o
 descarte imediato de pacotes em situações de descoberta inicial.
+
+O Algoritmo~\ref{alg:dados} resume o envio de um pacote de dados pela
+origem, incluindo o enfileiramento e o disparo de descoberta quando não
+há rota válida, e o encaminhamento salto a salto com decremento do limite
+de propagação.
+
+\begin{algorithm}[H]
+\caption{Envio e encaminhamento de DATA}\label{alg:dados}
+\begin{algorithmic}[1]
+\Require destino $d$, \emph{payload} $p$, instante $t$
+\State $\mathit{rota} \gets \Call{BuscarRotaValida}{d}$
+\If{$\mathit{rota} = \textsc{Nulo}$}
+  \State $\Call{Enfileirar}{d, p}$ \Comment{fila de dados pendentes (capacidade fixa)}
+  \State $\Call{IniciarDescoberta}{d}$ \Comment{emite RREQ}
+  \State \textbf{retornar} \textsc{Enfileirado}
+\EndIf
+\State construir DATA com $\mathit{ttl} \gets \mathit{TTL}_{\max}$, exigindo confirmação (ACK)
+\State $\Call{TransmitirUnicast}{\mathit{rota}.\mathit{prox}, \mathit{DATA}}$;\quad armar temporização de ACK
+\Statex \textbf{Ao receber DATA em um nó intermediário:}
+\If{$\mathit{DATA}.\mathit{dest} = \mathit{self}$}
+  \State $\Call{Entregar}{p}$;\quad $\Call{EnviarACK}{\mathit{DATA}.\mathit{orig}}$
+\ElsIf{$\mathit{DATA}.\mathit{ttl} > 1 \wedge \Call{BuscarRotaValida}{\mathit{DATA}.\mathit{dest}} \neq \textsc{Nulo}$}
+  \State $\mathit{DATA}.\mathit{ttl} \gets \mathit{DATA}.\mathit{ttl} - 1$;\quad $\Call{TransmitirUnicast}{\mathit{prox}, \mathit{DATA}}$
+\Else
+  \State $\Call{EnviarRERR}{\mathit{DATA}.\mathit{dest}}$ \Comment{rota indisponível}
+\EndIf
+\Statex \textbf{Na origem, se a confirmação não chega no prazo:} retransmitir até $R$ vezes; após $R$ falhas, descartar.
+\end{algorithmic}
+\end{algorithm}
 
 \subsection{Manutenção de Rotas}\label{manutenuxe7uxe3o-de-rotas}
 
@@ -627,6 +706,32 @@ da comunicação.
 \end{tikzpicture}
 \caption{Fluxo de tratamento de falhas e reconvergência no AODV-EN}\label{fig:falhas}
 \end{figure}
+
+O Algoritmo~\ref{alg:falhas} detalha o tratamento de falhas de enlace: a
+detecção é por \emph{limiar} de transmissões malsucedidas consecutivas a
+um vizinho (e não por uma única falha), seguida da invalidação das rotas
+afetadas e da notificação seletiva dos precursores por meio de RERR.
+
+\begin{algorithm}[H]
+\caption{Tratamento de falha de enlace e propagação de RERR}\label{alg:falhas}
+\begin{algorithmic}[1]
+\Statex \textbf{Ao falhar a transmissão para um vizinho $v$:}
+\State $v.\mathit{falhas} \gets v.\mathit{falhas} + 1$
+\If{$v.\mathit{falhas} \geq \mathit{LIMIAR}$}
+  \State marcar $v$ como \textsc{Inativo}
+  \ForAll{rota $\rho$ com $\rho.\mathit{prox} = v$}
+    \State invalidar $\rho$;\quad $\rho.\mathit{expira} \gets t + \mathit{DELETE\_PERIOD}$
+    \State $\Call{EnviarRERR}{\rho.\mathit{dest}}$ \textbf{aos} precursores de $\rho$
+  \EndFor
+\EndIf
+\Statex \textbf{Ao receber um RERR de $\mathit{link}$:}
+\ForAll{rota $\rho$ com $\rho.\mathit{dest} = \mathit{RERR}.\mathit{dest} \wedge \rho.\mathit{prox} = \mathit{link}$}
+  \State $\rho.\mathit{seq} \gets \max(\rho.\mathit{seq}, \mathit{RERR}.\mathit{seq})$;\quad invalidar $\rho$
+  \State propagar RERR aos precursores de $\rho$
+\EndFor
+\end{algorithmic}
+\end{algorithm}
+
 \section{Adaptações do AODV para ESP-NOW}\label{adaptacoes-do-aodv-para-esp-now}
 
 A adaptação do AODV para operação
@@ -740,6 +845,30 @@ escolha de caminho considere não apenas o número de saltos, mas também a
 robustez dos enlaces, contribuindo para maior estabilidade da
 comunicação em ambientes sem fio sujeitos a interferências, obstáculos e
 variações de sinal.
+
+O Algoritmo~\ref{alg:metrica} resume o cálculo do custo de uma rota e o
+critério de substituição entre rotas. A seleção emprega prioridade de
+estado --- uma rota válida não é substituída por uma rota reversa ou
+inválida --- e uma histerese que só troca o próximo salto entre rotas
+válidas quando a candidata é suficientemente melhor, prevenindo
+oscilação (\emph{flapping}).
+
+\begin{algorithm}[H]
+\caption{Custo da rota e critério de substituição}\label{alg:metrica}
+\begin{algorithmic}[1]
+\Function{Custo}{rota $\rho$}
+  \State $\overline{r} \gets$ RSSI médio (EWMA) do próximo salto de $\rho$, ou $\mathit{RSSI}_{\mathrm{worst}}$ se desconhecido
+  \State $\mathit{pen} \gets \Call{Limitar}{\dfrac{(\mathit{RSSI}_{\mathrm{best}} - \overline{r}) \cdot 100}{\mathit{RSSI}_{\mathrm{best}} - \mathit{RSSI}_{\mathrm{worst}}},\ 0,\ 100}$
+  \State \textbf{retornar} $\alpha \cdot \rho.\mathit{hops} + \beta \cdot \mathit{pen}$
+\EndFunction
+\Statex
+\Function{DeveSubstituir}{rota atual $a$, candidata $c$}
+  \If{$a.\mathit{estado} = \textsc{Valida} \wedge c.\mathit{estado} \neq \textsc{Valida}$}\quad \textbf{retornar} \textsc{Falso}\quad\EndIf
+  \If{$c.\mathit{seq} > a.\mathit{seq}$}\quad \textbf{retornar} \textsc{Verd.}\quad\EndIf
+  \State \textbf{retornar} (ganho de sequência $\geq 2$) $\vee$ (menor custo) $\vee$ (menos saltos) $\vee$ (ganho de validade $\geq 5000$\,ms)
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
 
 \section{Considerações sobre a Implementação}\label{consideracoes-sobre-a-implementacao}
 
