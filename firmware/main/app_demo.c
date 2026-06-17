@@ -617,6 +617,10 @@ static void app_process_rx_queue(app_context_t *app)
 
     while (xQueueReceive(app->rx_queue, &event, 0) == pdTRUE)
     {
+        char src_text[18];
+        app_format_mac(event.src_mac, src_text, sizeof(src_text));
+        ESP_LOGI(TAG, "RSSIPROBE src=%s rssi=%d", src_text, (int)event.rssi);
+
         (void)aodv_en_stack_on_recv_at(
             &app->stack,
             event.src_mac,
