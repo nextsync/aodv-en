@@ -28,6 +28,15 @@ config AODV_EN_APP_WIFI_CHANNEL
     range 1 13
     default 6
 
+config AODV_EN_APP_TX_POWER_QDBM
+    int "Max TX power (0.25 dBm units; 8..84 = 2..21 dBm; 0 = driver default)"
+    range 0 84
+    default 0
+    help
+      Potencia maxima de transmissao em unidades de 0,25 dBm (esp_wifi_set_max_tx_power).
+      8 = 2 dBm (minimo, encurta alcance p/ forcar saltos na bancada);
+      84 = 21 dBm (maximo). 0 mantem o padrao do driver.
+
 config AODV_EN_APP_HELLO_INTERVAL_MS
     int "HELLO interval (ms)"
     range 1000 60000

@@ -30,7 +30,7 @@
 
 #define APP_RX_QUEUE_LEN 8
 #define APP_TX_RESULT_QUEUE_LEN 16
-#define APP_LOOP_DELAY_MS 100
+#define APP_LOOP_DELAY_MS 10
 #define APP_MAX_FRAME_LEN ESP_NOW_MAX_DATA_LEN_V2
 #define APP_DRIVER_MAX_PEERS CONFIG_AODV_EN_APP_DRIVER_MAX_PEERS
 
@@ -742,6 +742,15 @@ static void app_init_wifi(uint8_t channel)
     ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config));
     ESP_ERROR_CHECK(esp_wifi_start());
     ESP_ERROR_CHECK(esp_wifi_set_channel(channel, WIFI_SECOND_CHAN_NONE));
+    if (CONFIG_AODV_EN_APP_TX_POWER_QDBM > 0)
+    {
+        ESP_ERROR_CHECK(esp_wifi_set_max_tx_power((int8_t)CONFIG_AODV_EN_APP_TX_POWER_QDBM));
+    }
+    {
+        int8_t tx_power = 0;
+        (void)esp_wifi_get_max_tx_power(&tx_power);
+        ESP_LOGI(TAG, "wifi channel=%u tx_power_qdbm=%d", channel, (int)tx_power);
+    }
 }
 
 static void app_blink_task(void *arg)
