@@ -10,6 +10,9 @@ config AODV_EN_APP_USE_APP_DEMO
 config AODV_EN_APP_USE_PROTO_EXAMPLE
     bool "Use app_proto_example (health/text/command example)"
 
+config AODV_EN_APP_USE_APP_FLOOD
+    bool "Use app_flood (controlled flooding baseline)"
+
 endchoice
 
 config AODV_EN_APP_NODE_NAME
@@ -39,6 +42,43 @@ config AODV_EN_APP_PRINT_INTERVAL_MS
     int "Stats print interval (ms)"
     range 1000 60000
     default 10000
+
+choice AODV_EN_APP_RREQ_FLOOD_MODE
+    prompt "RREQ flooding mode"
+    default AODV_EN_APP_RREQ_FLOOD_BROADCAST
+
+config AODV_EN_APP_RREQ_FLOOD_BROADCAST
+    bool "Broadcast (RFC 3561-style)"
+
+config AODV_EN_APP_RREQ_FLOOD_UNICAST_SEQ
+    bool "Unicast sequential for active neighbors (AODV-EN adaptation)"
+
+endchoice
+
+config AODV_EN_APP_DRIVER_MAX_PEERS
+    int "Max dynamic ESP-NOW peers in adapter (LRU managed)"
+    range 2 20
+    default 20
+
+config AODV_EN_APP_ROUTE_METRIC_HOP_WEIGHT
+    int "Route metric hop weight"
+    range 1 64
+    default 8
+
+config AODV_EN_APP_ROUTE_METRIC_RSSI_WEIGHT
+    int "Route metric RSSI penalty weight"
+    range 0 64
+    default 1
+
+config AODV_EN_APP_ROUTE_RSSI_BEST_DBM
+    int "Route metric RSSI best threshold (dBm)"
+    range -100 -30
+    default -55
+
+config AODV_EN_APP_ROUTE_RSSI_WORST_DBM
+    int "Route metric RSSI worst threshold (dBm)"
+    range -100 -30
+    default -90
 
 config AODV_EN_APP_ENABLE_DATA
     bool "Enable periodic DATA send"

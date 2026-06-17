@@ -1,0 +1,48 @@
+===== N1(34:99:34,target/relay) =====
+I (27702) flood_en_app: stats tx=24 rx=61 rebroadcast=0 delivered=24 ack=0 dup=37 ttl_drop=0
+I (27802) flood_en_app: DATA deliver from 28:05:A5:33:D6:1C: flood baseline
+I (28702) flood_en_app: DATA deliver from 28:05:A5:33:EB:80: flood baseline
+I (28702) flood_en_app: stats tx=26 rx=64 rebroadcast=0 delivered=26 ack=0 dup=38 ttl_drop=0
+I (29702) flood_en_app: stats tx=26 rx=66 rebroadcast=0 delivered=26 ack=0 dup=40 ttl_drop=0
+I (29802) flood_en_app: DATA deliver from 28:05:A5:33:D6:1C: flood baseline
+I (30702) flood_en_app: DATA deliver from 28:05:A5:33:EB:80: flood baseline
+I (30702) flood_en_app: stats tx=28 rx=70 rebroadcast=0 delivered=28 ack=0 dup=42 ttl_drop=0
+I (31702) flood_en_app: stats tx=28 rx=72 rebroadcast=0 delivered=28 ack=0 dup=44 ttl_drop=0
+I (31802) flood_en_app: DATA deliver from 28:05:A5:33:D6:1C: flood baseline
+I (32702) flood_en_app: DATA deliver from 28:05:A5:33:EB:80: flood baseline
+I (32702) flood_en_app: stats tx=30 rx=76 rebroadcast=0 delivered=30 ack=0 dup=46 ttl_drop=0
+I (33702) flood_en_app: stats tx=30 rx=78 rebroadcast=0 delivered=30 ack=0 dup=48 ttl_drop=0
+I (33802) flood_en_app: DATA deliver from 28:05:A5:33:D6:1C: flood baseline
+
+===== N2(33:EB:80,origem) =====
+I (95812) flood_en_app: ACK received from 28:05:A5:34:99:34 for seq=47
+I (96712) flood_en_app: stats tx=67 rx=161 rebroadcast=20 delivered=0 ack=14 dup=22 ttl_drop=0
+I (97712) flood_en_app: flood DATA broadcast
+I (97712) flood_en_app: stats tx=70 rx=163 rebroadcast=22 delivered=0 ack=14 dup=22 ttl_drop=0
+I (97812) flood_en_app: ACK received from 28:05:A5:34:99:34 for seq=48
+I (98712) flood_en_app: stats tx=70 rx=166 rebroadcast=22 delivered=0 ack=15 dup=24 ttl_drop=0
+I (99712) flood_en_app: flood DATA broadcast
+I (99712) flood_en_app: stats tx=73 rx=168 rebroadcast=24 delivered=0 ack=15 dup=24 ttl_drop=0
+I (99812) flood_en_app: ACK received from 28:05:A5:34:99:34 for seq=49
+I (100712) flood_en_app: stats tx=73 rx=171 rebroadcast=24 delivered=0 ack=16 dup=26 ttl_drop=0
+I (101712) flood_en_app: flood DATA broadcast
+I (101712) flood_en_app: stats tx=76 rx=173 rebroadcast=26 delivered=0 ack=16 dup=26 ttl_drop=0
+I (101812) flood_en_app: ACK received from 28:05:A5:34:99:34 for seq=50
+I (102712) flood_en_app: stats tx=76 rx=176 rebroadcast=26 delivered=0 ack=17 dup=28 ttl_drop=0
+
+===== N3(33:D6:1C,origem) =====
+I (23692) flood_en_app: stats tx=33 rx=52 rebroadcast=22 delivered=0 ack=10 dup=20 ttl_drop=0
+I (23792) flood_en_app: ACK received from 28:05:A5:34:99:34 for seq=11
+I (24692) flood_en_app: stats tx=35 rx=57 rebroadcast=24 delivered=0 ack=11 dup=22 ttl_drop=0
+I (25692) flood_en_app: flood DATA broadcast
+I (25692) flood_en_app: stats tx=36 rx=57 rebroadcast=24 delivered=0 ack=11 dup=22 ttl_drop=0
+I (25792) flood_en_app: ACK received from 28:05:A5:34:99:34 for seq=12
+I (26692) flood_en_app: stats tx=38 rx=62 rebroadcast=26 delivered=0 ack=12 dup=24 ttl_drop=0
+I (27692) flood_en_app: flood DATA broadcast
+I (27692) flood_en_app: stats tx=39 rx=62 rebroadcast=26 delivered=0 ack=12 dup=24 ttl_drop=0
+I (27792) flood_en_app: ACK received from 28:05:A5:34:99:34 for seq=13
+I (28692) flood_en_app: stats tx=41 rx=67 rebroadcast=28 delivered=0 ack=13 dup=26 ttl_drop=0
+I (29692) flood_en_app: flood DATA broadcast
+I (29692) flood_en_app: stats tx=42 rx=67 rebroadcast=28 delivered=0 ack=13 dup=26 ttl_drop=0
+I (29792) flood_en_app: ACK received from 28:05:A5:34:99:34 for seq=14
+
