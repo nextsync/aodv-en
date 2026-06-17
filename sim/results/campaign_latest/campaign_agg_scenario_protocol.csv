@@ -1,0 +1,9 @@
+scenario,protocol,profile,runs,pdr_avg,latency_avg_ms,nrl_avg,nrl_control_avg,energy_avg_mj,offered_avg,delivered_avg,tx_total_avg,tx_control_avg
+linear_stable,aodv_en,hop_only,8,0.20500000000000002,399.998125,40.13136975,23.02821675,1454.5,100.0,20.5,691.5,346.875
+linear_stable,flooding,baseline,8,0.14875,1.0,32.945970875,0.0,1141.85,100.0,14.875,484.125,0.0
+partial_mesh_failure,aodv_en,hop_only,8,0.41375,144.40775,20.02286125,7.5548345,1903.6,100.0,41.375,821.0,308.875
+partial_mesh_failure,flooding,baseline,8,0.92375,1.0,10.239482125,0.0,3741.1,100.0,92.375,945.5,0.0
+partial_mesh_stable,aodv_en,hop_only,8,0.41125,201.34275,20.252983,7.823981625,1946.45,100.0,41.125,822.625,321.125
+partial_mesh_stable,flooding,baseline,8,0.92625,1.0,10.270194624999998,0.0,3790.15,100.0,92.625,951.125,0.0
+tree_stable,aodv_en,hop_only,8,0.6675,118.41137499999999,6.320394625,2.21653025,867.65,100.0,66.75,418.125,145.375
+tree_stable,flooding,baseline,8,0.50125,1.0,14.18624675,0.0,1737.5,100.0,50.125,708.25,0.0

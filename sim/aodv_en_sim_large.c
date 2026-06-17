@@ -142,12 +142,13 @@ static void sim_deliver_data(
 static void sim_ack_received(
     void *user_ctx,
     const uint8_t ack_sender_mac[AODV_EN_MAC_ADDR_LEN],
-    uint32_t sequence_number)
+    uint32_t sequence_number,
+    uint32_t rtt_ms)
 {
     sim_endpoint_t *endpoint = (sim_endpoint_t *)user_ctx;
     printf("        %s ACK received from ", endpoint->name);
     sim_print_mac(ack_sender_mac);
-    printf(" for seq=%u\n", (unsigned int)sequence_number);
+    printf(" for seq=%u rtt_ms=%u\n", (unsigned int)sequence_number, (unsigned int)rtt_ms);
 }
 
 static void sim_init_network(sim_network_t *network)

@@ -1,8 +1,13 @@
 # Plano de Desenvolvimento Completo do AODV-EN
 
+## Estado
+
+- alinhado com [aodv-en-spec-v1.md](aodv-en-spec-v1.md)
+- ultima revisao: 2026-05-01
+
 ## Objetivo
 
-Este documento organiza o desenvolvimento completo do `AODV-EN` ate a conclusao do projeto tecnico e do TCC.
+Este documento organiza o desenvolvimento do `AODV-EN` ate a conclusao do projeto tecnico e do TCC.
 
 Ele serve como:
 
@@ -10,6 +15,14 @@ Ele serve como:
 - checklist de validacao
 - guia de experimentacao
 - trilha de escrita do trabalho final
+
+## Material visual para escrita do TCC
+
+- fluxos consolidados (Mermaid): [fluxos-tcc-aodv-en.md](./fluxos-tcc-aodv-en.md)
+- uso recomendado:
+- capitulo de metodologia: `F1`, `F3`, `F4`, `F8`
+- capitulo de implementacao: `F2`, `F5`, `F6`, `F7`
+- capitulo de resultados/discussao: `F4`, `F8`, `F9`
 
 ## Legenda de status
 
@@ -22,15 +35,22 @@ Ele serve como:
 
 ### Ja concluido
 
-- `CONCLUIDO` definicao dos invariantes do AODV em [aodv-base-invariantes.md](/Users/huaksonlima/Documents/tcc/aodv-en/docs/aodv-base-invariantes.md)
-- `CONCLUIDO` especificacao inicial do protocolo em [aodv-en-spec-v0.md](/Users/huaksonlima/Documents/tcc/aodv-en/docs/aodv-en-spec-v0.md)
-- `CONCLUIDO` modelagem das estruturas de dados em [aodv-en-estruturas-dados.md](/Users/huaksonlima/Documents/tcc/aodv-en/docs/aodv-en-estruturas-dados.md)
-- `CONCLUIDO` materializacao dos limites, tipos, mensagens e tabelas do protocolo em `firmware/components/aodv_en/include`
-- `CONCLUIDO` implementacao inicial das operacoes de vizinhos, rotas, cache de `RREQ` e cache de peers em `firmware/components/aodv_en/src`
-- `CONCLUIDO` implementacao inicial do nucleo do no em [aodv_en_node.h](/Users/huaksonlima/Documents/tcc/aodv-en/firmware/components/aodv_en/include/aodv_en_node.h) e [aodv_en_node.c](/Users/huaksonlima/Documents/tcc/aodv-en/firmware/components/aodv_en/src/aodv_en_node.c)
-- `CONCLUIDO` simulacao local do fluxo `RREQ -> RREP -> DATA -> ACK` em [sim/aodv_en_sim.c](/Users/huaksonlima/Documents/tcc/aodv-en/sim/aodv_en_sim.c)
+- `CONCLUIDO` invariantes do AODV em [aodv-base-invariantes.md](aodv-base-invariantes.md)
+- `CONCLUIDO` `Spec v1` consolidada em [aodv-en-spec-v1.md](aodv-en-spec-v1.md), substituindo a v0
+- `CONCLUIDO` modelagem das estruturas em [aodv-en-estruturas-dados.md](aodv-en-estruturas-dados.md)
+- `CONCLUIDO` materializacao dos limites, tipos, mensagens e tabelas em `firmware/components/aodv_en/include`
+- `CONCLUIDO` operacoes de vizinhos, rotas, cache de `RREQ` e cache de peers em `firmware/components/aodv_en/src`
+- `CONCLUIDO` nucleo do no com `HELLO`, `RREQ`, `RREP`, `RERR`, `DATA`, `ACK`
+- `CONCLUIDO` simulacao local do fluxo `RREQ -> RREP -> DATA -> ACK` em [sim/aodv_en_sim.c](../sim/aodv_en_sim.c)
+- `CONCLUIDO` fila pendente de `DATA` com retry de descoberta e expiracao ([features/enfilaremento-dos-dados.md](features/enfilaremento-dos-dados.md))
+- `CONCLUIDO` precursores e `RERR` direcionado ([features/precursores.md](features/precursores.md))
+- `CONCLUIDO` lib `AODV-EN` consumivel (adapter `aodv_en_stack_*`) em [aodv_en.h](../firmware/components/aodv_en/include/aodv_en.h)
+- `CONCLUIDO` app de bancada `app_proto_example` com CLI e mensagens `HEALTH/TEXT/CMD`
+- `CONCLUIDO` perfis pre-prontos `node_a`, `node_b`, `node_c`, `node_d` em `firmware/tests/`
+- `CONCLUIDO` casos `TC-001`, `TC-002`, `TC-003`, `TC-004`, `TC-005` documentados em [tests](tests/)
+- `CONCLUIDO` `TC-002` validado em hardware em 2026-04-21 (`PASS` com evidencias indiretas)
 
-### O que isso significa na pratica
+### Ainda nao concluido
 
 Hoje o projeto ja tem:
 
@@ -40,30 +60,72 @@ Hoje o projeto ja tem:
 - primeiro motor logico do no
 - uma simulacao executavel validando descoberta de rota e entrega fim a fim
 - um primeiro app ESP-IDF buildavel com integracao inicial a ESP-NOW
+- fila pendente de `DATA` com descoberta continua e retentativa com backoff
+- tratamento de falha de enlace por feedback de TX e reconvergencia
+- modo de flooding de `RREQ` configuravel (`broadcast` ou `unicast_seq`)
+- gerenciamento dinamico de peers ESP-NOW com LRU no adapter do app
 
 Hoje o projeto ainda nao tem:
 
-- validacao do protocolo em ESP32 real
-- fila pendente de dados apos descoberta
+- validacao completa em hardware com captura sincronizada de todos os nos em todos os cenarios
 - baseline de flooding
-- experimentos de bancada
-- resultados do TCC
+- campanha experimental completa com repeticoes por cenario
+- consolidacao final das metricas do TCC (`PDR`, latencia E2E, `NRL`, energia estimada)
+- multi-hop em hardware com captura simultanea dos 3 nos (`TC-002` com captura completa)
+- reconvergencia em hardware (`TC-003`)
+- soak de 30 minutos em hardware (`TC-004`)
+- baseline de flooding e experimentos comparativos
+- escrita do TCC
 
 ## Roadmap macro
 
 | Fase | Status | Objetivo principal | Entregavel |
 |---|---|---|---|
-| 0. Fundacao conceitual | CONCLUIDO | Definir o que o protocolo e e o que ele nao pode violar | docs base e spec v0 |
-| 1. Base estrutural do firmware | CONCLUIDO | Materializar tipos, tabelas e mensagens | headers e modulos iniciais |
-| 2. Nucleo logico do protocolo | EM_ANDAMENTO | Fazer o no processar mensagens e usar tabelas locais | `aodv_en_node` + simulacao |
-| 3. Endurecimento do nucleo | PENDENTE | Corrigir lacunas de MVP e consolidar regras do protocolo | versao v1 do nucleo |
-| 4. Adapter ESP-NOW / ESP-IDF | EM_ANDAMENTO | Conectar o nucleo ao transporte real | adapter inicial + callbacks reais |
-| 5. Firmware de teste em ESP32 | EM_ANDAMENTO | Rodar o protocolo em hardware real | app de no buildavel |
-| 6. Testes funcionais de rede | PENDENTE | Validar multi-hop, falha e recuperacao | relatorio de testes |
-| 7. Baseline de flooding | PENDENTE | Criar comparativo justo para o TCC | protocolo baseline |
-| 8. Experimentos e metricas | PENDENTE | Coletar dados para o trabalho | tabelas, logs e resultados |
-| 9. Escrita do TCC | PENDENTE | Transformar implementacao e resultados em texto academico | monografia |
-| 10. Defesa e demonstracao | PENDENTE | Preparar apresentacao final | slides e demo |
+| 0. Fundacao conceitual | `CONCLUIDO` | Definir o que o protocolo e e o que ele nao pode violar | invariantes + spec v1 |
+| 1. Base estrutural do firmware | `CONCLUIDO` | Materializar tipos, tabelas e mensagens | headers e modulos |
+| 2. Nucleo logico do protocolo | `CONCLUIDO` | Processar mensagens, manter rotas e filas | `aodv_en_node` + sim |
+| 3. Endurecimento do nucleo | `CONCLUIDO` | Fechar o nucleo conforme spec v1 | `AODV-EN core v1` |
+| 4. Adapter ESP-NOW / ESP-IDF | `EM_ANDAMENTO` | Conectar o nucleo ao transporte real | adapter desacoplado |
+| 5. Firmware de teste em ESP32 | `EM_ANDAMENTO` | Rodar o protocolo em hardware real | app + perfis por papel |
+| 6. Testes funcionais de rede | `EM_ANDAMENTO` | Validar TC-001 a TC-004 com captura completa | relatorio de testes |
+| 7. Baseline de flooding | `PENDENTE` | Criar comparativo justo para o TCC | protocolo baseline |
+| 8. Experimentos e metricas | `PENDENTE` | Coletar dados para o trabalho | tabelas, logs, graficos |
+| 9. Escrita do TCC | `PENDENTE` | Transformar implementacao e resultados em texto academico | monografia |
+| 10. Defesa e demonstracao | `PENDENTE` | Preparar apresentacao final | slides e demo |
+
+## Alinhamento com base de conhecimento (AODV + TCC)
+
+### Referencias canonicas usadas
+
+- protocolo AODV (normativo): `/home/dioguin/Documentos/base_conhecimento/wiki/domains/networking/sources/rfc-3561-aodv-routing.md`
+- comparacao oficial RFC vs implementacao: `/home/dioguin/Documentos/base_conhecimento/wiki/domains/networking/comparisons/rfc-3561-vs-aodv-en.md`
+- proposta do TCC (metas do artefato): `/home/dioguin/Documentos/base_conhecimento/wiki/domains/networking/sources/tcc-aodv-en-proposal.md`
+- sintese de adaptacao do projeto: `/home/dioguin/Documentos/base_conhecimento/wiki/domains/networking/synthesis/aodv-en-adaptation-synthesis.md`
+
+### O que esta certo hoje
+
+- fluxo reativo do AODV esta preservado (`RREQ`, `RREP`, `RERR`, descoberta sob demanda)
+- supressao de duplicata de `RREQ` e controle por `sequence number` seguem o desenho base
+- existe `RREQ` em broadcast (estilo RFC) e ele permanece como default
+- existe modo adaptado `unicast_seq` para flooding de `RREQ`, alinhado a proposta do TCC para ESP-NOW
+- o adapter agora remove/adiciona peers com politica LRU, alinhando com a restricao de peers do ESP-NOW
+
+### O que ainda esta em aberto para fechar com o TCC
+
+- metrica hibrida de rota (hop count + RSSI) foi iniciada no core e ainda precisa de calibracao experimental dos pesos/limiares
+- baseline de flooding comparavel (`TTL` + supressao de duplicata) ainda nao esta implementado como modulo de experimento
+- pipeline final de resultados (comparativo AODV-EN vs flooding com repeticoes e consolidacao estatistica) ainda esta pendente
+
+### Planos consolidados (A-F)
+
+| Plano | Status | Escopo | Entregavel |
+|---|---|---|---|
+| A | CONCLUIDO | Modo de flooding `RREQ` configuravel (`broadcast`/`unicast_seq`) | Core com chave de modo e propagacao por vizinhos ativos |
+| B | CONCLUIDO | LRU real para peers ESP-NOW no adapter | Adicao/eviccao dinamica de peers com peer broadcast fixo |
+| C | EM_ANDAMENTO | Metrica hibrida de roteamento (`hop + RSSI`) | Selecao de rota e criterio de substituicao com custo hibrido |
+| D | PENDENTE | Baseline flooding para comparacao justa | Modulo baseline com interface equivalente de envio/medicao |
+| E | PENDENTE | Campanha experimental TCC | Execucao por cenarios, repeticoes, tabelas e graficos finais |
+| F | PENDENTE | Pacote de escrita e defesa | Capitulo de resultados/discussao e narrativa de ganhos/limites |
 
 ## Fase 0. Fundacao conceitual
 
@@ -72,14 +134,14 @@ Status: `CONCLUIDO`
 ### Entregas
 
 - invariantes do AODV
-- especificacao v0 do AODV-EN
-- definicao de duas tabelas principais
-- definicao de mensagens centrais
+- spec v1 do `AODV-EN` (substitui a v0 obsoleta)
+- definicao das tabelas principais e mensagens
+- decisoes explicitas sobre `HELLO`, precursores, fila pendente, metrica e escopo de v2
 
 ### Criterio de conclusao
 
 - o projeto tem uma base teorica coerente
-- o nome `AODV-EN` ja esta defendido conceitualmente
+- a spec v1 fecha as decisoes funcionais que estavam em aberto
 
 ## Fase 1. Base estrutural do firmware
 
@@ -87,22 +149,16 @@ Status: `CONCLUIDO`
 
 ### Entregas
 
-- limites do protocolo
-- tipos centrais
-- formatos de mensagem
+- limites e tipos centrais
+- formatos de mensagem (`__attribute__((packed))`)
 - wrappers das tabelas
-- operacoes iniciais de vizinhos, rotas, `RREQ` cache e peers
-
-### Criterio de conclusao
-
-- a estrutura do protocolo ja existe em C
-- as tabelas centrais ja possuem API minima
+- operacoes iniciais de vizinhos, rotas, cache de `RREQ` e peers
 
 ## Fase 2. Nucleo logico do protocolo
 
-Status: `EM_ANDAMENTO`
+Status: `CONCLUIDO`
 
-### Ja feito
+### Entregas
 
 - criacao de `aodv_en_node_t`
 - callbacks de emissao e entrega
@@ -111,8 +167,6 @@ Status: `EM_ANDAMENTO`
 
 ### O que ainda falta nesta fase
 
-- fila de pacotes de dados aguardando descoberta de rota
-- timeout e retentativa de `ACK`
 - politica mais completa de numeros de sequencia
 - regras mais refinadas de `RERR`
 - melhor separacao entre rota reversa, rota valida e rota expirada
@@ -125,14 +179,17 @@ Status: `EM_ANDAMENTO`
 
 ## Fase 3. Endurecimento do nucleo
 
-Status: `PENDENTE`
+Status: `EM_ANDAMENTO`
 
-### Tarefas
+### Tarefas concluidas nesta fase
 
 - implementar fila pendente de `DATA` quando `RREQ` e disparado
 - implementar controle de retransmissao e timeout de `ACK`
-- consolidar politica de `sequence number` para origem e destino
 - revisar semantica de `RERR` e invalidacao em cascata por `next_hop`
+
+### Tarefas pendentes nesta fase
+
+- consolidar politica de `sequence number` para origem e destino
 - adicionar helpers de serializacao e validacao de frame
 - centralizar checagem de TTL, `hop_count` e tamanhos maximos
 - criar cenarios de simulacao adicionais:
@@ -141,14 +198,33 @@ Status: `PENDENTE`
 - `RREQ` duplicado
 - expiracao de rota
 - ausencia de `ACK`
+- `aodv_en_node_t` com filas pendentes, callbacks de emissao e entrega
+- processamento de `HELLO`, `RREQ`, `RREP`, `RERR`, `DATA`, `ACK`
+- precursores e `RERR` direcionado
+- simulacao local do fluxo principal e dos cenarios de retry e late-join
 
-### Entregavel
+## Fase 3. Endurecimento do nucleo
 
-- `AODV-EN core v1`
+Status: `CONCLUIDO`
 
-### Criterio de conclusao
+### Entregas que fecharam a fase
 
-- o nucleo deixa de ser apenas MVP e fica apto para ir ao ESP32 real
+- fila pendente de `DATA` com retry de descoberta e expiracao
+- timeout e retry de `ACK` com fila dedicada
+- alinhamento das regras de `sequence number` em `RREP` com a RFC 3561 secao 6.6.1
+- semantica de `RERR` direcionada a precursores
+- helpers de validacao de header e tamanho de frame
+- centralizacao de `TTL` e `hop_count` em `aodv_en_validate_*` e nos handlers
+- regra de troca de rota com histerese para evitar flapping
+- novos cenarios na simulacao local cobrindo descoberta, retry, late-join e ACK timeout
+
+### Itens reconhecidos como `OPCIONAL` para v1
+
+- separar `rreq_retry_count` de `ack_retry_count` (hoje compartilham orcamento)
+- tratamento explicito de wrap-around de `sequence number`
+- politica de substituicao de precursor quando o array enche
+
+Esses itens nao bloqueiam v1 e ficam mapeados na trilha de v2 da spec.
 
 ## Fase 4. Adapter ESP-NOW / ESP-IDF
 
@@ -156,31 +232,38 @@ Status: `EM_ANDAMENTO`
 
 ### Ja feito
 
-- criacao do primeiro app ESP-IDF em `firmware/`
-- integracao inicial com `esp_wifi_start`
-- integracao inicial com `esp_now_init`
-- callback de recepcao conectado ao `aodv_en_node_on_recv`
-- callback de emissao do no conectado ao `esp_now_send`
-- registro inicial de peer broadcast
+- app ESP-IDF buildavel em `firmware/`
+- integracao com `esp_wifi_start` e `esp_now_init`
+- callback de recepcao conectado ao `aodv_en_stack_on_recv`
+- callback de emissao conectado ao `esp_now_send`
+- registro de peer broadcast
 - processamento de frames fora do callback do Wi-Fi por fila local
+- configuracao de modo de flooding de `RREQ` via `Kconfig`
+- integracao de gerenciamento de peers no driver com LRU e limite configuravel
+- log de boot com visibilidade de modo de flooding e limite de peers
 
-### Tarefas
+### Tarefas restantes
 
 - extrair a camada de transporte do `main.c` para um adapter dedicado
 - encapsular `esp_wifi_start`, `esp_now_init`, peers e callbacks
-- integrar cache de peers ao driver
 - definir configuracao de canal e interface
 - adicionar logs estruturados por no
 - tratar melhor falhas de `esp_now_send`
-- decidir politica de manutencao e remocao de peers no driver
+- fechar testes de estresse da politica LRU em topologias maiores
+- extrair a camada de transporte do `main`/`app_proto_example` para um adapter dedicado `aodv_en_espnow`
+- encapsular `esp_wifi_start`, `esp_now_init`, peers e callbacks no adapter
+- integrar `peer_cache` ao driver com politica explicita de adicao/remocao
+- padronizar logs estruturados por no
+- tratar melhor falhas de `esp_now_send` (mapear para `aodv_en_stack_on_link_tx_result`)
+- documentar configuracao de canal e interface
 
 ### Entregavel
 
-- adapter `aodv_en_espnow` desacoplado do app
+- adapter `aodv_en_espnow` desacoplado, com a app reduzida a glue code
 
 ### Criterio de conclusao
 
-- o nucleo puro consegue rodar sobre ESP-NOW sem alterar a logica central
+- substituir o adapter por um mock nao exige mudar a app
 
 ## Fase 5. Firmware de teste em ESP32
 
@@ -188,65 +271,61 @@ Status: `EM_ANDAMENTO`
 
 ### Ja feito
 
-- projeto `ESP-IDF` criado em `firmware/`
-- `main.c` inicial criado
-- `menuconfig` inicial criado
-- scripts de build e flash criados
-- build validado com sucesso e geracao de `aodv_en_firmware.bin`
+- projeto `ESP-IDF` em `firmware/`
+- `app_demo` (legacy) e `app_proto_example` (atual) com CLI
 - envio periodico de `HELLO`
 - envio opcional de `DATA` para MAC configurado
-- logs iniciais de estatisticas e rotas
+- logs de estatisticas e rotas
+- perfis `NODE_A`, `NODE_B`, `NODE_C`, `NODE_D` prontos
+- build validado com `aodv_en_firmware.bin`
+- evidencia de funcionamento em hardware via `TC-002`
 
-### Tarefas
+### Tarefas restantes
 
-- flashar o firmware em 1 ESP32 e validar boot
-- validar `HELLO` no serial de 1 no
-- configurar e subir 2 nos
-- validar descoberta e troca de dados em hardware
-- melhorar observabilidade no serial
-- adicionar dumps mais claros de:
-- tabela de vizinhos
-- tabela de rotas
-- estatisticas do no
-- preparar perfis de `NODE_A`, `NODE_B` e `NODE_C`
+- captura serial simultanea dos 3 nos no `TC-002`
+- consolidar dumps periodicos (vizinhos, rotas, stats) em formato facil de parsear
+- definir convencao de log para alimentar [tools/draw_topology.py](../firmware/tools/draw_topology.py)
+- executar `TC-005` em hardware com 4 nos
 
 ### Entregavel
 
-- app de bancada funcional para os ESP32
-
-### Criterio de conclusao
-
-- pelo menos 2 e depois 3 ESP32 conseguem executar o protocolo real em bancada
+- app de bancada com observabilidade boa o suficiente para reproduzir os criterios de aprovacao da spec v1
 
 ## Fase 6. Testes funcionais de rede
 
-Status: `PENDENTE`
+Status: `EM_ANDAMENTO`
 
-### Cenarios minimos
+### Cenarios obrigatorios para v1
 
-- `2` nos: vizinhanca e envio direto
-- `3` nos: primeiro multi-hop
-- `4` ou `5` nos: cadeia linear
-- falha de enlace no meio
-- reestabelecimento de rota
-- descarte de `RREQ` duplicado
-- expiracao de rota
+| Caso | Topologia | Cobre criterios da spec |
+|---|---|---|
+| `TC-001` | 2 nos (`A <-> B`) | 1 |
+| `TC-002` | 3 nos (`A <-> B <-> C`) | 2, 5 |
+| `TC-003` | 3 nos com falha intermediaria | 3, 7 |
+| `TC-004` | 3 nos sob ciclos por 30 min | 4, 6 |
+| `TC-005` | 4 nos (`A <-> B <-> C <-> D`) | 2 (estendido para 3 saltos) |
+
+### Cenarios opcionais
+
+- estresse com fila pendente cheia em simulador
+- variantes de simulacao em escala (ver [../sim/README.md](../sim/README.md): `large`, `100`, `1000`)
 
 ### O que registrar
 
 - logs por no
 - tabelas antes e depois
-- latencia aproximada
+- latencia aproximada de descoberta e de entrega
 - numero de mensagens de controle
+- contadores de stats em `aodv_en_stack_stats_t`
 - sucesso ou falha da entrega
 
 ### Entregavel
 
-- relatorio funcional de bancada
+- relatorio funcional de bancada com PASS/FAIL por TC e evidencias
 
 ### Criterio de conclusao
 
-- o protocolo esta comprovadamente operando em hardware real
+- os criterios de aprovacao da spec v1 estao demonstrados
 
 ## Fase 7. Baseline de flooding
 
@@ -254,18 +333,17 @@ Status: `PENDENTE`
 
 ### Tarefas
 
-- implementar um baseline simples de flooding
-- manter a mesma interface de app
-- coletar as mesmas metricas
-- garantir comparacao justa de cenarios
+- implementar baseline simples de flooding usando o mesmo adapter `aodv_en_espnow`
+- manter a mesma interface de app (mesmo `send_data`, mesmo callback de entrega)
+- coletar as mesmas metricas de `aodv_en_stack_stats_t` (no que se aplica)
 
 ### Entregavel
 
-- modulo baseline `flooding`
+- modulo baseline `flooding` selecionavel por configuracao
 
 ### Criterio de conclusao
 
-- existe uma referencia experimental comparavel ao AODV-EN
+- existe uma referencia experimental comparavel ao `AODV-EN`
 
 ## Fase 8. Experimentos e metricas
 
@@ -273,16 +351,16 @@ Status: `PENDENTE`
 
 ### Metricas minimas
 
-- `PDR`
-- latencia fim a fim
-- overhead de controle
+- `PDR` (`delivered_frames / DATA enviados pela origem`)
+- latencia fim a fim (do envio ao `ACK`)
+- overhead de controle (`tx_frames` excluindo `DATA`)
 - numero total de transmissoes
 - tempo para descoberta de rota
 - tempo para recuperacao apos falha
 
 ### Cenarios de experimento
 
-- topologia linear
+- topologia linear (3 e 4 nos)
 - topologia em arvore
 - malha parcial com rota alternativa
 - cenario com falha induzida
@@ -290,26 +368,18 @@ Status: `PENDENTE`
 ### Tarefas
 
 - definir formato de log exportavel
-- executar repeticoes por cenario
-- consolidar resultados em tabela
+- repeticoes por cenario
+- consolidar resultados em tabelas
 - gerar graficos
 - comparar `AODV-EN` vs `Flooding`
 
-### Observacao importante
+### Observacao
 
-Se nao houver medicao real de energia, tratar consumo energetico como:
-
-- estimativa
-- inferencia por numero de transmissoes
-- ou limitacao explicitamente declarada
+Sem medicao real de energia, tratar consumo energetico como inferencia por numero de transmissoes ou limitacao explicitamente declarada.
 
 ### Entregavel
 
 - conjunto de resultados experimentais do TCC
-
-### Criterio de conclusao
-
-- existe base empirica suficiente para sustentar a discussao academica
 
 ## Fase 9. Escrita do TCC
 
@@ -320,14 +390,11 @@ Status: `PENDENTE`
 - introducao
 - problema e motivacao
 - objetivos geral e especificos
-- fundamentacao teorica
-- redes ad hoc e mesh
-- ESP-NOW
-- AODV e RFC 3561
+- fundamentacao teorica (redes ad hoc/mesh, ESP-NOW, AODV/RFC 3561)
 - trabalhos relacionados
-- proposta do `AODV-EN`
-- arquitetura e design
-- implementacao
+- proposta do `AODV-EN` (baseada na spec v1)
+- arquitetura e design (baseada no documento de estruturas)
+- implementacao (lib + adapter + app)
 - metodologia experimental
 - resultados
 - discussao
@@ -338,9 +405,7 @@ Status: `PENDENTE`
 
 ### Tarefas
 
-- escrever a descricao formal do protocolo
-- descrever tabelas, mensagens e fluxos
-- documentar arquitetura do firmware
+- transcrever a spec v1 e o documento de estruturas em texto academico
 - detalhar metodologia de experimento
 - consolidar resultados e interpretacoes
 - revisar linguagem academica e citacoes
@@ -348,10 +413,6 @@ Status: `PENDENTE`
 ### Entregavel
 
 - versao final da monografia
-
-### Criterio de conclusao
-
-- texto pronto para banca, com resultados e discussao coerentes
 
 ## Fase 10. Defesa e demonstracao
 
@@ -361,33 +422,29 @@ Status: `PENDENTE`
 
 - preparar slides
 - preparar roteiro de fala
-- preparar demo com 2 a 5 nos
+- preparar demo com 3 a 4 nos
 - preparar plano B em video
 - preparar respostas para perguntas provaveis da banca
 
 ### Perguntas que precisamos conseguir responder
 
 - por que isso ainda e AODV?
-- por que usar duas tabelas?
+- por que duas tabelas e duas filas?
 - por que ESP-NOW v2?
 - como o protocolo descobre e mantem rotas?
-- onde ele simplifica a RFC?
+- onde ele simplifica e onde ele estende a RFC 3561?
 - qual foi o ganho frente ao flooding?
 - quais sao as limitacoes do projeto?
 
-### Entregavel
-
-- pacote de defesa
-
 ## Caminho critico
 
-Se quisermos manter foco, o caminho critico do projeto e:
+Para fechar o TCC com folga:
 
-1. endurecer o nucleo do protocolo
-2. integrar o nucleo ao ESP-NOW real
-3. fazer os primeiros testes com ESP32
-4. implementar o baseline de flooding
-5. rodar os experimentos
+1. fechar `TC-002` com captura simultanea dos 3 nos
+2. executar e fechar `TC-003` e `TC-004`
+3. extrair adapter ESP-NOW dedicado
+4. implementar baseline de flooding com a mesma interface
+5. executar a bateria de experimentos
 6. escrever resultados e discussao
 7. preparar defesa
 
@@ -395,19 +452,23 @@ Se quisermos manter foco, o caminho critico do projeto e:
 
 Os proximos passos mais importantes agora sao:
 
-1. implementar fila pendente de `DATA` apos descoberta de rota
-2. melhorar timeout e retentativa de `ACK`
-3. flashar o firmware atual em 1 ESP32 e validar boot/logs
-4. subir 2 nos e observar `HELLO` em hardware
-5. adicionar mais cenarios de simulacao
-6. extrair o adapter ESP-NOW do `main.c`
+1. implementar o Plano C (metrica hibrida `hop + RSSI`) com rastreio no log
+2. implementar o Plano D (baseline flooding comparavel ao AODV-EN)
+3. executar campanha do Plano E com repeticoes por cenario e coleta padronizada
+4. consolidar analise final do ganho (PDR, latencia, NRL e energia estimada)
+5. fechar Plano F com capitulo de resultados, discussao e narrativa de defesa
+1. fechar captura serial dos 3 nos no `TC-002`
+2. extrair adapter ESP-NOW para um modulo dedicado
+3. executar `TC-003` em hardware com log analisavel
+4. iniciar baseline de flooding como segundo binario selecionavel por Kconfig
+5. preencher campos de "Resultado" dos casos de teste a cada execucao
 
 ## Definicao de pronto do projeto
 
-O projeto pode ser considerado completo quando:
+O projeto esta completo quando:
 
-- o `AODV-EN` roda em ESP32 real
-- a descoberta e o encaminhamento multi-hop funcionam
+- o `AODV-EN v1` roda em ESP32 real
+- os criterios de aprovacao da spec v1 estao demonstrados
 - existe comparacao com baseline de flooding
 - os resultados estao coletados e analisados
 - o TCC esta escrito

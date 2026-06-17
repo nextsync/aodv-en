@@ -290,6 +290,11 @@ aodv_en_status_t aodv_en_route_invalidate_destination(
         return AODV_EN_ERR_NOT_FOUND;
     }
 
+    if (route->state == AODV_EN_ROUTE_INVALID)
+    {
+        return AODV_EN_NOOP;
+    }
+
     route->state = AODV_EN_ROUTE_INVALID;
     route->metric = AODV_EN_ROUTE_METRIC_INFINITY;
     route->expires_at_ms = now_ms;
@@ -312,7 +317,8 @@ size_t aodv_en_route_invalidate_by_next_hop(
 
     for (index = 0; index < table->count; index++)
     {
-        if (aodv_en_mac_equal(table->entries[index].next_hop, next_hop))
+        if (aodv_en_mac_equal(table->entries[index].next_hop, next_hop) &&
+            table->entries[index].state != AODV_EN_ROUTE_INVALID)
         {
             table->entries[index].state = AODV_EN_ROUTE_INVALID;
             table->entries[index].metric = AODV_EN_ROUTE_METRIC_INFINITY;

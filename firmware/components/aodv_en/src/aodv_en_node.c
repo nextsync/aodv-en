@@ -11,6 +11,13 @@ static aodv_en_status_t aodv_en_node_send_rreq(
     const uint8_t destination_mac[AODV_EN_MAC_ADDR_LEN],
     uint32_t now_ms);
 
+static aodv_en_status_t aodv_en_node_flood_control_frame(
+    aodv_en_node_t *node,
+    const uint8_t *frame,
+    size_t frame_len,
+    const uint8_t exclude_neighbor_mac[AODV_EN_MAC_ADDR_LEN],
+    uint32_t now_ms);
+
 static size_t aodv_en_node_flush_pending_data_for_destination(
     aodv_en_node_t *node,
     const uint8_t destination_mac[AODV_EN_MAC_ADDR_LEN],
@@ -21,6 +28,115 @@ static bool aodv_en_node_is_self(
     const uint8_t mac[AODV_EN_MAC_ADDR_LEN])
 {
     return node != NULL && aodv_en_mac_equal(node->self_mac, mac);
+}
+
+static bool aodv_en_node_use_unicast_rreq_flood(
+    const aodv_en_node_t *node)
+{
+    if (node == NULL)
+    {
+        return false;
+    }
+
+    return node->config.rreq_flood_mode == AODV_EN_RREQ_FLOOD_UNICAST_SEQUENTIAL;
+}
+
+static int8_t aodv_en_node_route_metric_pick_rssi(
+    const aodv_en_node_t *node,
+    const uint8_t next_hop[AODV_EN_MAC_ADDR_LEN])
+{
+    const aodv_en_neighbor_entry_t *neighbor;
+
+    if (node == NULL || aodv_en_mac_is_zero(next_hop))
+    {
+        return AODV_EN_ROUTE_METRIC_RSSI_WORST_DBM_DEFAULT;
+    }
+
+    neighbor = aodv_en_neighbor_find_const(&node->neighbors, next_hop);
+    if (neighbor == NULL || neighbor->state != AODV_EN_NEIGHBOR_ACTIVE)
+    {
+        return AODV_EN_ROUTE_METRIC_RSSI_WORST_DBM_DEFAULT;
+    }
+
+    return neighbor->avg_rssi;
+}
+
+static uint8_t aodv_en_node_route_metric_rssi_penalty(
+    const aodv_en_node_t *node,
+    int8_t rssi_dbm)
+{
+    int16_t best_dbm;
+    int16_t worst_dbm;
+    int16_t numerator;
+    int16_t denominator;
+
+    if (node == NULL)
+    {
+        return 100u;
+    }
+
+    best_dbm = (int16_t)node->config.route_metric_rssi_best_dbm;
+    worst_dbm = (int16_t)node->config.route_metric_rssi_worst_dbm;
+
+    if (best_dbm <= worst_dbm)
+    {
+        best_dbm = AODV_EN_ROUTE_METRIC_RSSI_BEST_DBM_DEFAULT;
+        worst_dbm = AODV_EN_ROUTE_METRIC_RSSI_WORST_DBM_DEFAULT;
+    }
+
+    if ((int16_t)rssi_dbm >= best_dbm)
+    {
+        return 0u;
+    }
+
+    if ((int16_t)rssi_dbm <= worst_dbm)
+    {
+        return 100u;
+    }
+
+    numerator = (int16_t)(best_dbm - (int16_t)rssi_dbm);
+    denominator = (int16_t)(best_dbm - worst_dbm);
+    if (denominator <= 0)
+    {
+        return 100u;
+    }
+
+    return (uint8_t)((numerator * 100) / denominator);
+}
+
+static uint16_t aodv_en_node_compute_hybrid_metric(
+    const aodv_en_node_t *node,
+    uint8_t hop_count,
+    const uint8_t next_hop[AODV_EN_MAC_ADDR_LEN])
+{
+    uint32_t hop_weight;
+    uint32_t rssi_weight;
+    uint8_t rssi_penalty;
+    uint32_t total;
+
+    if (node == NULL)
+    {
+        return AODV_EN_ROUTE_METRIC_INFINITY;
+    }
+
+    hop_weight = (uint32_t)node->config.route_metric_hop_weight;
+    rssi_weight = (uint32_t)node->config.route_metric_rssi_weight;
+    if (hop_weight == 0u)
+    {
+        hop_weight = AODV_EN_ROUTE_METRIC_HOP_WEIGHT_DEFAULT;
+    }
+
+    rssi_penalty = aodv_en_node_route_metric_rssi_penalty(
+        node,
+        aodv_en_node_route_metric_pick_rssi(node, next_hop));
+
+    total = ((uint32_t)hop_count * hop_weight) + ((uint32_t)rssi_penalty * rssi_weight);
+    if (total >= (uint32_t)AODV_EN_ROUTE_METRIC_INFINITY)
+    {
+        return (uint16_t)(AODV_EN_ROUTE_METRIC_INFINITY - 1u);
+    }
+
+    return (uint16_t)total;
 }
 
 static bool aodv_en_route_is_usable(
@@ -91,9 +207,77 @@ static aodv_en_status_t aodv_en_node_emit(
     if (status == AODV_EN_OK)
     {
         node->stats.tx_frames++;
+        if (frame_len >= sizeof(aodv_en_header_t))
+        {
+            uint8_t type = ((const aodv_en_header_t *)frame)->message_type;
+            if (type == AODV_EN_MSG_HELLO || type == AODV_EN_MSG_RREQ ||
+                type == AODV_EN_MSG_RREP || type == AODV_EN_MSG_RERR)
+            {
+                node->stats.control_tx_frames++;
+            }
+        }
     }
 
     return status;
+}
+
+static aodv_en_status_t aodv_en_node_flood_control_frame(
+    aodv_en_node_t *node,
+    const uint8_t *frame,
+    size_t frame_len,
+    const uint8_t exclude_neighbor_mac[AODV_EN_MAC_ADDR_LEN],
+    uint32_t now_ms)
+{
+    uint16_t index;
+    size_t sent_count = 0u;
+    aodv_en_status_t first_error = AODV_EN_NOOP;
+    bool use_unicast;
+
+    if (node == NULL || frame == NULL || frame_len == 0u)
+    {
+        return AODV_EN_ERR_ARG;
+    }
+
+    use_unicast = aodv_en_node_use_unicast_rreq_flood(node);
+    if (!use_unicast)
+    {
+        return aodv_en_node_emit(node, AODV_EN_BROADCAST_MAC, frame, frame_len, true, now_ms);
+    }
+
+    for (index = 0; index < node->neighbors.count; index++)
+    {
+        const aodv_en_neighbor_entry_t *neighbor = &node->neighbors.entries[index];
+        aodv_en_status_t status;
+
+        if (neighbor->state != AODV_EN_NEIGHBOR_ACTIVE || aodv_en_mac_is_zero(neighbor->mac))
+        {
+            continue;
+        }
+
+        if (exclude_neighbor_mac != NULL && aodv_en_mac_equal(neighbor->mac, exclude_neighbor_mac))
+        {
+            continue;
+        }
+
+        status = aodv_en_node_emit(node, neighbor->mac, frame, frame_len, false, now_ms);
+        if (status == AODV_EN_OK)
+        {
+            sent_count++;
+            continue;
+        }
+
+        if (first_error == AODV_EN_NOOP)
+        {
+            first_error = status;
+        }
+    }
+
+    if (sent_count > 0u)
+    {
+        return AODV_EN_OK;
+    }
+
+    return first_error;
 }
 
 static void aodv_en_fill_header(
@@ -361,9 +545,16 @@ static void aodv_en_node_track_pending_ack(
 static bool aodv_en_node_pending_ack_consume(
     aodv_en_node_t *node,
     const uint8_t ack_sender_mac[AODV_EN_MAC_ADDR_LEN],
-    uint32_t sequence_number)
+    uint32_t sequence_number,
+    uint32_t now_ms,
+    uint32_t *out_rtt_ms)
 {
     uint16_t index;
+
+    if (out_rtt_ms != NULL)
+    {
+        *out_rtt_ms = AODV_EN_RTT_UNKNOWN;
+    }
 
     if (node == NULL || aodv_en_mac_is_zero(ack_sender_mac))
     {
@@ -383,6 +574,11 @@ static bool aodv_en_node_pending_ack_consume(
             entry->sequence_number != sequence_number)
         {
             continue;
+        }
+
+        if (out_rtt_ms != NULL)
+        {
+            *out_rtt_ms = now_ms - entry->last_sent_at_ms;
         }
 
         aodv_en_node_pending_ack_clear(entry);
@@ -438,7 +634,7 @@ static aodv_en_status_t aodv_en_node_send_data_via_route(
     {
         if (ack_required)
         {
-            (void)aodv_en_node_pending_ack_consume(node, destination_mac, sequence_number);
+            (void)aodv_en_node_pending_ack_consume(node, destination_mac, sequence_number, now_ms, NULL);
         }
         return status;
     }
@@ -905,7 +1101,12 @@ static aodv_en_status_t aodv_en_node_send_rreq(
         0u,
         now_ms);
 
-    return aodv_en_node_emit(node, AODV_EN_BROADCAST_MAC, (const uint8_t *)&message, sizeof(message), true, now_ms);
+    return aodv_en_node_flood_control_frame(
+        node,
+        (const uint8_t *)&message,
+        sizeof(message),
+        NULL,
+        now_ms);
 }
 
 static aodv_en_status_t aodv_en_node_send_rrep(
@@ -1025,6 +1226,7 @@ static aodv_en_status_t aodv_en_node_send_ack(
 static aodv_en_status_t aodv_en_node_forward_rreq(
     aodv_en_node_t *node,
     const aodv_en_rreq_msg_t *incoming,
+    const uint8_t link_src_mac[AODV_EN_MAC_ADDR_LEN],
     uint32_t now_ms)
 {
     aodv_en_rreq_msg_t message = *incoming;
@@ -1038,7 +1240,12 @@ static aodv_en_status_t aodv_en_node_forward_rreq(
     message.ttl--;
     aodv_en_mac_copy(message.header.sender_mac, node->self_mac);
 
-    return aodv_en_node_emit(node, AODV_EN_BROADCAST_MAC, (const uint8_t *)&message, sizeof(message), true, now_ms);
+    return aodv_en_node_flood_control_frame(
+        node,
+        (const uint8_t *)&message,
+        sizeof(message),
+        link_src_mac,
+        now_ms);
 }
 
 static aodv_en_status_t aodv_en_node_forward_rrep(
@@ -1110,8 +1317,8 @@ static aodv_en_status_t aodv_en_node_handle_hello(
     aodv_en_mac_copy(route.next_hop, link_src_mac);
     route.dest_seq_num = message->node_seq_num;
     route.expires_at_ms = now_ms + node->config.route_lifetime_ms;
-    route.metric = 1u;
     route.hop_count = 1u;
+    route.metric = aodv_en_node_compute_hybrid_metric(node, route.hop_count, route.next_hop);
     route.state = AODV_EN_ROUTE_VALID;
 
     return aodv_en_route_upsert(&node->routes, &route);
@@ -1143,8 +1350,8 @@ static aodv_en_status_t aodv_en_node_handle_rreq(
     aodv_en_mac_copy(reverse_route.next_hop, link_src_mac);
     reverse_route.dest_seq_num = message->originator_seq_num;
     reverse_route.expires_at_ms = now_ms + node->config.route_lifetime_ms;
-    reverse_route.metric = (uint16_t)(message->header.hop_count + 1u);
     reverse_route.hop_count = (uint8_t)(message->header.hop_count + 1u);
+    reverse_route.metric = aodv_en_node_compute_hybrid_metric(node, reverse_route.hop_count, reverse_route.next_hop);
     reverse_route.state = AODV_EN_ROUTE_REVERSE;
     (void)aodv_en_route_upsert(&node->routes, &reverse_route);
 
@@ -1158,7 +1365,7 @@ static aodv_en_status_t aodv_en_node_handle_rreq(
             now_ms);
     }
 
-    return aodv_en_node_forward_rreq(node, message, now_ms);
+    return aodv_en_node_forward_rreq(node, message, link_src_mac, now_ms);
 }
 
 static aodv_en_status_t aodv_en_node_handle_rrep(
@@ -1176,8 +1383,8 @@ static aodv_en_status_t aodv_en_node_handle_rrep(
     aodv_en_mac_copy(route.next_hop, link_src_mac);
     route.dest_seq_num = message->destination_seq_num;
     route.expires_at_ms = now_ms + message->lifetime_ms;
-    route.metric = (uint16_t)(message->header.hop_count + 1u);
     route.hop_count = (uint8_t)(message->header.hop_count + 1u);
+    route.metric = aodv_en_node_compute_hybrid_metric(node, route.hop_count, route.next_hop);
     route.state = AODV_EN_ROUTE_VALID;
     (void)aodv_en_route_upsert(&node->routes, &route);
     (void)aodv_en_node_flush_pending_data_for_destination(node, message->destination_mac, now_ms);
@@ -1248,14 +1455,17 @@ static aodv_en_status_t aodv_en_node_handle_ack(
 
     if (aodv_en_node_is_self(node, message->destination_mac))
     {
-        (void)aodv_en_node_pending_ack_consume(node, message->originator_mac, message->ack_for_sequence);
+        uint32_t rtt_ms = AODV_EN_RTT_UNKNOWN;
+
+        (void)aodv_en_node_pending_ack_consume(node, message->originator_mac, message->ack_for_sequence, now_ms, &rtt_ms);
         node->stats.ack_received++;
         if (node->callbacks.ack_received != NULL)
         {
             node->callbacks.ack_received(
                 node->callbacks.user_ctx,
                 message->originator_mac,
-                message->ack_for_sequence);
+                message->ack_for_sequence,
+                rtt_ms);
         }
         return AODV_EN_OK;
     }
@@ -1376,7 +1586,12 @@ void aodv_en_config_set_defaults(aodv_en_config_t *config)
     config->max_hops = AODV_EN_MAX_HOPS_DEFAULT;
     config->ttl_default = AODV_EN_TTL_DEFAULT;
     config->rreq_retry_count = AODV_EN_RREQ_RETRY_COUNT_DEFAULT;
+    config->rreq_flood_mode = AODV_EN_RREQ_FLOOD_MODE_DEFAULT;
     config->link_fail_threshold = AODV_EN_LINK_FAIL_THRESHOLD_DEFAULT;
+    config->route_metric_hop_weight = AODV_EN_ROUTE_METRIC_HOP_WEIGHT_DEFAULT;
+    config->route_metric_rssi_weight = AODV_EN_ROUTE_METRIC_RSSI_WEIGHT_DEFAULT;
+    config->route_metric_rssi_best_dbm = (int8_t)AODV_EN_ROUTE_METRIC_RSSI_BEST_DBM_DEFAULT;
+    config->route_metric_rssi_worst_dbm = (int8_t)AODV_EN_ROUTE_METRIC_RSSI_WORST_DBM_DEFAULT;
 }
 
 aodv_en_status_t aodv_en_node_init(
