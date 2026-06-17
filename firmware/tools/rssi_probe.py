@@ -19,7 +19,7 @@ from collections import defaultdict
 import serial
 
 RE_PROBE = re.compile(r"RSSIPROBE src=([0-9A-Fa-f:]{17}) rssi=(-?\d+)")
-RE_SELF = re.compile(r"self_mac=([0-9A-Fa-f:]{17})")
+RE_SELF = re.compile(r"(?:RSSISELF self|self_mac)=([0-9A-Fa-f:]{17})")
 
 
 def capture(label, port, duration, baud, out):
