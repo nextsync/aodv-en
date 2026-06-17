@@ -89,7 +89,7 @@ _A introdução tem boa densidade técnica, encadeamento lógico coerente (ubiqu
 - **Problema:** Período sem oração principal: 'Desenvolvido pela Espressif Systems, operando de forma connectionless sobre a camada de enlace do padrão IEEE 802.11, permitindo a troca de mensagens curtas...' — sequência de orações reduzidas (particípio/gerúndio) sem verbo finito que sustente a frase.
 - **Correção:** Reescrever com verbo principal, ex.: 'Desenvolvido pela Espressif Systems, o ESP-NOW opera de forma connectionless sobre a camada de enlace do padrão IEEE 802.11 e permite a troca de mensagens curtas (até 250 bytes de payload) sem necessidade de associação prévia a um ponto de acesso Wi-Fi.'
 
-### [ ] C1-008 · 🟡 MÉDIO · `coesao`
+### [x] C1-008 · 🟡 MÉDIO · `coesao`
 - **Local:** Linhas 26-31 (transição) e 47-49
 - **Problema:** Transições abruptas entre macroblocos temáticos. Ex.: 'A comunicação em redes IoT frequentemente enfrenta desafios...' surge logo após o ESP32 sem conector; e 'Os protocolos de roteamento para redes ad-hoc podem ser classificados...' entra sem ligação com o parágrafo de mesh. O problema é agravado por ser tudo um só parágrafo.
 - **Correção:** Ao quebrar em parágrafos, iniciar cada um com frase-tópico de transição que conecte ao bloco anterior (ex.: 'Embora versátil, o ESP32 enfrenta...', 'Para viabilizar o roteamento nessas redes mesh, ...').
@@ -99,7 +99,7 @@ _A introdução tem boa densidade técnica, encadeamento lógico coerente (ubiqu
 - **Problema:** Na introdução afirma-se 'cache de 8 entradas simultâneas (configurável)', mas no parágrafo das limitações (linha 84) menciona-se o limite de 20 peers do ESP-NOW. A introdução não explica por que o cache (8) é menor que o limite de hardware (20), o que pode confundir o leitor sobre a relação entre os dois valores.
 - **Correção:** Esclarecer brevemente que o cache LRU é uma escolha de projeto (não o limite físico), ou remover o número específico da introdução, deixando o detalhamento para a metodologia. Garantir consistência terminológica entre 'peers', 'cache' e 'tabela de pares'.
 
-### [ ] C1-010 · 🟡 MÉDIO · `argumentacao`
+### [x] C1-010 · 🟡 MÉDIO · `argumentacao`
 - **Local:** Introdução inteira vs. título do trabalho (AODV-EN vs flooding)
 - **Problema:** O trabalho compara AODV-EN com baseline de flooding (conforme escopo/metodologia), mas a introdução nunca introduz a abordagem por flooding/broadcast como alternativa concorrente nem motiva a comparação. O leitor chega ao problema sem saber que flooding é o termo de comparação central.
 - **Correção:** Acrescentar, na motivação ou no problema de pesquisa, uma menção à abordagem por flooding/broadcast como solução ingênua comum em ESP-NOW, justificando por que ela serve de baseline e por que um protocolo reativo poderia superá-la (latência/energia/overhead).
@@ -169,12 +169,12 @@ _Capítulo bem organizado e de leitura fluida, com PT-BR formal correto e progre
 - **Problema:** Mark Weiser e o conceito de Computação Ubíqua (1991) são nomeados no texto sem citação, embora a entrada \cite{weiser1991} exista na .bib e seja usada no Cap. 1. Afirmação histórica relevante fica sem âncora bibliográfica neste capítulo.
 - **Correção:** Acrescentar \cite{weiser1991} após 'antecipada por Mark Weiser em 1991 sob o conceito de Computação Ubíqua'.
 
-### [ ] C2-021 · 🟡 MÉDIO · `completude`
+### [x] C2-021 · 🟡 MÉDIO · `completude`
 - **Local:** Seção 2.4.1 (linhas 281-305) — conceito de multi-hop
 - **Problema:** Embora 'multi-hop' seja explicado no contexto de redes mesh (linha 289), o termo já é usado antes — no título da subseção 2.3.3 (linha 252) e no texto da seção 2.3 — sem definição prévia. O conceito central de comunicação em múltiplos saltos aparece pela primeira vez como limitação do ESP-NOW antes de ser conceituado.
 - **Correção:** Antecipar uma definição breve de comunicação multi-hop/multi-salto na seção 2.1 ou no início de 2.3, ou reordenar para que a conceituação (2.4.1) preceda o uso do termo nas limitações do ESP-NOW (2.3.3).
 
-### [ ] C2-022 · 🟡 MÉDIO · `coesao`
+### [x] C2-022 · 🟡 MÉDIO · `coesao`
 - **Local:** Transições entre seções 2.1->2.2, 2.2->2.3, 2.3->2.4, 2.4->2.5
 - **Problema:** As seções principais começam de forma abrupta ('O ESP32 é...', 'O ESP-NOW é...', 'As Redes Mesh...', 'O AODV é...'), sem frases-ponte que liguem o fim de uma seção ao início da seguinte. A coesão inter-seções depende só do parágrafo introdutório do capítulo, não de transições locais.
 - **Correção:** Adicionar 1 frase de transição ao final/início de cada seção (ex.: ao fim de 2.2 sobre consumo do ESP32, ligar à necessidade de um protocolo de comunicação leve, introduzindo o ESP-NOW em 2.3).
@@ -250,7 +250,7 @@ _Capítulo metodologicamente bem estruturado e com escrita academica em geral cl
 - **Problema:** A limitacao central do trabalho — campanha em hardware restrita a 3 nos/6 repeticoes e demais cenarios 'avaliados por simulacao' — e mencionada de passagem, mas o capitulo de metodologia nao descreve a simulacao em si: que simulador/modelo foi usado, como o modelo foi calibrado/validado contra os dados de hardware, quais pressupostos. Para um capitulo de metodologia, a ausencia de uma subsecao sobre o metodo de simulacao compromete a reprodutibilidade da maior parte dos resultados.
 - **Correção:** Acrescentar uma subsecao (ou paragrafo substancial) descrevendo o ambiente de simulacao: ferramenta/abordagem, modelo de propagacao/energia adotado, parametros, e como a simulacao foi ancorada nos 6 seeds de hardware (calibracao/validacao). Sem isso, a frase 'avaliados por simulacao' fica como caixa-preta metodologica.
 
-### [ ] C3-034 · 🟡 MÉDIO · `tecnico`
+### [x] C3-034 · 🟡 MÉDIO · `tecnico`
 - **Local:** Secao 3.6.2, item b (l.547-549) — 'Garantia de entrega: ... o Flooding garante que o pacote alcancara o destino ... servindo como referencia de PDR maximo alcancavel'
 - **Problema:** Afirmacao tecnicamente forte demais sem ressalva. Flooding so garante entrega na ausencia de colisoes/perdas; em ESP-NOW sobre broadcast, o flooding tipicamente sofre o problema da tempestade de broadcast (broadcast storm), com colisoes que DERRUBAM o PDR em redes densas — ou seja, pode nao ser o 'PDR maximo alcancavel' na pratica. O proprio trabalho depende de comparar PDR, entao tratar o baseline como teto teorico de entrega e arriscado.
 - **Correção:** Qualificar: 'em redes conectadas e na ausencia de perdas por colisao, o Flooding tende a maximizar a probabilidade de entrega, servindo como referencia superior de cobertura'. E reconhecer o efeito broadcast storm como limitacao do baseline (isso fortalece, em vez de enfraquecer, a comparacao a favor do AODV-EN).
@@ -310,17 +310,17 @@ _Capítulo tecnicamente sólido e bem escrito, com registro acadêmico formal ad
 - **Problema:** As equações de custo (eq:custo e eq:custo_impl) e de penalidade (eq:penalidade e eq:penalidade_impl) são reproduzidas literalmente, idênticas, em duas seções. Duas equações numeradas iguais no mesmo capítulo são um defeito editorial: o leitor questiona qual é a "oficial" e por que diferem (não diferem).
 - **Correção:** Apresentar cada equação uma única vez (preferencialmente na Seção 4.2.3, onde é fundamentada) e, na Seção 4.7.4, referenciá-la por \ref em vez de reescrevê-la. Remover eq:custo_impl e eq:penalidade_impl.
 
-### [ ] C4-043 · 🟡 MÉDIO · `coerencia`
+### [x] C4-043 · 🟡 MÉDIO · `coerencia`
 - **Local:** Seção 4.2.4 — Estimativa de consumo energético (linhas 185-207)
 - **Problema:** A subseção destoa do capítulo: o capítulo trata de PROJETO/IMPLEMENTAÇÃO do AODV-EN, mas esta seção introduz um modelo analítico de energia (heinzelman2000, E_tx = P_tx·t_tx) que não é uma decisão de projeto do protocolo nem é amarrado à implementação. A equação fica genérica (não há valores de V, I_tx, t_tx para o ESP32) e a seção não conclui como o consumo é estimado no artefato. Parece material de metodologia de avaliação inserido no lugar errado.
 - **Correção:** Decidir o papel: se a estimativa de energia é parte do método de avaliação, mover para o capítulo de metodologia/resultados. Se permanecer aqui, fechar o raciocínio com os parâmetros concretos adotados para o ESP32 (corrente de TX/RX, tensão, tempo por quadro) e explicitar como o firmware/simulação contabiliza energia, conectando à implementação.
 
-### [ ] C4-044 · 🟡 MÉDIO · `completude`
+### [x] C4-044 · 🟡 MÉDIO · `completude`
 - **Local:** Seção 4.2.3 / 4.7.4 — definição da penalidade quando não há vizinho ativo
 - **Problema:** O texto afirma que a métrica considera a qualidade do enlace, mas não menciona o comportamento de borda implementado: quando o próximo salto não é um vizinho ativo, o código usa RSSI_worst (-90 dBm), ou seja, penalidade máxima 100 (aodv_en_node.c, aodv_en_node_route_metric_pick_rssi retorna WORST quando neighbor==NULL ou state!=ACTIVE). Esse default penaliza rotas sem RSSI conhecido e afeta a seleção — é uma decisão de projeto relevante e omitida.
 - **Correção:** Acrescentar uma frase explicando que, na ausência de RSSI confiável para o próximo salto (vizinho não ativo), aplica-se penalidade máxima como política conservadora, e justificar a escolha. Isso aumenta a fidelidade e a completude da descrição da métrica.
 
-### [ ] C4-045 · 🟡 MÉDIO · `escrita`
+### [x] C4-045 · 🟡 MÉDIO · `escrita`
 - **Local:** Quadro 13 (linha 422) — mensagem ACK classificada como "Controle/aplicação"
 - **Problema:** O tipo da mensagem ACK é descrito de forma ambígua ("Controle/aplicação") sem que o texto subsequente (linhas 445-450) esclareça a distinção. Como o próprio capítulo enfatiza que a confirmação é fim-a-fim em nível de aplicação (linha 710), classificá-la também como "Controle" gera inconsistência conceitual com o resto do texto.
 - **Correção:** Padronizar a classificação: se a confirmação é fim-a-fim em nível de aplicação (como afirma 4.7.2), rotular o ACK como "Aplicação" e remover a barra "Controle/". Garantir que a coluna Tipo do quadro seja coerente com a descrição textual.
@@ -469,12 +469,12 @@ _O resumo e o abstract sao de alta qualidade de escrita: bem estruturados, com r
 
 **Problemas:**
 
-### [ ] RA-066 · 🟡 MÉDIO · `coerencia`
+### [x] RA-066 · 🟡 MÉDIO · `coerencia`
 - **Local:** abstract.tex, linha 23: 'We conclude that AODV-EN's reactive routing...'
 - **Problema:** O abstract introduz a 1a pessoa do plural ('We conclude'), enquanto o resumo PT usa a construcao impessoal 'Conclui-se que' (linha 25). Alem de quebrar a fidelidade de tom entre as duas versoes, o uso de 1a pessoa contraria o registro impessoal recomendado pela ABNT NBR 6028, que pede o verbo na voz ativa de 3a pessoa ou voz passiva sintetica.
 - **Correção:** Substituir por construcao impessoal equivalente, p. ex. 'It is concluded that AODV-EN's reactive routing becomes advantageous...'. Garantir simetria de pessoa/voz com o resumo PT ao longo de todo o texto.
 
-### [ ] RA-067 · 🟡 MÉDIO · `abnt-formatacao`
+### [x] RA-067 · 🟡 MÉDIO · `abnt-formatacao`
 - **Local:** resumo.tex, linha 8-9: 'Este trabalho propoe, implementa e avalia o AODV-EN'
 - **Problema:** A ABNT NBR 6028 recomenda que o resumo seja redigido com o verbo na voz ativa em 3a pessoa ou na voz passiva, evitando sujeito-agente como 'Este trabalho'. A abertura com 'Este trabalho propoe' e amplamente tolerada, mas para rigor normativo a frase de objetivo poderia ser impessoalizada.
 - **Correção:** Opcionalmente reformular para voz passiva sintetica, p. ex. 'Propoe-se, implementa-se e avalia-se o AODV-EN, uma adaptacao...'. Caso se mantenha 'Este trabalho', verificar com o orientador a preferencia da banca/IFG.
@@ -614,12 +614,12 @@ _O texto tem boa redação acadêmica e estrutura de capítulos coerente, mas a 
 - **Problema:** Inconsistência de formatação da linha 'Fonte:' dos quadros. Em vários quadros do Capítulo 4 a fonte está em negrito ('\textbf{Fonte: Elaborado pelos autores.}'), enquanto nos Capítulos 2, 3 e 5 a mesma linha está em texto normal ('Fonte: ...'). A ABNT pede fonte em fonte menor (ex.: \footnotesize/\small) e padronizada, normalmente sem negrito.
 - **Correção:** Padronizar todas as linhas de Fonte: remover \textbf, aplicar tamanho reduzido uniforme (ex.: definir um comando \fonte{...}) e mantê-las imediatamente abaixo do quadro/figura sem linha em branco extra.
 
-### [ ] AB-089 · 🟡 MÉDIO · `abnt-formatacao`
+### [x] AB-089 · 🟡 MÉDIO · `abnt-formatacao`
 - **Local:** capitulo_5.tex, linhas 110-124 (Tabela 1) e quadros longtable em geral
 - **Problema:** A 'Tabela 1' usa \LTcaptype{table} num longtable, o que é correto, mas o restante dos dados numéricos de resultados (Quadro 15 'Ledger', L63-103) é declarado como \LTcaptype{quadro} embora contenha exclusivamente dados numéricos por seed. Pela convenção ABNT/IBGE, conteúdo numérico aberto nas laterais é Tabela, não Quadro. Há mistura de critério: o ledger numérico é Quadro, mas a consolidação numérica é Tabela.
 - **Correção:** Reclassificar o 'Ledger de execuções' como Tabela (\LTcaptype{table}) por conter apenas medições numéricas, ou justificar explicitamente o critério adotado. Garantir coerência: dados numéricos → Tabela; dados textuais/esquemáticos → Quadro.
 
-### [ ] AB-090 · 🟡 MÉDIO · `abnt-formatacao`
+### [x] AB-090 · 🟡 MÉDIO · `abnt-formatacao`
 - **Local:** Template_Pacheco_TCC.tex L64; figuras em geral usam [H]
 - **Problema:** O preâmbulo redefine \cleardoublepage como \clearpage e o ambiente quadro é declarado com placement=H; as figuras tikz/imagem usam \begin{figure}[H] (posicionamento forçado via float/H). O uso indiscriminado de [H] em todas as figuras pode gerar grandes espaços em branco e quebra ruim de página, e contraria a recomendação de deixar o LaTeX posicionar floats; além disso as figuras de imagem do cap.5 (L131, 141, 176, 216) usam \begin{figure} SEM especificador de posição, criando inconsistência com as demais que usam [H].
 - **Correção:** Padronizar o especificador de posição das figuras (escolher [htbp] ou [H] de forma consistente) e revisar se o uso de [H] é realmente necessário caso a caso para evitar páginas com excesso de espaço.
@@ -728,17 +728,17 @@ _A redação tem boa base técnica e registro formal predominante, mas há padr�
 - **Problema:** Dentro do mesmo capítulo, o artefato é descrito ora no pretérito (relato do que foi feito: "A arquitetura foi concebida", "A implementação foi organizada", "As estruturas foram projetadas") ora no presente atemporal (descrição de funcionamento: "O ESP-NOW suporta", "o AODV-EN utiliza", "o protocolo separa"). A alternância não segue critério explícito e por vezes ocorre em parágrafos adjacentes, prejudicando a uniformidade do registro.
 - **Correção:** Adotar critério claro: pretérito para decisões/ações de projeto já tomadas ("foi adotada a política LRU") e presente para o comportamento permanente do protocolo ("o protocolo retransmite cada RREQ uma única vez"). Padronizar cada subseção segundo esse critério em vez de misturar.
 
-### [ ] PT-106 · 🟡 MÉDIO · `escrita`
+### [x] PT-106 · 🟡 MÉDIO · `escrita`
 - **Local:** capitulo_1.tex, linhas 21-26 e 60-64
 - **Problema:** Frases nominais sem verbo principal (fragmentos) usadas como períodos completos. Linha 25-26: "Características que o tornam ideal para prototipagem e implantação de soluções IoT em escala." é um fragmento — deveria ligar-se à frase anterior. Linha 60-64: "Desenvolvido pela Espressif Systems, operando de forma connectionless sobre a camada de enlace do padrão IEEE 802.11, permitindo a troca de mensagens curtas (...)" é uma sequência de orações reduzidas sem oração principal — não há verbo finito que sustente o período.
 - **Correção:** Unir o fragmento à oração anterior com vírgula/relativo: "...custo acessível, características que o tornam ideal...". No segundo caso, fornecer verbo principal: "O ESP-NOW, desenvolvido pela Espressif Systems, opera de forma \emph{connectionless} sobre a camada de enlace do IEEE 802.11 e permite a troca de mensagens curtas...".
 
-### [ ] PT-107 · 🟡 MÉDIO · `escrita`
+### [x] PT-107 · 🟡 MÉDIO · `escrita`
 - **Local:** Recorrente nos três capítulos — ex.: capitulo_1.tex linha 11 "Essa visão", linha 41 "Essa abordagem"; capitulo_4.tex linha 93 "Essa abordagem", linha 181 "Essa abordagem", linha 335 "Essa estrutura", linha 372 "Essa estratégia", linha 535 "Esse mecanismo"; conectivo "Dessa forma" em capitulo_4.tex linhas 217(impl.), 352, 628, 782
 - **Problema:** Uso repetitivo e quase formulaico de demonstrativos anafóricos para iniciar frases ("Essa abordagem...", "Essa estrutura...", "Esse mecanismo...") e de conectivos de fechamento ("Dessa forma", "Assim", "Portanto"). O padrão se repete dezenas de vezes e cria monotonia sintática, além de tornar a anáfora por vezes vaga (a que "abordagem" exatamente se refere quando há duas no parágrafo anterior).
 - **Correção:** Variar as aberturas de frase (nominalizar o referente explicitamente: "A separação entre vizinhança lógica e tabela física..." em vez de "Essa abordagem...") e reduzir conectivos de fechamento redundantes, eliminando os que apenas reafirmam o já dito.
 
-### [ ] PT-108 · 🟡 MÉDIO · `escrita`
+### [x] PT-108 · 🟡 MÉDIO · `escrita`
 - **Local:** capitulo_4.tex, linhas 701-710 (parágrafo do unicast sequencial) e capitulo_1.tex linhas 26-47
 - **Problema:** Frases excessivamente longas com múltiplas subordinadas encadeadas. Ex. cap.4 l.701-710: período único de ~7 linhas com três orações coordenadas listando consequências ("inflaria... subcontaria... descaracterizaria") aninhadas em explicações entre travessões e parênteses. O cap.1 também concentra períodos de 5-6 linhas. A densidade dificulta a leitura e a localização do núcleo da oração.
 - **Correção:** Quebrar períodos com mais de 3-4 linhas em duas ou três frases. No exemplo do unicast, separar a decisão ("A alternativa foi descartada.") das três justificativas em frases curtas ou em lista, em vez de um único período sobrecarregado.
@@ -748,7 +748,7 @@ _A redação tem boa base técnica e registro formal predominante, mas há padr�
 - **Problema:** Conectivo "Dessa forma" mal empregado: a frase anterior introduz a proposta do AODV-EN como adaptação do AODV, e a seguinte afirma que o ESP-NOW tem restrições — não há relação de consequência/conclusão entre as duas, então o conectivo é semanticamente incoerente. A frase também repete informação já estabelecida várias vezes no capítulo (as limitações do ESP-NOW já foram detalhadas nas linhas 75-96), soando redundante e deslocada.
 - **Correção:** Remover a frase ou reposicioná-la, e eliminar o conectivo "Dessa forma". Se a intenção é fechar o parágrafo justificando a escolha do AODV, ligar diretamente: "A escolha do AODV como protocolo base justifica-se..." sem a sentença intermediária redundante.
 
-### [ ] PT-110 · 🟡 MÉDIO · `abnt-formatacao`
+### [x] PT-110 · 🟡 MÉDIO · `abnt-formatacao`
 - **Local:** Anglicismos com itálico inconsistente — ex.: capitulo_4.tex linha 86 "peers" sem itálico ("O ESP-NOW suporta até 20 \emph{peers}" está com itálico em 86, mas "peers" aparece sem \emph em linhas 358, 361, 716, 718, 720, 723, 725, 727; "hop count" com itálico na l.661 mas sem na l.741/747; "broadcast" sem itálico em todo o cap.4 §4.5.2 enquanto está com \emph no cap.1 e §4.2.2; "flooding" sem itálico nas linhas 349, 693, 700 mas com em outros pontos
 - **Problema:** O mesmo estrangeirismo aparece ora em itálico (\emph), ora em redondo, ao longo dos capítulos e às vezes na mesma seção. A norma exige tratamento tipográfico uniforme para termos em língua estrangeira. A inconsistência é visível e recorrente (peers, broadcast, flooding, hop count).
 - **Correção:** Definir uma lista de termos estrangeiros e aplicar \emph{} (ou a macro padronizada do template) a TODAS as ocorrências, ou — após a primeira definição — decidir aportuguesar/manter em redondo de forma consistente. Fazer uma varredura por termo.

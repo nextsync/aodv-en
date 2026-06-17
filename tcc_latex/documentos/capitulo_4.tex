@@ -178,9 +178,14 @@ interferência:
 \end{equation}
 
 \noindent Quanto melhor o sinal ($\overline{\text{RSSI}}$ mais próximo de $-55\,\text{dBm}$),
-menor a penalidade e menor o custo da rota. Essa abordagem possibilita
-a seleção de rotas que otimizem simultaneamente o comprimento do caminho
-e a confiabilidade esperada das transmissões.
+menor a penalidade e menor o custo da rota. Como comportamento de borda,
+quando o próximo salto ainda não corresponde a um vizinho ativo com
+RSSI registrado, a implementação atribui a penalidade máxima
+($\text{RSSI}_\text{worst}$), de modo que rotas por enlaces de qualidade
+desconhecida sejam preteridas em favor de enlaces já caracterizados.
+Essa abordagem possibilita a seleção de rotas que otimizem
+simultaneamente o comprimento do caminho e a confiabilidade esperada das
+transmissões.
 
 \subsection{Estimativa de consumo
 energético}\label{estimativa-de-consumo-energuxe9tico}
@@ -300,8 +305,8 @@ de RSSI & Subsidia o cálculo da métrica híbrida e a manutenção da
 conectividade local \\
 Cache de RREQ & Armazenar requisições de rota já processadas & Evita
 duplicatas, retransmissões desnecessárias e ciclos de propagação \\
-Gerenciamento de peers & Controlar pares registrados no ESP-NOW &
-Permite operar dentro das limitações de peers simultâneos do ESP-NOW \\
+Gerenciamento de \emph{peers} & Controlar pares registrados no ESP-NOW &
+Permite operar dentro das limitações de \emph{peers} simultâneos do ESP-NOW \\
 \end{longtable}
 }
 
@@ -355,9 +360,9 @@ descoberta.
 
 \subsection{Gerenciamento de Peers}\label{gerenciamento-de-peers}
 
-O gerenciamento de peers foi projetado para lidar com a limitação de
+O gerenciamento de \emph{peers} foi projetado para lidar com a limitação de
 pares simultâneos imposta pelo ESP-NOW. Como o protocolo exige que
-dispositivos sejam registrados como peers para comunicação unicast, essa
+dispositivos sejam registrados como \emph{peers} para comunicação unicast, essa
 restrição pode limitar a escalabilidade da rede quando há múltiplos nós
 participantes.
 
@@ -623,10 +628,10 @@ da comunicação.
 
 A adaptação do AODV para operação
 sobre ESP-NOW exigiu modificações relacionadas ao endereçamento, à
-disseminação de mensagens, ao gerenciamento de peers e à métrica de
+disseminação de mensagens, ao gerenciamento de \emph{peers} e à métrica de
 seleção de rotas. Essas adaptações foram necessárias porque o ESP-NOW
 opera na camada de enlace, utiliza endereçamento baseado em MAC, possui
-limitação no número de peers registrados simultaneamente e não oferece,
+limitação no número de \emph{peers} registrados simultaneamente e não oferece,
 de forma nativa, mecanismos completos para roteamento multi-hop. Dessa
 forma, o AODV-EN preserva os princípios fundamentais do AODV, como
 descoberta de rotas sob demanda, uso de mensagens de controle,
@@ -658,8 +663,8 @@ Disseminação de RREQ & Baseada em broadcast IP & Flooding controlado
 sobre broadcast de enlace (MAC) com cache de duplicatas e TTL \\
 Gerenciamento de vizinhos & Associado à conectividade da rede ad-hoc &
 Mantém tabela de vizinhos com estado, último contato e RSSI \\
-Gerenciamento de peers & Não aplicável diretamente ao AODV original &
-Usa cache de peers e política LRU para lidar com o limite do ESP-NOW \\
+Gerenciamento de \emph{peers} & Não aplicável diretamente ao AODV original &
+Usa cache de \emph{peers} e política LRU para lidar com o limite do ESP-NOW \\
 Métrica de rota & Baseada principalmente em número de saltos & Combina
 hop count e penalidade associada ao RSSI \\
 Tratamento de falhas & Usa mensagens RERR e invalidação de rotas &
@@ -702,13 +707,13 @@ fim-a-fim pelo protocolo.
 \subsection{Gerenciamento Dinâmico de Peers}\label{gerenciamento-dinamico-de-peers}
 
 Conforme apresentado na
-Seção~\ref{gerenciamento-de-peers-com-poluxedtica-lru}, o AODV-EN contorna
+Seção~\ref{gerenciamento-de-\emph{peers}-com-poluxedtica-lru}, o AODV-EN contorna
 o limite de \emph{peers} simultâneos do ESP-NOW por meio de uma política
 LRU. No nível de implementação, isso se traduz na separação entre a
 vizinhança lógica do protocolo --- os nós conhecidos ou alcançáveis no
 contexto do roteamento, mantidos na tabela de vizinhos
 (Seção~\ref{tabela-de-vizinhos}) --- e a tabela física de \emph{peers}
-registrados no ESP-NOW (Seção~\ref{gerenciamento-de-peers}). Quando a
+registrados no ESP-NOW (Seção~\ref{gerenciamento-de-\emph{peers}}). Quando a
 capacidade do cache de \emph{peers} é atingida, o \emph{peer} menos
 recentemente utilizado é substituído pelo novo \emph{peer} requisitado
 pela comunicação, permitindo que o protocolo opere em redes com mais nós
@@ -740,7 +745,7 @@ protocolo AODV, especialmente a descoberta de rotas sob demanda, a
 manutenção de tabelas de roteamento, o uso de mensagens de controle e o
 tratamento de falhas de enlace. Entretanto, devido às particularidades
 do ESP-NOW, foram necessárias adaptações relacionadas ao endereçamento
-por MAC, ao gerenciamento dinâmico de peers, à disseminação controlada
+por MAC, ao gerenciamento dinâmico de \emph{peers}, à disseminação controlada
 de requisições de rota e ao uso de métricas baseadas na qualidade do
 enlace. Dessa forma, o algoritmo não corresponde a uma reprodução
 literal do AODV original, mas a uma adaptação orientada às restrições de

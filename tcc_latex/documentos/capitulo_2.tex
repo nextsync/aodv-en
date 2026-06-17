@@ -259,10 +259,11 @@ multi-hop}\label{limitauxe7uxf5es-para-comunicauxe7uxe3o-multi-hop}
 Apesar de suas vantagens, o ESP-NOW apresenta limitações estruturais que
 restringem sua aplicação direta em redes de maior escala. A primeira e
 mais significativa limitação é a ausência de suporte nativo a roteamento
-multi-hop. O protocolo foi concebido exclusivamente para comunicações
+em múltiplos saltos (\emph{multi-hop}), isto é, ao encaminhamento de
+pacotes por nós intermediários até um destino fora do alcance direto. O
+protocolo foi concebido exclusivamente para comunicações
 ponto-a-ponto ou em topologia estrela, não oferecendo mecanismos para
-encaminhamento de pacotes através de nós intermediários
-\cite{becker2025}. A segunda limitação refere-se ao número máximo de
+esse encaminhamento \cite{becker2025}. A segunda limitação refere-se ao número máximo de
 \emph{peers} simultâneos: cada dispositivo ESP32 suporta no máximo
 20 \emph{peers} registrados na tabela de pares, sendo que apenas 6
 desses podem ter criptografia AES-128 habilitada individualmente
