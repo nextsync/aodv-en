@@ -204,7 +204,6 @@ static flood_en_status_t app_emit_frame(
     bool broadcast)
 {
     app_context_t *app = (app_context_t *)user_ctx;
-    flood_en_status_t status = FLOOD_EN_OK;
 
     if (frame_len > ESP_NOW_MAX_DATA_LEN_V2)
     {
@@ -217,22 +216,7 @@ static flood_en_status_t app_emit_frame(
         return app_send_one(app, next_hop, frame, frame_len);
     }
 
-    // Flooding controlado (TCC 4.6.1d): disseminar por UNICAST para cada vizinho
-    // conhecido. Antes de conhecer vizinhos (bootstrap), usa broadcast.
-    if (app->neighbor_count == 0)
-    {
-        return app_send_one(app, BROADCAST_MAC, frame, frame_len);
-    }
-
-    for (uint8_t i = 0; i < app->neighbor_count; i++)
-    {
-        if (app_send_one(app, app->neighbors[i], frame, frame_len) != FLOOD_EN_OK)
-        {
-            status = FLOOD_EN_ERR_STATE;
-        }
-    }
-
-    return status;
+    return app_send_one(app, BROADCAST_MAC, frame, frame_len);
 }
 
 static void app_led_pulse_task(void *arg)
