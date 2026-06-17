@@ -114,7 +114,7 @@ _A introdução tem boa densidade técnica, encadeamento lógico coerente (ubiqu
 - **Problema:** Inconsistência de caixa nos títulos: o capítulo e as seções OBJETIVOS estão em CAIXA ALTA, mas as seções do Capítulo 2 (ex.: 'O Microcontrolador ESP32') usam caixa de título normal. Convém padronizar o estilo de títulos em todo o trabalho.
 - **Correção:** Definir um padrão único (ABNT costuma usar caixa alta para seções primárias e caixa baixa/título para subseções) e aplicá-lo consistentemente entre capítulos.
 
-### [ ] C1-013 · ⚪ BAIXO · `escrita`
+### [x] C1-013 · ⚪ BAIXO · `escrita`
 - **Local:** Linha 68 ('2,8 ms'), linha 71 ('15%'), linha 99 ('75 ms', '9,25%')
 - **Problema:** Mistura de estilos de citação de números entre o português (vírgula decimal, ok) mas sem padronização do uso de 'ms', '%' colados/separados e sem espaço protegido (~) antes de unidades, podendo gerar quebras de linha indevidas em LaTeX.
 - **Correção:** Padronizar e usar espaço protegido em LaTeX antes de unidades e símbolos (ex.: '2,8~ms', 'PDR superior a 99\%', '55~metros'), conforme boas práticas tipográficas/ABNT.
@@ -255,7 +255,7 @@ _Capítulo metodologicamente bem estruturado e com escrita academica em geral cl
 - **Problema:** Afirmacao tecnicamente forte demais sem ressalva. Flooding so garante entrega na ausencia de colisoes/perdas; em ESP-NOW sobre broadcast, o flooding tipicamente sofre o problema da tempestade de broadcast (broadcast storm), com colisoes que DERRUBAM o PDR em redes densas — ou seja, pode nao ser o 'PDR maximo alcancavel' na pratica. O proprio trabalho depende de comparar PDR, entao tratar o baseline como teto teorico de entrega e arriscado.
 - **Correção:** Qualificar: 'em redes conectadas e na ausencia de perdas por colisao, o Flooding tende a maximizar a probabilidade de entrega, servindo como referencia superior de cobertura'. E reconhecer o efeito broadcast storm como limitacao do baseline (isso fortalece, em vez de enfraquecer, a comparacao a favor do AODV-EN).
 
-### [ ] C3-035 · ⚪ BAIXO · `coerencia`
+### [x] C3-035 · ⚪ BAIXO · `coerencia`
 - **Local:** Secao 3.6.1, item b (l.527-529) 'buffer circular com os ultimos N identificadores (N=100)' vs Secao 3.4.2, Quadro 9 'Cache de peers 8 entradas'
 - **Problema:** Dois tamanhos de buffer distintos (100 para deteccao de duplicatas do Flooding; 8 para cache de peers do AODV-EN) aparecem proximos sem deixar claro que sao estruturas de propositos diferentes. Risco de o leitor inferir inconsistencia.
 - **Correção:** Nenhuma mudanca de valor necessaria; apenas garantir que cada numero esteja inequivocamente associado a sua estrutura/algoritmo (p.ex. 'buffer de deteccao de duplicatas do Flooding (N=100)' vs 'cache LRU de peers do AODV-EN (8 entradas)').
@@ -405,7 +405,7 @@ _Capítulo bem estruturado e, no geral, bem escrito: a sequência (ambiente/vali
 - **Problema:** A conclusão de escalabilidade (cruzamento em ~9-11 nós; flooding deixa de alcançar destinos além de 5 saltos com TTL=5) é central para a tese, mas baseia-se inteiramente em simulação cuja fidelidade/validação não é discutida aqui — apenas se mencionou na Seção 5.1 que houve 'simulações determinísticas'. Não se declara o modelo de canal/perdas da simulação (parece ideal, já que 'ambos entregam a totalidade dos pacotes'), o que limita a generalização para hardware real.
 - **Correção:** Acrescentar uma frase qualificando a simulação (modelo de propagação/perda assumido, ausência de colisões/ruído reais) e indicando que o cruzamento é uma estimativa de tendência, não um ponto operacional medido. Conectar à limitação de que o multi-hop real não foi medido em hardware.
 
-### [ ] C5-059 · ⚪ BAIXO · `referencia`
+### [x] C5-059 · ⚪ BAIXO · `referencia`
 - **Local:** Seção 5.6 (Conformidade RFC), l.239-241: 'conforme a Seção 6.11 da RFC'
 - **Problema:** Referência à seção da RFC 3561 digitada no corpo do texto sem citação formal da fonte (\citeonline/\cite) na sentença, diferente do padrão de citação do restante do TCC. Verificar também se a numeração (6.11) corresponde de fato ao processamento de RERR na RFC 3561.
 - **Correção:** Citar a RFC formalmente (ex.: 'conforme a Seção 6.11 da RFC 3561 \citeonline{rfc3561}') e conferir a numeração da seção citada contra o documento original.
@@ -415,7 +415,7 @@ _Capítulo bem estruturado e, no geral, bem escrito: a sequência (ambiente/vali
 - **Problema:** A seção mistura duas métricas distintas (consumo energético e ocupação de canal) sob um único parágrafo denso, com vários números intercalados (21%, 12,66 J, 10,45 J, 1.066 vs 564, 1,89, 1,98), dificultando a leitura. A Figura 9 (canal) é referenciada na seção 5.2, longe da discussão de canal aqui.
 - **Correção:** Separar em duas ideias-tópico (energia; ocupação de canal) ou ao menos quebrar em dois parágrafos, e referenciar a Figura de canal no ponto da discussão onde os números RX/TX são interpretados, aproximando figura e texto.
 
-### [ ] C5-061 · ⚪ BAIXO · `escrita`
+### [x] C5-061 · ⚪ BAIXO · `escrita`
 - **Local:** Seção 5.1, l.19-21: 'versão reduzida do cenário C1 (denominada C1-3n)'
 - **Problema:** O cenário 'C1' é citado como se o leitor já o conhecesse, mas a definição está no Capítulo 3 e não é referenciada aqui por \ref. O sufixo '-3n' (três nós) também não é explicado na primeira ocorrência.
 - **Correção:** Referenciar o cenário C1 com \ref à tabela de cenários do Cap.3 e explicitar na primeira menção que 'C1-3n' designa a variante de três nós do cenário C1.
