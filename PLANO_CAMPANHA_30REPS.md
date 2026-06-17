@@ -15,6 +15,19 @@
 
 (Os 10 ESPs finais serão enumerados do mesmo modo. Identificar sempre por MAC.)
 
+### Topologia C1 (cadeia) CONFIRMADA por RSSI (TX=2 dBm)
+
+Medição real com `rssi_probe.py` (origem N1=EB80 na serial, N2/N3 espalhados):
+
+| Enlace | RSSI médio | recepções | estado |
+|---|---|---|---|
+| N1 ↔ N2 (~5 m) | −75 dBm | 30/35 | **firme** ✅ |
+| N1 ↔ N3 (pontas, ~10 m) | −88,5 dBm | **4/35** | **quebrado** (89% perda) |
+| N2 ↔ N3 | −74 dBm | 29/30 | firme ✅ |
+
+→ As pontas (N1, N3) **não se ouvem**; N3 só alcança N1 via N2 = **cadeia A→B→C, 2 saltos
+reais**, multi-hop nativo por atenuação física (sem allowlist). É o C1 do TCC.
+
 ## Decisões tomadas (usuário)
 
 - **Topologia**: espalhar os 10 ESPs fisicamente (saltos reais), **não** allowlist por software.
@@ -48,7 +61,7 @@
 
 - [x] **F0.1** Laço da app 100 ms → 10 ms (`APP_LOOP_DELAY_MS` em `app_demo.c:33` e equivalente
   no `app_flood.c`). Latência deixa de ser quantizada em 100 ms.
-- [ ] **F0.2** Flood unicast → **broadcast** (baseline canônico): `app_flood.c` `app_emit_frame`
+- [x] **F0.2** Flood unicast → **broadcast** (baseline canônico): `app_flood.c` `app_emit_frame`
   passa a emitir 1 broadcast por (re)transmissão (decisão registrada anteriormente).
 - [ ] **F0.3** **Telemetria in-band de stats**: nova mensagem que, ao fim de cada run, carrega os
   contadores (tx/rx/control/delivered) de cada nó até a origem; a origem loga linha
