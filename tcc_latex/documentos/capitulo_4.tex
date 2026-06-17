@@ -272,14 +272,14 @@ limitações de memória do ambiente embarcado e a necessidade de
 atualização em tempo real das informações de roteamento. Essas
 estruturas armazenam o estado local de cada nó e permitem a execução dos
 mecanismos de descoberta, seleção, manutenção e invalidação de rotas. O
-Quadro 12 apresenta uma síntese das principais estruturas utilizadas na
+Quadro~\ref{quadro:estruturas} apresenta uma síntese das principais estruturas utilizadas na
 implementação do AODV-EN e sua função no funcionamento do protocolo.
 {\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
-\caption{Estruturas de dados utilizadas no AODV-EN}\\
+\caption{Estruturas de dados utilizadas no AODV-EN}\label{quadro:estruturas}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Estrutura
@@ -385,7 +385,7 @@ quanto ao uso de requisições de rota, respostas de rota e mensagens de
 erro. Entretanto, foram incorporadas adaptações necessárias ao contexto
 do ESP-NOW, como o uso de endereçamento por MAC, limitação de tamanho de
 payload, controle de TTL e suporte à confirmação em nível de aplicação.
-O Quadro 13 apresenta uma síntese das mensagens utilizadas pelo AODV-EN
+O Quadro~\ref{quadro:mensagens} apresenta uma síntese das mensagens utilizadas pelo AODV-EN
 e suas respectivas funções no protocolo.
 
 {\def\LTcaptype{quadro}
@@ -394,7 +394,7 @@ e suas respectivas funções no protocolo.
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
-\caption{Mensagens utilizadas pelo AODV-EN}\\
+\caption{Mensagens utilizadas pelo AODV-EN}\label{quadro:mensagens}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Mensagem
@@ -629,14 +629,14 @@ forma, o AODV-EN preserva os princípios fundamentais do AODV, como
 descoberta de rotas sob demanda, uso de mensagens de controle,
 manutenção de tabelas de roteamento e tratamento de falhas, mas
 incorpora mecanismos específicos para viabilizar sua execução em
-dispositivos ESP32 utilizando ESP-NOW. O Quadro 14 sintetiza as
+dispositivos ESP32 utilizando ESP-NOW. O Quadro~\ref{quadro:adaptacoes} sintetiza as
 principais adaptações realizadas no AODV-EN em relação ao AODV original.
 {\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
-\caption{Principais adaptações do AODV para o contexto do ESP-NOW}\\
+\caption{Principais adaptações do AODV para o contexto do ESP-NOW}\label{quadro:adaptacoes}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Aspecto

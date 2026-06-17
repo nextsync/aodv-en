@@ -55,7 +55,7 @@ contra dados reais dos dois algoritmos.
 
 \section{Resultados de Hardware}\label{resultados-de-hardware}
 
-O Quadro 15 apresenta o \emph{ledger} das execuções em hardware, com as
+O Quadro~\ref{tab:ledger} apresenta o \emph{ledger} das execuções em hardware, com as
 quatro métricas por repetição (\emph{seed}) para cada algoritmo. Os
 valores do \emph{flooding} correspondem à campanha com transporte por
 \emph{broadcast} puro; os do AODV-EN, à campanha reativa com
@@ -69,7 +69,7 @@ valores do \emph{flooding} correspondem à campanha com transporte por
   >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}
   >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}
   >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}@{}}
-\caption{Ledger de execuções em hardware (C1-3n, 6 seeds por algoritmo)}\\
+\caption{Ledger de execuções em hardware (C1-3n, 6 seeds por algoritmo)}\label{tab:ledger}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\centering
 Algoritmo
@@ -105,12 +105,12 @@ Flooding & 6 & 98,53 & 85,9 & 0,0 & 12,66 \\
 
 Fonte: Elaborado pelos autores.
 
-A Tabela 1 consolida a comparação, apresentando média e desvio padrão
+A Tabela~\ref{tab:comparacao} consolida a comparação, apresentando média e desvio padrão
 de cada métrica para os dois algoritmos.
 
 {\def\LTcaptype{table}
 \begin{longtable}[]{@{}lccc@{}}
-\caption{Comparação AODV-EN vs.~Flooding (média $\pm$ desvio padrão de 6 seeds)}\\
+\caption{Comparação AODV-EN vs.~Flooding (média $\pm$ desvio padrão de 6 seeds)}\label{tab:comparacao}\\
 \toprule\noalign{}
 Métrica & AODV-EN & Flooding (broadcast) & Δ (flood − aodv) \\
 \midrule\noalign{}
