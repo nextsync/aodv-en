@@ -101,9 +101,11 @@ analógico-digitais (ADC), conversores digital-analógicos (DAC),
 interfaces SPI, I²C, I²S, UART, PWM, sensores de toque capacitivo e
 sensor de efeito Hall.
 
+O Quadro~\ref{quadro:esp32-specs} resume as principais especificações técnicas do ESP32.
+
 {\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}cl@{}}
-\caption{Especificações técnicas do microcontrolador ESP32}\\
+\caption{Especificações técnicas do microcontrolador ESP32}\label{quadro:esp32-specs}\\
 \toprule\noalign{}
 Característica & Especificação \\
 \midrule\noalign{}
@@ -198,11 +200,13 @@ no modo CCMP, permitindo comunicação segura quando necessário. A
 identificação dos dispositivos é realizada através de seus endereços MAC
 de 6 bytes.
 
+O Quadro~\ref{quadro:espnow-carac} sintetiza as principais características técnicas do ESP-NOW.
+
 {\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}
   >{\centering\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
   >{\centering\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}@{}}
-\caption{Características técnicas do protocolo ESP-NOW}\\
+\caption{Características técnicas do protocolo ESP-NOW}\label{quadro:espnow-carac}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\centering
 Parâmetro
@@ -334,13 +338,15 @@ dentro de zonas locais e roteamento reativo para comunicação entre
 zonas. Essa estratégia busca balancear as vantagens de ambas as
 abordagens, mas introduz complexidade adicional na implementação.
 
+O Quadro~\ref{quadro:comp-protocolos} apresenta um comparativo entre as categorias de protocolos de roteamento ad-hoc.
+
 {\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
-\caption{Comparativo entre categorias de protocolos de roteamento ad-hoc}\\
+\caption{Comparativo entre categorias de protocolos de roteamento ad-hoc}\label{quadro:comp-protocolos}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Característica
