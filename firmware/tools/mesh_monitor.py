@@ -122,15 +122,20 @@ def snapshot():
         now = time.monotonic()
         nodes = []
         for mac, n in STATE["nodes"].items():
+            age = now - n["last_seen"]
             nodes.append({
                 "mac": mac, "label": mac[-5:],
                 "tx": n["tx"], "rx": n["rx"], "control": n["control"], "delivered": n["delivered"],
-                "online": (now - n["last_seen"]) < 12,
+                # tolera ate ~K=5 janelas de report (4s) ausentes antes de marcar offline,
+                # absorvendo perdas best-effort do report multi-hop sem falso-offline.
+                "online": age < 22,
+                "stale": 22 <= age < 45,
+                "last_seen_s": round(age, 1),
                 "is_collector": mac == STATE["collector"],
             })
         links = []
         for lk in STATE["links"].values():
-            if (now - lk["last_seen"]) < 20:
+            if (now - lk["last_seen"]) < 30:
                 links.append({"a": lk["a"], "b": lk["b"], "rssi": lk["rssi"]})
         rtts = STATE["rtts"]
         rtt_mean = round(sum(rtts) / len(rtts), 1) if rtts else None
@@ -160,7 +165,7 @@ HTML = """<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8">
  table{width:100%;border-collapse:collapse;font-size:12.5px}
  th,td{text-align:left;padding:5px 8px;border-bottom:1px solid #273449}
  th{color:#64748b;font-weight:600}
- .on{color:#4ade80} .off{color:#64748b}
+ .on{color:#4ade80} .off{color:#64748b} .st{color:#facc15}
  .col{color:#38bdf8;font-weight:700}
  .metric{display:inline-block;margin-right:16px} .metric b{color:#f1f5f9;font-size:18px}
  t.dim{color:#64748b}
@@ -217,7 +222,7 @@ async function tick(){
    g+=`<text x="${P[0]}" y="${P[1]+4}" fill="#e2e8f0" font-size="11" text-anchor="middle">${n.label}</text>`;
    if(n.is_collector)g+=`<text x="${P[0]}" y="${P[1]+38}" fill="#38bdf8" font-size="9" text-anchor="middle">coletor</text>`;});
  document.getElementById('g').innerHTML=g;
- document.getElementById('nt').innerHTML=s.nodes.map(n=>`<tr><td class="${n.is_collector?'col':''}">${n.label}${n.is_collector?' ★':''}</td><td>${n.tx}</td><td>${n.rx}</td><td>${n.control}</td><td>${n.delivered}</td><td class="${n.online?'on':'off'}">${n.online?'online':'—'}</td></tr>`).join('');
+ document.getElementById('nt').innerHTML=s.nodes.map(n=>{const st=n.online?(n.stale?'stale':'online'):'offline';const cls=n.online?(n.stale?'st':'on'):'off';return `<tr><td class="${n.is_collector?'col':''}">${n.label}${n.is_collector?' ★':''}</td><td>${n.tx}</td><td>${n.rx}</td><td>${n.control}</td><td>${n.delivered}</td><td class="${cls}" title="visto ha ${n.last_seen_s}s">${st}</td></tr>`;}).join('');
  document.getElementById('rt').innerHTML=s.routes.length?s.routes.map(r=>`<tr><td>${r.dest.slice(-5)}</td><td>${r.via.slice(-5)}</td><td>${r.hops}</td><td>${r.metric}</td></tr>`).join(''):'<tr><td colspan=4 class=off>sem rotas</td></tr>';
 }
 setInterval(tick,1000); tick();
