@@ -804,7 +804,7 @@ static void app_protocol_task(void *arg)
                 app_put_u32_be(&payload[9], overview.stats.control_tx_frames);
                 app_put_u32_be(&payload[13], overview.stats.delivered_frames);
                 (void)aodv_en_stack_send_data_at(
-                    &app->stack, app->report_to_mac, payload, APP_STATSREP_LEN, false, now_ms);
+                    &app->stack, app->report_to_mac, payload, APP_STATSREP_LEN, true, now_ms);
             }
 
             {
@@ -819,7 +819,7 @@ static void app_protocol_task(void *arg)
                     np[off++] = (uint8_t)(int8_t)app->neigh_rssi[i];
                 }
                 (void)aodv_en_stack_send_data_at(
-                    &app->stack, app->report_to_mac, np, off, false, now_ms);
+                    &app->stack, app->report_to_mac, np, off, true, now_ms);
             }
 
             app->next_report_at_ms = now_ms + app->report_interval_ms;
