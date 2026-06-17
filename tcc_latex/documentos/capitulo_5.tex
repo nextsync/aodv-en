@@ -1,7 +1,7 @@
 % -----------------------------------------------------------------------------
 % Conteudo AODV-EN. Template base: Prof. Wesley Pacheco Calixto (IFG).
 % -----------------------------------------------------------------------------
-\chapter{RESULTADOS E DISCUSSÃO}\label{resultados-e-discussuxe3o}
+\chapter{RESULTADOS E DISCUSSÃO}\label{cap:resultados}\label{resultados-e-discussuxe3o}
 
 Este capítulo apresenta os resultados obtidos com a implementação e a
 avaliação experimental do algoritmo AODV-EN, comparando-o ao algoritmo
@@ -19,11 +19,12 @@ Funcional}\label{ambiente-das-coletas-e-validauxe7uxe3o-funcional}
 A avaliação experimental foi conduzida em uma versão reduzida do cenário
 C1 (denominada C1-3n), composta por três módulos ESP32 dispostos em
 concentrador (\emph{hub}), com aproximadamente um salto de separação.
-Embora o planejamento experimental (Seção 4.4) preveja cenários de até
+Embora o planejamento experimental
+(Seção~\ref{planejamento-experimental}) preveja cenários de até
 cinco saltos e trinta repetições, a disponibilidade de hardware no
 momento das coletas limitou a campanha de hardware a três dispositivos;
 os cenários de maior diâmetro e escala foram avaliados por simulação
-(Seção 6.4). Em todos os experimentos, os parâmetros foram mantidos
+(Seção~\ref{anuxe1lise-de-escalabilidade-por-simulauxe7uxe3o}). Em todos os experimentos, os parâmetros foram mantidos
 idênticos para os dois algoritmos: \emph{payload} de 32 bytes, taxa de
 um pacote por segundo, duas origens (N2 e N3) transmitindo para um
 destino comum (N1) e janela de 60 segundos por execução, com
@@ -125,24 +126,24 @@ Energia (J, estimada) & 10,45 ± 2,16 & 12,66 ± 0,01 & +2,20 \\
 
 Fonte: Elaborado pelos autores.
 
-A Figura 8 apresenta graficamente as quatro métricas, com barras de erro
+A Figura~\ref{fig:hw-metrics} apresenta graficamente as quatro métricas, com barras de erro
 correspondentes ao desvio padrão entre as seis repetições.
 
 \begin{figure}
 \centering
 \pandocbounded{\includegraphics[keepaspectratio,alt={Figura 8 -- Métricas de hardware (PDR, latência, NRL e energia): AODV-EN vs.~Flooding, média de 6 seeds com barra de desvio.}]{figuras/fig_hw_metrics.png}}
 \caption{Métricas de hardware (PDR, latência, NRL e
-energia): AODV-EN vs.~Flooding, média de 6 seeds com barra de desvio.}
+energia): AODV-EN vs.~Flooding, média de 6 seeds com barra de desvio.}\label{fig:hw-metrics}
 \end{figure}
 
-A Figura 9 detalha o custo de ocupação de canal, apresentando o total de
+A Figura~\ref{fig:hw-channel} detalha o custo de ocupação de canal, apresentando o total de
 transmissões (TX) e recepções (RX) agregadas na rede de três nós.
 
 \begin{figure}
 \centering
 \pandocbounded{\includegraphics[keepaspectratio,alt={Figura 9 -- Transmissões e recepções agregadas da rede de 3 nós (média de 6 seeds).}]{figuras/fig_hw_channel.png}}
 \caption{Transmissões e recepções agregadas da rede de 3 nós
-(média de 6 seeds).}
+(média de 6 seeds).}\label{fig:hw-channel}
 \end{figure}
 
 \section{Discussão por Métrica}\label{discussuxe3o-por-muxe9trica}
@@ -170,13 +171,13 @@ dispersão do \emph{flooding} reflete a ausência de confirmação de enlace
 --- sem retransmissão automática, parte das confirmações (ACK) flodadas
 de volta apenas se completa pela retransmissão seguinte ou retorna por
 um caminho de dois saltos. Os valores são quantizados pelo laço de 100
-ms da aplicação. A Figura 10 evidencia essa diferença de dispersão entre
+ms da aplicação. A Figura~\ref{fig:latency-seeds} evidencia essa diferença de dispersão entre
 as repetições.
 
 \begin{figure}
 \centering
 \pandocbounded{\includegraphics[keepaspectratio,alt={Figura 10 -- Latência one-way por seed (AODV-EN vs.~Flooding).}]{figuras/fig_latency_seeds.png}}
-\caption{Latência one-way por seed (AODV-EN vs.~Flooding).}
+\caption{Latência one-way por seed (AODV-EN vs.~Flooding).}\label{fig:latency-seeds}
 \end{figure}
 
 \textbf{Carga de roteamento normalizada (NRL).} O AODV-EN apresentou NRL
@@ -203,7 +204,7 @@ Simulação}\label{anuxe1lise-de-escalabilidade-por-simulauxe7uxe3o}
 
 Para avaliar o comportamento dos algoritmos além do concentrador de três
 nós, conduziu-se uma varredura por simulação em grades de 4 a 25 nós,
-medindo o número de transmissões por pacote entregue. A Figura 11
+medindo o número de transmissões por pacote entregue. A Figura~\ref{fig:sim-crossover}
 apresenta o resultado: ambos os algoritmos entregam a totalidade dos
 pacotes dentro do alcance do TTL, mas a razão transmissões-por-entrega
 cruza-se em torno de 9 a 11 nós, acima do qual o roteamento do AODV-EN
@@ -218,6 +219,7 @@ rotas, continua entregando.
 \pandocbounded{\includegraphics[keepaspectratio,alt={Figura 11 -- Transmissões por pacote entregue em função do número de nós (simulação).}]{figuras/fig_sim_crossover.png}}
 \caption{Transmissões por pacote entregue em função do
 número de nós (simulação).}
+\label{fig:sim-crossover}
 \end{figure}
 
 Esse resultado confirma a hipótese central do trabalho: o roteamento
@@ -255,9 +257,14 @@ sequência, precursores, fila de dados pendentes, confirmação fim-a-fim e
 invalidação por falha de enlace --- utilizando disseminação de RREQ por
 \emph{broadcast} e métrica de contagem de saltos. As adaptações de
 gerenciamento de \emph{peers} por política LRU e de métrica híbrida
-(saltos + RSSI), embora projetadas e descritas no Capítulo 5, permanecem
-como trabalho futuro de implementação e não influenciam os resultados
-aqui apresentados.
+(saltos + RSSI), embora projetadas e implementadas no \emph{firmware}
+(Capítulo~\ref{cap:implementacao}), não são exercitadas pelos cenários
+avaliados neste trabalho: a topologia reduzida de três nós não excede o
+\emph{cache} de \emph{peers}, não acionando a substituição por LRU, e a
+seleção de rota em um único salto não distingue a métrica híbrida da
+contagem de saltos. Assim, tais mecanismos permanecem implementados,
+porém não avaliados experimentalmente, constituindo objeto de trabalhos
+futuros de validação em topologias mais densas.
 
 As principais limitações do estudo são: (i) a amostragem reduzida ---
 seis repetições em um único cenário (C1-3n), aquém das trinta repetições

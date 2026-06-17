@@ -1,7 +1,7 @@
 % -----------------------------------------------------------------------------
 % Conteudo AODV-EN. Template base: Prof. Wesley Pacheco Calixto (IFG).
 % -----------------------------------------------------------------------------
-\chapter{CONCLUSÃO}
+\chapter{CONCLUSÃO}\label{cap:conclusao}
 
 Este trabalho propôs, implementou e avaliou o AODV-EN, uma adaptação do protocolo
 AODV (RFC 3561) para redes mesh multi-hop construídas sobre o protocolo ESP-NOW em
@@ -15,9 +15,10 @@ Quanto ao objetivo geral, o trabalho demonstrou a viabilidade de prover roteamen
 multi-hop sobre o ESP-NOW por meio de uma adaptação fiel do AODV, contornando a
 ausência de roteamento nativo, o limite de \emph{peers} e as restrições de difusão do
 protocolo. Em relação aos objetivos específicos, foram analisadas as limitações
-técnicas do ESP-NOW (Capítulo 2), projetadas e implementadas as adaptações necessárias
-(Capítulo 4), e avaliado o desempenho do algoritmo frente a um algoritmo de
-referência baseado em \emph{flooding} (Capítulo 5).
+técnicas do ESP-NOW (Capítulo~\ref{cap:referencial}), projetadas e implementadas as
+adaptações necessárias (Capítulo~\ref{cap:implementacao}), e avaliado o desempenho do
+algoritmo frente a um algoritmo de referência baseado em \emph{flooding}
+(Capítulo~\ref{cap:resultados}).
 
 A avaliação experimental, conduzida no cenário reduzido C1-3n com seis repetições por
 algoritmo, indicou confiabilidade equivalente entre as abordagens (PDR de 98,93\% para
@@ -47,7 +48,7 @@ aquém das trinta repetições e dos cenários C2 a C4 planejados), a topologia 
 concentrador com aproximadamente um salto, a quantização da latência pelo laço da
 aplicação e o caráter estimado do consumo energético. As adaptações de gerenciamento de
 \emph{peers} por política LRU e de métrica híbrida (saltos combinados com RSSI)
-foram projetadas e implementadas no firmware (Capítulo 4); contudo, a campanha
+foram projetadas e implementadas no firmware (Capítulo~\ref{cap:implementacao}); contudo, a campanha
 experimental utilizou exclusivamente o núcleo reativo com métrica de contagem de
 saltos, de modo que a avaliação comparativa dessas extensões constitui trabalho futuro.
 
