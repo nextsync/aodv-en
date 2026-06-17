@@ -358,7 +358,8 @@ Por limitação de disponibilidade de hardware no período de coleta, apenas
 uma versão reduzida do cenário C1 --- denominada C1-3n, com três nós em
 concentrador e seis repetições por algoritmo --- foi executada em
 hardware real; os demais cenários foram avaliados por simulação
-(Capítulo 5, Seção 5.4).
+(Capítulo~\ref{cap:resultados}). O Quadro~\ref{quadro:cenarios} apresenta a
+configuração dos quatro cenários experimentais.
 
 {\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}
@@ -366,7 +367,7 @@ hardware real; os demais cenários foram avaliados por simulação
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
-\caption{Configuração dos cenários experimentais}\\
+\caption{Configuração dos cenários experimentais}\label{quadro:cenarios}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Cenário
@@ -413,12 +414,14 @@ o tempo de validade das rotas ativas. Para o Flooding, define-se o valor
 máximo de TTL, utilizado para limitar a propagação dos pacotes e evitar
 retransmissões indefinidas.
 
+O Quadro~\ref{quadro:params-exp} resume os parâmetros adotados nos experimentos.
+
 {\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}
   >{\centering\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\centering\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\centering\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
-\caption{Parâmetros dos experimentos}\\
+\caption{Parâmetros dos experimentos}\label{quadro:params-exp}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\centering
 Parâmetro
@@ -466,12 +469,14 @@ entrega dos pacotes; o NRL mede o overhead de controle introduzido pelo
 protocolo; e o consumo energético estimado permite analisar o impacto
 das transmissões sobre a autonomia dos dispositivos.
 
+O Quadro~\ref{quadro:metricas} sintetiza as métricas de avaliação de desempenho adotadas.
+
 {\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
-\caption{Métricas de avaliação de desempenho}\\
+\caption{Métricas de avaliação de desempenho}\label{quadro:metricas}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Métrica

@@ -149,12 +149,12 @@ _Capítulo bem organizado e de leitura fluida, com PT-BR formal correto e progre
 - **Problema:** As métricas que sustentam toda a avaliação experimental (PDR, NRL/Normalized Routing Load, latência fim-a-fim, consumo energético) não são definidas conceitualmente no referencial. PDR é usado de passagem (linha 239) como se já fosse conhecido. A literatura de métricas de roteamento (couto2003 ETX, draves2004, rfc6551, karlwillig2005, heinzelman2000) está toda relegada ao Cap. 4, deixando o Cap. 5 sem ancoragem teórica para os indicadores reportados.
 - **Correção:** Inserir uma seção/subseção 'Métricas de avaliação de protocolos de roteamento' definindo formalmente PDR, NRL, latência e modelo de energia, com as fontes já disponíveis (\cite{couto2003,draves2004,rfc6551,karlwillig2005,heinzelman2000}). Definir PDR antes de usá-lo na linha 239.
 
-### [ ] C2-017 · 🟠 ALTO · `abnt-formatacao`
+### [x] C2-017 · 🟠 ALTO · `abnt-formatacao`
 - **Local:** Linhas 38, 129, 481 (referências no texto) e tabelas longtable nas linhas 41-72, 104-123, 133-164, 201-227, 337-365, 485-505
 - **Problema:** As tabelas são referenciadas na prosa por número fixo ('O Quadro 1', 'O Quadro 3', 'O Quadro 6') em vez de \ref{}, e nenhuma das 6 tabelas possui \label. Se a numeração mudar (inserção/remoção de quadro ou pelo contador automático do \LTcaptype), o texto fica inconsistente. Pior: a numeração escrita já não bate — há 6 quadros, mas o texto pula para 'Quadro 3' e 'Quadro 6', sugerindo numeração manual frágil.
 - **Correção:** Adicionar \label{tab:...} a cada longtable e substituir os números fixos por '\ref{tab:...}' (ou 'o Quadro \ref{...}'). Garantir que o contador 'quadro' seja consistente em todo o documento.
 
-### [ ] C2-018 · 🟠 ALTO · `coesao`
+### [x] C2-018 · 🟠 ALTO · `coesao`
 - **Local:** Linhas 38, 129, 481 vs. os 6 quadros do capítulo
 - **Problema:** Três dos seis quadros nunca são referenciados na prosa: Quadro 2 (Especificações do ESP32, linha 106), Quadro 4 (Características do ESP-NOW, linha 205) e Quadro 5 (Comparativo de protocolos, linha 343). Em texto acadêmico ABNT, todo elemento flutuante deve ser chamado e comentado no corpo do texto; tabelas 'órfãs' são apontadas em banca.
 - **Correção:** Inserir frase de chamada para cada quadro não referenciado (ex.: 'A Tabela X sintetiza as especificações...', 'O Quadro Y compara as três categorias quanto a latência, overhead e memória'), idealmente com uma leitura interpretativa, não apenas 'ver Quadro X'.
@@ -589,12 +589,12 @@ _O texto tem boa redação acadêmica e estrutura de capítulos coerente, mas a 
 - **Problema:** 'OBJETIVO GERAL' e 'OBJETIVOS ESPECÍFICOS' estão marcados como \section, no mesmo nível hierárquico de 'OBJETIVOS' (L127, também \section). Logo, no sumário aparecerão como seções 1.1, 1.2 e 1.3 irmãs, quando deveriam ser subseções de OBJETIVOS (1.1.1 e 1.1.2). A hierarquia está achatada e incorreta.
 - **Correção:** Trocar os \section{OBJETIVO GERAL} e \section{OBJETIVOS ESPECÍFICOS} por \subsection. Verificar também se 'INTRODUÇÃO' deveria ter uma seção inicial sem título (contextualização) antes de 1.1 OBJETIVOS, conforme o template.
 
-### [ ] AB-084 · 🟠 ALTO · `abnt-formatacao`
+### [x] AB-084 · 🟠 ALTO · `abnt-formatacao`
 - **Local:** capitulo_2.tex (Quadros 2, 4, 5 = Especificações ESP32, Características ESP-NOW, Comparativo protocolos); capitulo_3.tex (Quadros 9, 10, 11 = Configuração cenários, Parâmetros experimentos, Métricas de avaliação)
 - **Problema:** Seis quadros nunca são citados pelo número no corpo do texto (não há 'Quadro 2', 'Quadro 4', 'Quadro 5', 'Quadro 9', 'Quadro 10', 'Quadro 11' em lugar nenhum). A ABNT exige que todo elemento flutuante seja referenciado/chamado no texto antes de aparecer. Atualmente esses floats 'flutuam' sem âncora textual.
 - **Correção:** Adicionar no parágrafo imediatamente anterior a cada um desses quadros uma frase de chamada do tipo 'O Quadro~\ref{quad:espec_esp32} apresenta...'. Isso resolve simultaneamente a chamada obrigatória e a numeração automática.
 
-### [ ] AB-085 · 🟠 ALTO · `abnt-formatacao`
+### [x] AB-085 · 🟠 ALTO · `abnt-formatacao`
 - **Local:** capitulo_3.tex L361 ('Capítulo 5, Seção 5.4'); capitulo_5.tex L26 ('Seção 6.4') e L240 ('Seção 6.11' — esta é da RFC, ok) e L258 ('descritas no Capítulo 5')
 - **Problema:** Referências cruzadas a seções/capítulos apontam para locais errados ou inexistentes. (a) cap.3 L361 manda o leitor à 'Seção 5.4' para a simulação, mas a análise por simulação está na Seção 5.4 do Capítulo 5 (Resultados) — ok em número mas o cap.5 L26 chama a mesma análise de 'Seção 6.4', que não existe (Capítulo 6 é a Conclusão, sem seções numeradas). (b) cap.5 L258 diz 'projetadas e descritas no Capítulo 5', mas o projeto/descrição das adaptações está no Capítulo 4 — o capítulo refere-se a si mesmo por engano. Há contradição interna sobre se a análise está no cap.5 ou cap.6.
 - **Correção:** Padronizar via \label nos títulos de capítulo/seção e \ref/\autoref nas menções. Corrigir 'Seção 6.4' → \ref da seção de escalabilidade do cap.5; corrigir 'descritas no Capítulo 5' → 'Capítulo 4'. Revisar todas as menções 'Seção 4.4'/'Seção 3.4' (cap.3 L318 cita 'Seção 3.4' que é a própria — ok, mas use \ref).
