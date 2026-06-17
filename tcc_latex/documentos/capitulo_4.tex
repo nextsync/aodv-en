@@ -21,7 +21,7 @@ integração, núcleo do protocolo, adaptador de transporte e meio de
 comunicação ESP-NOW. Essa separação reduz o acoplamento entre os
 componentes, favorece a manutenção do código e permite a evolução
 incremental do artefato sem comprometer o funcionamento global da
-solução. A Figura 3 apresenta a organização geral da arquitetura
+solução. A Figura~\ref{fig:arquitetura} apresenta a organização geral da arquitetura
 proposta, evidenciando o fluxo de interação entre as camadas
 responsáveis pela aplicação, pela interface pública da pilha, pelo
 núcleo do protocolo, pelo adaptador de transporte e pelo meio de
@@ -63,7 +63,7 @@ comunicação ESP-NOW.
 \draw[darr] (adapt)--(radio);
 \end{tikzpicture}
 }
-\caption{Arquitetura geral do AODV-EN}
+\caption{Arquitetura geral do AODV-EN}\label{fig:arquitetura}
 \end{figure}
 A camada de aplicação é responsável por acionar o envio de dados e
 registrar eventos de execução. A interface pública disponibiliza as
@@ -222,7 +222,7 @@ recepção, atualização temporal e consulta de estatísticas. O núcleo de
 roteamento coordena os processos de descoberta de rotas, encaminhamento
 de dados, manutenção de estados e tratamento de mensagens. As estruturas
 auxiliares mantêm informações de rotas, vizinhos, requisições já
-processadas, pares de comunicação e endereços MAC. A Figura 4 apresenta
+processadas, pares de comunicação e endereços MAC. A Figura~\ref{fig:estrutura-modular} apresenta
 essa organização em forma de pseudocódigo arquitetural, sem depender dos
 nomes físicos dos arquivos do firmware.
 \begin{figure}[H]
@@ -262,7 +262,7 @@ nomes físicos dos arquivos do firmware.
 \draw[arr] (esp)--(hw);
 \end{tikzpicture}
 }
-\caption{Estrutura modular da implementação do AODV-EN}
+\caption{Estrutura modular da implementação do AODV-EN}\label{fig:estrutura-modular}
 \end{figure}
 \section{Estruturas de Dados
 Utilizadas}\label{estruturas-de-dados-utilizadas}
@@ -272,14 +272,14 @@ limitações de memória do ambiente embarcado e a necessidade de
 atualização em tempo real das informações de roteamento. Essas
 estruturas armazenam o estado local de cada nó e permitem a execução dos
 mecanismos de descoberta, seleção, manutenção e invalidação de rotas. O
-Quadro 12 apresenta uma síntese das principais estruturas utilizadas na
+Quadro~\ref{quad:estruturas-dados} apresenta uma síntese das principais estruturas utilizadas na
 implementação do AODV-EN e sua função no funcionamento do protocolo.
 {\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
-\caption{Estruturas de dados utilizadas no AODV-EN}\\
+\caption{Estruturas de dados utilizadas no AODV-EN}\label{quad:estruturas-dados}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Estrutura
@@ -385,7 +385,7 @@ quanto ao uso de requisições de rota, respostas de rota e mensagens de
 erro. Entretanto, foram incorporadas adaptações necessárias ao contexto
 do ESP-NOW, como o uso de endereçamento por MAC, limitação de tamanho de
 payload, controle de TTL e suporte à confirmação em nível de aplicação.
-O Quadro 13 apresenta uma síntese das mensagens utilizadas pelo AODV-EN
+O Quadro~\ref{quad:mensagens} apresenta uma síntese das mensagens utilizadas pelo AODV-EN
 e suas respectivas funções no protocolo.
 
 {\def\LTcaptype{quadro}
@@ -394,7 +394,7 @@ e suas respectivas funções no protocolo.
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
-\caption{Mensagens utilizadas pelo AODV-EN}\\
+\caption{Mensagens utilizadas pelo AODV-EN}\label{quad:mensagens}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Mensagem
@@ -481,7 +481,7 @@ possua rota válida para ele, é gerada uma mensagem RREP. Essa resposta
 retorna em unicast pelo caminho reverso previamente estabelecido,
 permitindo que os nós intermediários atualizem suas rotas diretas até o
 destino. Ao receber o RREP, a origem passa a possuir uma rota válida e
-pode iniciar o envio dos dados pendentes. A Figura 5 apresenta o fluxo
+pode iniciar o envio dos dados pendentes. A Figura~\ref{fig:descoberta} apresenta o fluxo
 de descoberta de rotas no AODV-EN, destacando a propagação da mensagem
 RREQ e o retorno da mensagem RREP pelo caminho reverso.
 \begin{figure}[H]
@@ -518,7 +518,7 @@ RREQ e o retorno da mensagem RREP pelo caminho reverso.
 \draw[->, >=Stealth, thick, dashed, blue!60] (\xI,-7.4) -- (\xO,-7.4) node[midway, above, align=center, font=\scriptsize, blue!70] {Encaminha RREP\\pelo caminho reverso};
 \node[align=center, font=\scriptsize, text width=2.6cm] at (\xO,-8.2) {Atualiza rota direta\\para o destino};
 \end{tikzpicture}
-\caption{Fluxo de descoberta de rotas no AODV-EN}
+\caption{Fluxo de descoberta de rotas no AODV-EN}\label{fig:descoberta}
 \end{figure}
 \subsection{Encaminhamento de Dados}\label{encaminhamento-de-dados}
 
@@ -575,7 +575,7 @@ de RREQ. Esse mecanismo permite que o AODV-EN reaja dinamicamente a
 alterações na topologia da rede, buscando restabelecer a comunicação por
 rotas alternativas quando disponíveis. Dessa forma, o tratamento de
 falhas contribui para a capacidade de auto-recuperação da rede mesh. A
-Figura 6 apresenta o fluxo de tratamento de falhas e reconvergência do
+Figura~\ref{fig:falhas} apresenta o fluxo de tratamento de falhas e reconvergência do
 AODV-EN, desde a detecção da falha até a tentativa de restabelecimento
 da comunicação.
 \begin{figure}[H]
@@ -614,7 +614,7 @@ da comunicação.
 \draw[arr] (upd)--(res);
 \draw[arr] (res)--(end);
 \end{tikzpicture}
-\caption{Fluxo de tratamento de falhas e reconvergência no AODV-EN}
+\caption{Fluxo de tratamento de falhas e reconvergência no AODV-EN}\label{fig:falhas}
 \end{figure}
 \section{Adaptações do AODV para ESP-NOW}\label{adaptacoes-do-aodv-para-esp-now}
 
@@ -629,14 +629,14 @@ forma, o AODV-EN preserva os princípios fundamentais do AODV, como
 descoberta de rotas sob demanda, uso de mensagens de controle,
 manutenção de tabelas de roteamento e tratamento de falhas, mas
 incorpora mecanismos específicos para viabilizar sua execução em
-dispositivos ESP32 utilizando ESP-NOW. O Quadro 14 sintetiza as
+dispositivos ESP32 utilizando ESP-NOW. O Quadro~\ref{quad:adaptacoes} sintetiza as
 principais adaptações realizadas no AODV-EN em relação ao AODV original.
 {\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
-\caption{Principais adaptações do AODV para o contexto do ESP-NOW}\\
+\caption{Principais adaptações do AODV para o contexto do ESP-NOW}\label{quad:adaptacoes}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Aspecto
