@@ -225,12 +225,12 @@ _Capítulo metodologicamente bem estruturado e com escrita academica em geral cl
 - **Problema:** O quadro declara 30 repeticoes por cenario e a Secao 3.5 (linha 507-508) promete media, desvio padrao e IC95, mas o restante do proprio capitulo (linhas 318-319, 358-360) e o Capitulo 5 (linhas 23, 263) afirmam que apenas 6 repeticoes foram efetivamente executadas, em um unico cenario reduzido, sem IC95 reportado. Ha contradicao direta entre o parametro planejado e o que foi feito, e uma promessa estatistica (IC95) nao cumprida.
 - **Correção:** Reconciliar o planejado com o executado: ou (a) manter 30 como meta de planejamento, mas adicionar nota explicita no quadro/texto deixando claro que a campanha real teve 6 repeticoes por limitacao de hardware, com remissao a Secao/Capitulo onde isso e tratado; ou (b) ajustar o valor. Em qualquer caso, alinhar a promessa de IC95 da Secao 3.5 com o que o Cap. 5 realmente entrega (se nao houver IC95 calculado, reformular para 'media e desvio padrao', justificando a ausencia de IC por n pequeno).
 
-### [ ] C3-029 · 🟠 ALTO · `coerencia`
+### [x] C3-029 · 🟠 ALTO · `coerencia`
 - **Local:** Secoes 3.5 (Metricas), 3.6 (Flooding) e 3.7 (Coleta e Analise) — verbos no futuro: 'sera realizada' (l.458), 'sera implementado' (l.514), 'serao coletados' (l.564), 'serao calculados' (l.507), 'permitira' (l.555/627)
 - **Problema:** Inconsistencia de tempo verbal dentro do mesmo capitulo. As Fases 1-5 (3.3.1-3.3.5) estao no passado ('foi realizado', 'correspondeu', 'deu continuidade', 'materializando'), descrevendo trabalho concluido, mas tres secoes inteiras estao no futuro, como se o experimento ainda nao tivesse ocorrido — quando o Capitulo 5 ja apresenta os resultados. Isso confunde o leitor sobre o que foi planejado versus realizado e soa como capitulo escrito antes da execucao e nao revisado.
 - **Correção:** Padronizar o tempo verbal de todo o capitulo. Como o trabalho ja foi executado, converter para passado/presente de descricao metodologica: 'A avaliacao foi realizada por meio de...', 'foi implementado um algoritmo de referencia...', 'os dados foram coletados...'. Manter coerencia com o tom retrospectivo das Fases.
 
-### [ ] C3-030 · 🟠 ALTO · `abnt-formatacao`
+### [x] C3-030 · 🟠 ALTO · `abnt-formatacao`
 - **Local:** Todo o capitulo — 'Quadro 7' (l.78), 'Quadro 8' (l.156), 'Figura 1' (l.208), 'Figura 2' (l.621), 'Secao 3.4' (l.318), 'Capitulo 5, Secao 5.4' (l.361)
 - **Problema:** Todas as referencias a quadros, figuras, secoes e capitulos usam numeros fixos digitados manualmente, sem \label/\ref. Os quadros usam \caption mas nenhum tem \label, e nenhum numero e gerado automaticamente. Qualquer insercao/remocao de um quadro ou figura quebra silenciosamente toda a numeracao e as remissoes, alem de tornar a citacao 'Capitulo 5, Secao 5.4' fragil a reorganizacao.
 - **Correção:** Adicionar \label{quad:dsr-etapas}, \label{fig:fluxo-metodologico} etc. a cada elemento flutuante e a cada \section/\subsection, e substituir os numeros literais por \ref{}/\autoref{}. Conferir que a numeracao gerada de fato corresponde (o 'Quadro 7' sugere que ha 6 quadros em capitulos anteriores — confirmar continuidade).
@@ -295,7 +295,7 @@ _Capítulo tecnicamente sólido e bem escrito, com registro acadêmico formal ad
 
 **Problemas:**
 
-### [ ] C4-040 · 🟠 ALTO · `abnt-formatacao`
+### [x] C4-040 · 🟠 ALTO · `abnt-formatacao`
 - **Local:** Todo o capítulo — linhas 24, 225, 275, 388, 484, 578, 632 ("Figura 3", "Figura 4", "Quadro 12", "Quadro 13", "Figura 5", "Figura 6", "Quadro 14")
 - **Problema:** Todas as referências cruzadas a figuras e quadros usam números fixos digitados manualmente, enquanto as equações usam \ref corretamente (linhas 147, 156, 169). Além de inconsistente, isso quase garante numeração errada na versão final: as figuras nem têm \label, e qualquer inserção de figura/quadro em capítulos anteriores desalinha todas as chamadas. O "Figura 3/4/5/6" e "Quadro 12/13/14" sugerem numeração global manual que não acompanha o LaTeX.
 - **Correção:** Adicionar \label{fig:...} em cada \caption de figura e quadro e trocar todas as menções por \ref (ex.: "A Figura~\ref{fig:arquitetura} apresenta..."). Usar \autoref ou o padrão já adotado nas equações para uniformizar. Nunca digitar o número.
@@ -370,12 +370,12 @@ _Capítulo bem estruturado e, no geral, bem escrito: a sequência (ambiente/vali
 - **Problema:** Ambas as referências cruzadas estão incorretas para a numeração real. O planejamento experimental está em capitulo_3.tex (Capítulo 3 — METODOLOGIA, seção 'Planejamento Experimental'), não na 'Seção 4.4'. A análise por simulação é a Seção 5.4 deste próprio capítulo (não 'Seção 6.4'). Referências erradas a seções comprometem a navegação e a credibilidade do trabalho perante a banca.
 - **Correção:** Substituir por \ref a labels reais: o planejamento aponta para o Capítulo 3 (METODOLOGIA / Planejamento Experimental) e a simulação aponta para a Seção 5.4 (\ref{anuxe1lise-de-escalabilidade-por-simulauxe7uxe3o}). Eliminar todos os números de seção digitados à mão.
 
-### [ ] C5-052 · 🟠 ALTO · `abnt-formatacao`
+### [x] C5-052 · 🟠 ALTO · `abnt-formatacao`
 - **Local:** Todo o capítulo: 'Quadro 15' (l.57/71), 'Tabela 1' (l.107/112), 'Figura 8/9/10/11' (l.128, 138, 173, 206)
 - **Problema:** Numeração de quadros, tabelas e figuras digitada manualmente, sem \label/\ref. Há ainda incoerência de esquema: convivem 'Quadro 15' e 'Tabela 1' (numerações de partida totalmente distintas) e a ABNT pede tratamento consistente de quadros vs. tabelas. Qualquer reordenação quebra a numeração; e 'Quadro 15' sugere continuidade de outros capítulos enquanto 'Tabela 1' reinicia, o que confunde o leitor.
 - **Correção:** Atribuir \caption + \label a cada flutuante e referenciá-los no texto com \ref (ex.: 'O Quadro~\ref{quad:ledger} apresenta...'). Padronizar a decisão Quadro vs. Tabela e deixar o LaTeX numerar automaticamente.
 
-### [ ] C5-053 · 🟠 ALTO · `escrita`
+### [x] C5-053 · 🟠 ALTO · `escrita`
 - **Local:** Seção 5.3 (Latência), l.170 'confirmações (ACK) flodadas de volta'; Seção 5.4 (Energia), l.194 'cada disseminação é re-flodada por todos os nós'
 - **Problema:** 'flodadas' e 're-flodada' são neologismos/aportuguesamentos informais de 'flood', inadequados ao registro acadêmico formal PT-BR. Comprometem o tom científico do capítulo.
 - **Correção:** Substituir por construções formais: 'confirmações (ACK) disseminadas de volta por flooding' e 'cada disseminação é retransmitida por todos os nós (re-inundação)' ou 'redisseminada por flooding'. Manter 'flooding' em itálico como termo técnico, sem conjugá-lo em português.
@@ -599,7 +599,7 @@ _O texto tem boa redação acadêmica e estrutura de capítulos coerente, mas a 
 - **Problema:** Referências cruzadas a seções/capítulos apontam para locais errados ou inexistentes. (a) cap.3 L361 manda o leitor à 'Seção 5.4' para a simulação, mas a análise por simulação está na Seção 5.4 do Capítulo 5 (Resultados) — ok em número mas o cap.5 L26 chama a mesma análise de 'Seção 6.4', que não existe (Capítulo 6 é a Conclusão, sem seções numeradas). (b) cap.5 L258 diz 'projetadas e descritas no Capítulo 5', mas o projeto/descrição das adaptações está no Capítulo 4 — o capítulo refere-se a si mesmo por engano. Há contradição interna sobre se a análise está no cap.5 ou cap.6.
 - **Correção:** Padronizar via \label nos títulos de capítulo/seção e \ref/\autoref nas menções. Corrigir 'Seção 6.4' → \ref da seção de escalabilidade do cap.5; corrigir 'descritas no Capítulo 5' → 'Capítulo 4'. Revisar todas as menções 'Seção 4.4'/'Seção 3.4' (cap.3 L318 cita 'Seção 3.4' que é a própria — ok, mas use \ref).
 
-### [ ] AB-086 · 🟠 ALTO · `referencia`
+### [x] AB-086 · 🟠 ALTO · `referencia`
 - **Local:** capitulo_3.tex, linha 26
 - **Problema:** A citação de Gil é feita em texto corrido manualmente como '(GIL, 2017)', fora do mecanismo abntex2cite. A chave gil2017 EXISTE no referencias.bib mas não é usada por \cite em lugar nenhum — ou seja, a referência não entrará na lista de Referências e o formato '(GIL, 2017)' não seguirá o estilo abntex2-alf do resto do documento.
 - **Correção:** Substituir '(GIL, 2017)' por '\cite{gil2017}'. Conferir que a entrada apareça na lista final. Fazer varredura por outras citações digitadas à mão.
@@ -713,7 +713,7 @@ _A redação tem boa base técnica e registro formal predominante, mas há padr�
 
 **Problemas:**
 
-### [ ] PT-103 · 🟠 ALTO · `abnt-formatacao`
+### [x] PT-103 · 🟠 ALTO · `abnt-formatacao`
 - **Local:** capitulo_4.tex, linhas 24, 225, 275, 388, 484, 578, 632 ("A Figura 3", "A Figura 4", "Quadro 12", "Quadro 13", "Figura 5", "Figura 6", "Quadro 14") e capitulo_6.tex linhas 18-20, 50 ("Capítulo 2", "Capítulo 4", "Capítulo 5")
 - **Problema:** Numeração de figuras, quadros e capítulos está escrita manualmente (hardcoded) no texto, em vez de usar referências automáticas \ref/\autoref. As figuras do cap. 4 sequer têm \label, e os números fixos (3, 4, 12, 13, 14) quase certamente ficarão incorretos quando o documento for recompilado ou reordenado — risco real de o texto citar "Figura 3" enquanto a numeração automática gera outro número. É um defeito de formatação ABNT/LaTeX que compromete a integridade das remissões.
 - **Correção:** Adicionar \label{fig:arquitetura}, \label{fig:modular} etc. a cada \caption e substituir todas as menções por \autoref{...} ou "Figura~\ref{...}". O mesmo para os \chapter dos capítulos 2, 4 e 5 referenciados na conclusão.

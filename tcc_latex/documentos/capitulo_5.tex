@@ -168,7 +168,7 @@ estável (60,0 ms, sem dispersão), enquanto o \emph{flooding} variou de
 61,9 a 100,0 ms (média 83,6 ms; desvio padrão 16,5 ms). A estabilidade
 do AODV-EN decorre do uso de uma rota fixa após a descoberta; a
 dispersão do \emph{flooding} reflete a ausência de confirmação de enlace
---- sem retransmissão automática, parte das confirmações (ACK) flodadas
+--- sem retransmissão automática, parte das confirmações (ACK) difundidas
 de volta apenas se completa pela retransmissão seguinte ou retorna por
 um caminho de dois saltos. Os valores são quantizados pelo laço de 100
 ms da aplicação. A Figura~\ref{fig:latency-seeds} evidencia essa diferença de dispersão entre
@@ -192,8 +192,8 @@ energético.
 simétrica, o \emph{flooding} apresentou consumo aproximadamente 21\%
 superior ao do AODV-EN (12,66 J contra 10,45 J), e o contraste mais
 expressivo manifesta-se nas recepções: 1.066 contra 564 quadros
-agregados na rede (fator de 1,89). Cada disseminação é re-flodada por
-todos os nós, e cada quadro no ar é recebido por todos os vizinhos ao
+agregados na rede (fator de 1,89). Cada disseminação é retransmitida por
+inundação por todos os nós, e cada quadro no ar é recebido por todos os vizinhos ao
 alcance --- no concentrador de três nós, a razão entre recepções e
 transmissões do \emph{flooding} é de 1,98, exatamente os dois vizinhos
 que escutam cada \emph{broadcast}. Trata-se do custo estrutural do

@@ -23,7 +23,7 @@ ausência de suporte nativo a roteamento multi-hop no protocolo ESP-NOW.
 Diferentemente da pesquisa básica, que busca ampliar o conhecimento
 teórico sem preocupação imediata com aplicação, a pesquisa aplicada
 objetiva gerar conhecimento para aplicação prática dirigida à solução de
-problemas específicos (GIL, 2017). Quanto aos procedimentos técnicos, a
+problemas específicos \cite{gil2017}. Quanto aos procedimentos técnicos, a
 pesquisa é caracterizada como experimental, uma vez que envolve a
 implementação de um protótipo funcional (o algoritmo AODV-EN) e a
 realização de testes controlados em ambiente de laboratório. A
@@ -205,7 +205,7 @@ Análise de resultados • Conclusões • Documento final \\
 
 Fonte: Elaborado pelos autores.
 
-A Figura 1 apresenta, de forma sintética, o fluxo metodológico adotado
+A Figura~\ref{fig:fluxo-metodologico} apresenta, de forma sintética, o fluxo metodológico adotado
 nesta pesquisa, evidenciando a relação entre o problema investigado, a
 abordagem Design Science Research, as fases do trabalho e a etapa de
 avaliação experimental. A representação contribui para visualizar a
@@ -243,7 +243,7 @@ sequência lógica das atividades desenvolvidas ao longo da pesquisa.
 \draw[darr] (f4.east)--(dsr3.west);
 \draw[darr] (f5.east)--(dsr4.west);
 \end{tikzpicture}
-\caption{Fluxo metodológico da pesquisa}
+\caption{Fluxo metodológico da pesquisa}\label{fig:fluxo-metodologico}
 \end{figure}
 
 \subsection{Fase 1: Revisão
@@ -455,7 +455,7 @@ transitórias em redes embarcadas de baixo custo.
 
 \section{Métricas de Avaliação}\label{muxe9tricas-de-avaliauxe7uxe3o}
 
-A avaliação do desempenho do algoritmo AODV-EN será realizada por meio
+A avaliação do desempenho do algoritmo AODV-EN é realizada por meio
 de quatro métricas complementares: Packet Delivery Ratio (PDR), latência
 fim-a-fim, Normalized Routing Load (NRL) e consumo energético estimado.
 Essas métricas foram selecionadas por sua recorrência na literatura de
@@ -504,14 +504,14 @@ t\_idle × P\_idle) \\
 
 Fonte: Elaborado pelos autores.
 
-Para cada métrica, serão calculados: média aritmética, desvio padrão e
-intervalo de confiança de 95\%. Os resultados serão apresentados em
+Para cada métrica, são calculados: média aritmética, desvio padrão e
+intervalo de confiança de 95\%. Os resultados são apresentados em
 tabelas e gráficos comparativos entre AODV-EN e Flooding.
 
 \section{Algoritmo de Referência para Comparação:
 Flooding}\label{algoritmo-de-referuxeancia-para-comparauxe7uxe3o-flooding}
 
-Para estabelecer uma base de comparação experimental, será implementado
+Para estabelecer uma base de comparação experimental, implementou-se
 um algoritmo de referência baseado em Flooding sobre ESP-NOW. O Flooding
 é a abordagem mais básica para disseminação de mensagens em redes sem
 infraestrutura, consistindo na retransmissão de cada pacote recebido
@@ -520,7 +520,7 @@ para todos os vizinhos, exceto aquele de quem o pacote foi recebido.
 \subsection{Especificação do algoritmo
 Flooding}\label{especificauxe7uxe3o-do-algoritmo-flooding}
 
-O algoritmo de referência baseado em Flooding será implementado com as
+O algoritmo de referência baseado em Flooding foi implementado com as
 seguintes características: a) \textbf{Estrutura do pacote}: cada pacote
 contém identificador único (origem + número de sequência), endereço de
 origem, endereço de destino, TTL (Time-To-Live) e payload de dados; b)
@@ -552,7 +552,7 @@ eficiência, permitindo quantificar os ganhos obtidos pelo roteamento
 inteligente do AODV-EN; d) \textbf{Ausência de estado}: não requer
 tabelas de roteamento ou manutenção de rotas, isolando o impacto desses
 mecanismos no AODV-EN. A comparação entre o AODV-EN e o Flooding
-permitirá avaliar a relação entre complexidade de implementação e
+permite avaliar a relação entre complexidade de implementação e
 eficiência de comunicação. Embora o AODV-EN apresente maior complexidade
 por envolver descoberta e manutenção de rotas, espera-se que ele
 proporcione menor carga de controle, menor consumo energético estimado e
@@ -561,7 +561,7 @@ desempenho comparável em termos de taxa de entrega de pacotes.
 \section{Coleta e Análise dos
 Dados}\label{coleta-e-anuxe1lise-dos-dados}
 
-Os dados experimentais serão coletados a partir dos registros gerados
+Os dados experimentais são coletados a partir dos registros gerados
 durante a execução dos cenários de teste. Esses registros incluirão
 informações sobre pacotes enviados, pacotes recebidos, mensagens de
 controle, eventos de retransmissão, falhas de comunicação, atualizações
@@ -616,25 +616,25 @@ de rota e tempos de envio e recepção.
 \draw[larr] (r4.east) -- (c1.west);
 \end{tikzpicture}
 }
-\caption{Fluxo de execução dos experimentos e análise dos dados}
+\caption{Fluxo de execução dos experimentos e análise dos dados}\label{fig:fluxo-execucao}
 \end{figure}
-A Figura 2 sintetiza o fluxo de execução dos experimentos e de
+A Figura~\ref{fig:fluxo-execucao} sintetiza o fluxo de execução dos experimentos e de
 tratamento dos dados, desde a configuração do ambiente experimental até
 a comparação dos resultados obtidos para o AODV-EN e o algoritmo de
 referência baseado em Flooding. Para garantir a rastreabilidade dos
-experimentos, cada execução deverá ser identificada pelo cenário
+experimentos, cada execução é identificada pelo cenário
 avaliado, algoritmo utilizado, número da repetição, configuração dos nós
-e arquivos de log correspondentes. Essa organização permitirá relacionar
+e arquivos de log correspondentes. Essa organização permite relacionar
 os resultados obtidos às condições específicas de cada execução
-experimental. Após a coleta, os dados serão organizados em tabelas e
+experimental. Após a coleta, os dados são organizados em tabelas e
 submetidos à análise estatística descritiva, considerando média, desvio
 padrão e intervalo de confiança de 95\% para cada métrica avaliada. A
-análise será realizada por cenário e por algoritmo, possibilitando a
+análise é realizada por cenário e por algoritmo, possibilitando a
 comparação direta entre os resultados do AODV-EN e do algoritmo de
 referência baseado em Flooding. Execuções com falhas de instrumentação,
 perda de registros, reinicialização inesperada dos dispositivos ou
-divergência de configuração serão desconsideradas e repetidas, a fim de
+divergência de configuração são desconsideradas e repetidas, a fim de
 preservar a consistência dos dados analisados. A partir dos resultados
-consolidados, será avaliado se o AODV-EN, apresenta ganhos em eficiência
+consolidados, avalia-se se o AODV-EN apresenta ganhos em eficiência
 de comunicação, mantendo desempenho compatível em termos de
 confiabilidade e latência.
