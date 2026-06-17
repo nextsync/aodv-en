@@ -546,9 +546,12 @@ referência}\label{justificativa-da-escolha-do-flooding-como-algoritmo-de-referu
 A escolha do Flooding como algoritmo de comparação justifica-se por: a)
 \textbf{Simplicidade}: é o algoritmo mais simples possível para
 comunicação multi-hop, servindo como limite inferior de complexidade de
-implementação; b) \textbf{Garantia de entrega}: em redes conectadas, o
-Flooding garante que o pacote alcançará o destino (se existir caminho),
-servindo como referência de PDR máximo alcançável; c) \textbf{Overhead
+implementação; b) \textbf{Garantia de entrega}: em redes conectadas e na ausência de
+colisões e perdas, o Flooding tende a alcançar o destino sempre que
+existir caminho, servindo como referência de PDR máximo alcançável ---
+ressalvando-se que, sobre \emph{broadcast} sem confirmação de enlace, a
+redundância da inundação pode degradar-se pelo problema da tempestade de
+\emph{broadcast} em redes densas; c) \textbf{Overhead
 elevado}: o Flooding representa o extremo oposto em termos de
 eficiência, permitindo quantificar os ganhos obtidos pelo roteamento
 inteligente do AODV-EN; d) \textbf{Ausência de estado}: não requer
