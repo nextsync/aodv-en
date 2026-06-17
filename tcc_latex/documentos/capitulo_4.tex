@@ -269,6 +269,39 @@ nomes físicos dos arquivos do firmware.
 }
 \caption{Estrutura modular da implementação do AODV-EN}\label{fig:modular}
 \end{figure}
+
+No nível de código, o núcleo do protocolo é organizado em módulos de
+responsabilidade única, implementados como um componente reutilizável e
+independente do ESP-IDF. O Quadro~\ref{quadro:modulos} relaciona cada
+módulo à sua responsabilidade e ao arquivo correspondente, evidenciando
+o baixo acoplamento e a separação de interesses adotados.
+
+{\def\LTcaptype{quadro}
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.26}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.50}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.24}}@{}}
+\caption{Módulos do núcleo do AODV-EN, responsabilidades e arquivos}\label{quadro:modulos}\\
+\toprule\noalign{}
+Módulo & Responsabilidade & Arquivo \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Núcleo do nó & lógica do protocolo: descoberta, encaminhamento, manutenção e falhas & \texttt{aodv\_en\_node} \\
+Interface da pilha & fachada pública (inicialização, envio, recepção, \emph{tick}, métricas) & \texttt{aodv\_en} \\
+Tabela de rotas & entradas, estados, substituição e precursores & \texttt{aodv\_en\_routes} \\
+Tabela de vizinhos & HELLO, RSSI (EWMA) e expiração de vizinhança & \texttt{aodv\_en\_neighbors} \\
+\emph{Cache} de \emph{peers} & registros ESP-NOW com política LRU & \texttt{aodv\_en\_peers} \\
+\emph{Cache} de RREQ & deduplicação de requisições de rota & \texttt{aodv\_en\_rreq\_cache} \\
+Mensagens e tipos & formato das PDUs e estruturas de dados & \texttt{aodv\_en\_messages}, \texttt{aodv\_en\_types} \\
+Endereçamento & utilidades de manipulação de MAC & \texttt{aodv\_en\_mac} \\
+Adaptador & emissão/recepção sobre ESP-NOW (na aplicação) & \texttt{app\_demo} \\
+\end{longtable}
+}
+
+Fonte: Elaborado pelos autores.
+
 \section{Estruturas de Dados
 Utilizadas}\label{estruturas-de-dados-utilizadas}
 
