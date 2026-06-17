@@ -247,6 +247,58 @@ concentrador minúsculo, o AODV-EN já entrega latência mais previsível e
 menor consumo energético; a sua vantagem estrutural amplia-se à medida
 que a rede cresce em tamanho e diâmetro.
 
+\section{Comparação com Trabalhos Correlatos}\label{comparacao-literatura}
+
+A Tabela~\ref{tab:literatura} posiciona o AODV-EN frente a soluções
+representativas da literatura para comunicação sobre ESP-NOW. A comparação deve
+ser interpretada com cautela, pois as condições experimentais --- topologia,
+ambiente, distância e número de nós --- diferem entre os trabalhos; ainda assim,
+situa o desempenho do AODV-EN em ordem de grandeza compatível e evidencia seu
+diferencial de ser a única abordagem fundamentada em um protocolo de roteamento
+padronizado (AODV, RFC 3561).
+
+{\def\LTcaptype{table}
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2600}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.3200}}
+  >{\centering\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.1200}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.3000}}@{}}
+\caption{Comparação do AODV-EN com trabalhos correlatos sobre ESP-NOW}\label{tab:literatura}\\
+\toprule\noalign{}
+Trabalho & Base de roteamento & PDR & Latência / condição \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+Trabalho & Base de roteamento & PDR & Latência / condição \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+AODV-EN (este trabalho) & AODV reativo padronizado (RFC 3561), multi-hop & 98,93\% & $\approx$60~ms\textsuperscript{a}; 3 nós (1 salto em hardware; multi-hop por simulação) \\
+BRAM-NOW \cite{cujilema2023} & Mesh \emph{ad-hoc} não padronizado & $\approx$90,8\%\textsuperscript{b} & 75~ms; residencial, multi-hop \\
+ESP-NOW base \cite{becker2025} & Ponto-a-ponto (sem roteamento) & $>$99\% & 2,8~ms/salto; campo aberto, linha de visada \\
+\end{longtable}
+}
+
+Fonte: Elaborado pelos autores.
+
+\noindent\footnotesize\textsuperscript{a}Latência quantizada pelo laço de 100~ms
+da aplicação, refletindo o tempo de amostragem do \emph{firmware} e não a latência
+de propagação do meio (ver Seção~\ref{escopo-implementado-e-limitauxe7uxf5es}).
+\textsuperscript{b}Complemento da taxa de perda de 9,25\% reportada pelos autores.
+\normalsize
+
+No regime avaliado, o AODV-EN apresentou confiabilidade superior à do BRAM-NOW
+(98,93\% contra $\approx$90,8\%), mantendo latência da mesma ordem de grandeza,
+porém sob topologia controlada de um salto --- a avaliação multi-hop em maior
+escala foi conduzida por simulação
+(Seção~\ref{anuxe1lise-de-escalabilidade-por-simulauxe7uxe3o}). Frente ao ESP-NOW
+puro \cite{becker2025}, o custo adicional de latência decorre do plano de
+roteamento e da amostragem da aplicação, e não do meio físico. O principal
+diferencial do AODV-EN é apoiar-se em um protocolo padronizado e amplamente
+documentado, propriedade ausente nas soluções \emph{ad-hoc} correlatas, o que
+favorece reprodutibilidade, comparabilidade e extensões futuras.
+
 \section{Conformidade com a RFC 3561}\label{conformidade-com-a-rfc-3561}
 
 Ao longo do desenvolvimento, o núcleo do protocolo foi submetido a uma
