@@ -305,7 +305,7 @@ Permite operar dentro das limitações de peers simultâneos do ESP-NOW \\
 \end{longtable}
 }
 
-\textbf{Fonte: Elaborado pelos autores.}
+Fonte: Elaborado pelos autores.
 
 \subsection{Tabela de Rotas}\label{tabela-de-rotas}
 
@@ -424,7 +424,7 @@ verificação de entrega e o cálculo de métricas de confiabilidade \\
 \end{longtable}
 }
 
-\textbf{Fonte: Elaborado pelos autores.}
+Fonte: Elaborado pelos autores.
 
 As mensagens RREQ, RREP e RERR compõem o núcleo do mecanismo de
 roteamento reativo do AODV-EN. A mensagem RREQ é utilizada quando a
@@ -476,9 +476,12 @@ se a requisição já foi processada anteriormente. Caso seja uma
 requisição duplicada, ela é descartada. Caso contrário, o nó registra ou
 atualiza uma rota reversa para a origem, incrementa o contador de saltos
 e retransmite a requisição conforme a política de disseminação
-configurada. Quando a mensagem RREQ alcança o destino, ou um nó que
-possua rota válida para ele, é gerada uma mensagem RREP. Essa resposta
-retorna em unicast pelo caminho reverso previamente estabelecido,
+configurada. Quando a mensagem RREQ alcança o nó de destino, este gera
+uma mensagem RREP. Na implementação atual, apenas o destino responde à
+requisição; a resposta antecipada por nó intermediário com rota válida
+(\emph{intermediate route reply}), prevista pela RFC 3561, não é
+utilizada, de modo que toda descoberta percorre o caminho completo até o
+destino. Essa resposta retorna em unicast pelo caminho reverso previamente estabelecido,
 permitindo que os nós intermediários atualizem suas rotas diretas até o
 destino. Ao receber o RREP, a origem passa a possuir uma rota válida e
 pode iniciar o envio dos dados pendentes. A Figura~\ref{fig:descoberta} apresenta o fluxo
@@ -664,7 +667,7 @@ Mantém RERR, invalidação de rotas e redescoberta adaptada ao ESP-NOW \\
 \end{longtable}
 }
 
-\textbf{Fonte: Elaborado pelos autores.}
+Fonte: Elaborado pelos autores.
 
 \subsection{Endereçamento por MAC}\label{endereuxe7amento-por-mac}
 
