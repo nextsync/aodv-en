@@ -35,14 +35,14 @@ tipicamente dispositivos de recursos limitados, com restrições de
 processamento, memória, energia e largura de banda de comunicação. O
 projeto de WSNs deve considerar um conjunto de requisitos críticos que
 influenciam diretamente a viabilidade e eficácia das aplicações. O
-Quadro 1 sintetiza os principais requisitos e suas implicações para o
+Quadro~\ref{quad:requisitos-rssf} sintetiza os principais requisitos e suas implicações para o
 projeto de redes de sensores.
 
 {\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}
   >{\centering\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
   >{\centering\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}@{}}
-\caption{Requisitos críticos para projeto de Redes de Sensores Sem Fio}\\
+\caption{Requisitos críticos para projeto de Redes de Sensores Sem Fio}\label{quad:requisitos-rssf}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\centering
 Requisito
@@ -72,7 +72,7 @@ ou na composição da rede. \\
 \end{longtable}
 }
 
-Fonte: Adaptado de Priyadarshi et al.~(2025) e Chai e Zeng (2021).
+Fonte: Adaptado de \citeonline{priyadarshi2025} e \citeonline{chaizeng2021}.
 
 A comunicação sem fio é o componente de maior consumo energético em um
 nó sensor típico, podendo representar até 70\% do consumo total do
@@ -99,11 +99,11 @@ SoC integra interfaces Wi-Fi 802.11 b/g/n e Bluetooth 4.2 (incluindo
 BLE), além de um amplo conjunto de periféricos como conversores
 analógico-digitais (ADC), conversores digital-analógicos (DAC),
 interfaces SPI, I²C, I²S, UART, PWM, sensores de toque capacitivo e
-sensor de efeito Hall.
+sensor de efeito Hall. O Quadro~\ref{quad:esp32-specs} sintetiza as principais especificações técnicas do dispositivo.
 
 {\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}cl@{}}
-\caption{Especificações técnicas do microcontrolador ESP32}\\
+\caption{Especificações técnicas do microcontrolador ESP32}\label{quad:esp32-specs}\\
 \toprule\noalign{}
 Característica & Especificação \\
 \midrule\noalign{}
@@ -126,7 +126,7 @@ Fonte: \citeonline{espressif2024}.
 
 Uma característica diferencial do ESP32 para aplicações IoT é seu
 suporte a múltiplos modos de operação com diferentes perfis de consumo
-energético. O Quadro 3 apresenta os modos de energia disponíveis e seus
+energético. O Quadro~\ref{quad:esp32-energia} apresenta os modos de energia disponíveis e seus
 respectivos consumos típicos, conforme especificado no \emph{datasheet}
 do fabricante.
 
@@ -135,7 +135,7 @@ do fabricante.
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
-\caption{Modos de operação e consumo energético do ESP32}\\
+\caption{Modos de operação e consumo energético do ESP32}\label{quad:esp32-energia}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Modo de Operação
@@ -196,13 +196,13 @@ Cada mensagem ESP-NOW pode transportar até 250 bytes de \emph{payload}
 protocolo suporta criptografia opcional utilizando o algoritmo AES-128
 no modo CCMP, permitindo comunicação segura quando necessário. A
 identificação dos dispositivos é realizada através de seus endereços MAC
-de 6 bytes.
+de 6 bytes. O Quadro~\ref{quad:espnow-specs} resume as características técnicas do protocolo.
 
 {\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}
   >{\centering\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
   >{\centering\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}@{}}
-\caption{Características técnicas do protocolo ESP-NOW}\\
+\caption{Características técnicas do protocolo ESP-NOW}\label{quad:espnow-specs}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\centering
 Parâmetro
@@ -226,7 +226,7 @@ Número máximo de peers & 20 peers no total, dos quais até 6 com criptografia 
 \end{longtable}
 }
 
-Fonte: Becker et al.~(2025); \citeonline{espressif2024}.
+Fonte: \citeonline{becker2025}; \citeonline{espressif2024}.
 
 \subsection{Desempenho e alcance}\label{desempenho-e-alcance}
 
@@ -332,7 +332,7 @@ protocolos híbridos, como o \emph{Zone Routing Protocol} (ZRP), combinam
 características de ambas as abordagens: utilizam roteamento proativo
 dentro de zonas locais e roteamento reativo para comunicação entre
 zonas. Essa estratégia busca balancear as vantagens de ambas as
-abordagens, mas introduz complexidade adicional na implementação.
+abordagens, mas introduz complexidade adicional na implementação. O Quadro~\ref{quad:protocolos-comparativo} sintetiza o comparativo entre as três categorias.
 
 {\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}
@@ -340,7 +340,7 @@ abordagens, mas introduz complexidade adicional na implementação.
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
-\caption{Comparativo entre categorias de protocolos de roteamento ad-hoc}\\
+\caption{Comparativo entre categorias de protocolos de roteamento ad-hoc}\label{quad:protocolos-comparativo}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Característica
@@ -364,7 +364,7 @@ Adequação para WSNs & Limitada & Boa & Moderada \\
 \end{longtable}
 }
 
-Fonte: Adaptado de Chai e Zeng (2021) e Priyadarshi et al.~(2025).
+Fonte: Adaptado de \citeonline{chaizeng2021} e \citeonline{priyadarshi2025}.
 
 \subsection{Soluções existentes de mesh para
 ESP32}\label{soluuxe7uxf5es-existentes-de-mesh-para-esp32}
@@ -478,13 +478,13 @@ RERR.
 configuração}\label{paruxe2metros-de-configurauxe7uxe3o}
 
 A RFC 3561 define valores padrão para diversos parâmetros configuráveis
-que influenciam o comportamento e desempenho do protocolo. O Quadro 6
+que influenciam o comportamento e desempenho do protocolo. O Quadro~\ref{quad:aodv-parametros}
 apresenta os principais parâmetros e seus valores padrão, que podem ser
 ajustados conforme as características específicas da rede.
 
 {\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}lll@{}}
-\caption{Parâmetros de configuração do AODV (RFC 3561)}\\
+\caption{Parâmetros de configuração do AODV (RFC 3561)}\label{quad:aodv-parametros}\\
 \toprule\noalign{}
 Parâmetro & Valor Padrão & Descrição \\
 \midrule\noalign{}

@@ -23,7 +23,7 @@ ausência de suporte nativo a roteamento multi-hop no protocolo ESP-NOW.
 Diferentemente da pesquisa básica, que busca ampliar o conhecimento
 teórico sem preocupação imediata com aplicação, a pesquisa aplicada
 objetiva gerar conhecimento para aplicação prática dirigida à solução de
-problemas específicos (GIL, 2017). Quanto aos procedimentos técnicos, a
+problemas específicos \cite{gil2017}. Quanto aos procedimentos técnicos, a
 pesquisa é caracterizada como experimental, uma vez que envolve a
 implementação de um protótipo funcional (o algoritmo AODV-EN) e a
 realização de testes controlados em ambiente de laboratório. A
@@ -75,13 +75,13 @@ ESP32). \citeonline{peffers2007} propuseram um modelo de processo para
 condução de pesquisas em DSR composto por seis atividades: (1)
 identificação do problema e motivação; (2) definição dos objetivos da
 solução; (3) design e desenvolvimento; (4) demonstração; (5) avaliação;
-e (6) comunicação. O Quadro 7 apresenta estas etapas e suas descrições.
+e (6) comunicação. O Quadro~\ref{quad:etapas-dsr} apresenta estas etapas e suas descrições.
 
 {\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
   >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}@{}}
-\caption{Etapas do Design Science Research segundo \citeauthor{peffers2007} (\citeyear{peffers2007})}\\
+\caption{Etapas do Design Science Research segundo \citeauthor{peffers2007} (\citeyear{peffers2007})}\label{quad:etapas-dsr}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Etapa DSR
@@ -153,7 +153,7 @@ DSR}\label{mapeamento-das-fases-do-trabalho-uxe0s-etapas-da-dsr}
 
 O presente trabalho está organizado em cinco fases, que foram mapeadas
 às etapas do modelo de processo DSR de \citeonline{peffers2007}. O
-Quadro 8 apresenta este mapeamento, relacionando cada fase do trabalho à
+Quadro~\ref{quad:mapeamento-fases} apresenta este mapeamento, relacionando cada fase do trabalho à
 respectiva etapa DSR, suas atividades específicas e produtos esperados.
 
 {\def\LTcaptype{quadro}
@@ -162,7 +162,7 @@ respectiva etapa DSR, suas atividades específicas e produtos esperados.
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
-\caption{Mapeamento das fases do trabalho às etapas da DSR}\\
+\caption{Mapeamento das fases do trabalho às etapas da DSR}\label{quad:mapeamento-fases}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Fase
@@ -205,7 +205,7 @@ Análise de resultados • Conclusões • Documento final \\
 
 Fonte: Elaborado pelos autores.
 
-A Figura 1 apresenta, de forma sintética, o fluxo metodológico adotado
+A Figura~\ref{fig:fluxo-metodologico} apresenta, de forma sintética, o fluxo metodológico adotado
 nesta pesquisa, evidenciando a relação entre o problema investigado, a
 abordagem Design Science Research, as fases do trabalho e a etapa de
 avaliação experimental. A representação contribui para visualizar a
@@ -243,7 +243,7 @@ sequência lógica das atividades desenvolvidas ao longo da pesquisa.
 \draw[darr] (f4.east)--(dsr3.west);
 \draw[darr] (f5.east)--(dsr4.west);
 \end{tikzpicture}
-\caption{Fluxo metodológico da pesquisa}
+\caption{Fluxo metodológico da pesquisa}\label{fig:fluxo-metodologico}
 \end{figure}
 
 \subsection{Fase 1: Revisão
@@ -315,7 +315,7 @@ Dados}\label{fase-4-execuuxe7uxe3o-dos-experimentos-e-coleta-de-dados}
 A quarta fase correspondeu à etapa de Demonstração da DSR, onde o
 artefato foi exercitado em cenários representativos para demonstrar sua
 eficácia na resolução do problema. Os experimentos seguiram o
-planejamento detalhado na Seção 3.4, com execução parcial em hardware
+planejamento detalhado na Seção~\ref{planejamento-experimental}, com execução parcial em hardware
 --- seis repetições no cenário C1-3n (três nós em concentrador) --- e
 complementação por simulação para os cenários de maior escala e
 diâmetro. As métricas foram coletadas automaticamente pelo firmware e
@@ -358,7 +358,7 @@ Por limitação de disponibilidade de hardware no período de coleta, apenas
 uma versão reduzida do cenário C1 --- denominada C1-3n, com três nós em
 concentrador e seis repetições por algoritmo --- foi executada em
 hardware real; os demais cenários foram avaliados por simulação
-(Capítulo 5, Seção 5.4).
+(Capítulo~\ref{resultados-e-discussuxe3o}, Seção~\ref{anuxe1lise-de-escalabilidade-por-simulauxe7uxe3o}).
 
 {\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}
@@ -366,7 +366,7 @@ hardware real; os demais cenários foram avaliados por simulação
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
-\caption{Configuração dos cenários experimentais}\\
+\caption{Configuração dos cenários experimentais}\label{quad:cenarios}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Cenário
@@ -418,7 +418,7 @@ retransmissões indefinidas.
   >{\centering\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\centering\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\centering\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
-\caption{Parâmetros dos experimentos}\\
+\caption{Parâmetros dos experimentos}\label{quad:parametros}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\centering
 Parâmetro
@@ -471,7 +471,7 @@ das transmissões sobre a autonomia dos dispositivos.
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
-\caption{Métricas de avaliação de desempenho}\\
+\caption{Métricas de avaliação de desempenho}\label{quad:metricas}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Métrica
@@ -616,9 +616,9 @@ de rota e tempos de envio e recepção.
 \draw[larr] (r4.east) -- (c1.west);
 \end{tikzpicture}
 }
-\caption{Fluxo de execução dos experimentos e análise dos dados}
+\caption{Fluxo de execução dos experimentos e análise dos dados}\label{fig:fluxo-execucao}
 \end{figure}
-A Figura 2 sintetiza o fluxo de execução dos experimentos e de
+A Figura~\ref{fig:fluxo-execucao} sintetiza o fluxo de execução dos experimentos e de
 tratamento dos dados, desde a configuração do ambiente experimental até
 a comparação dos resultados obtidos para o AODV-EN e o algoritmo de
 referência baseado em Flooding. Para garantir a rastreabilidade dos
