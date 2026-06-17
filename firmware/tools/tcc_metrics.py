@@ -36,6 +36,9 @@ AODV_STATS_RE = re.compile(
 FLOOD_STATS_RE = re.compile(
     r"stats tx=(\d+) rx=(\d+) rebroadcast=(\d+) delivered=(\d+) ack=(\d+) dup=(\d+) ttl_drop=(\d+)"
 )
+STATSREP_RE = re.compile(
+    r"STATSREP node=([0-9A-Fa-f:]{17}) tx=(\d+) rx=(\d+) control=(\d+) delivered=(\d+)"
+)
 
 # Constantes do modelo de energia (ESP32-WROOM-32, datasheet tipico, ROTULADO estimativa)
 ENERGY_DEFAULTS = {
@@ -58,7 +61,16 @@ def parse_origin(path):
     flood_sent = len(re.findall(r"flood DATA broadcast", text))
     aodv_sent = len(re.findall(r"DATA queued", text))
     data_sent = flood_sent if flood_sent > 0 else aodv_sent
-    return {"rtts": rtts, "acks": acks, "data_sent": data_sent}
+    statsrep = {}
+    for m in STATSREP_RE.finditer(text):
+        mac = m.group(1).upper()
+        statsrep[mac] = {
+            "tx": int(m.group(2)),
+            "rx": int(m.group(3)),
+            "control": int(m.group(4)),
+            "delivered": int(m.group(5)),
+        }
+    return {"rtts": rtts, "acks": acks, "data_sent": data_sent, "statsrep": statsrep}
 
 
 def parse_node_final(path):
@@ -112,8 +124,14 @@ def main():
     lat_rtt = stats_summary(org["rtts"])
     lat_oneway = stats_summary([r / 2.0 for r in org["rtts"]])
 
-    nodes = [parse_node_final(n) for n in args.node]
-    nodes = [n for n in nodes if n["found"]]
+    statsrep = org.get("statsrep", {})
+    if statsrep:
+        nodes = list(statsrep.values())
+        stats_source = "statsrep_inband"
+    else:
+        nodes = [parse_node_final(n) for n in args.node]
+        nodes = [n for n in nodes if n["found"]]
+        stats_source = "node_serial_logs"
     sum_tx = sum(n["tx"] for n in nodes)
     sum_rx = sum(n["rx"] for n in nodes)
     sum_control = sum(n["control"] for n in nodes)
@@ -132,6 +150,7 @@ def main():
         "seed": args.seed,
         "duration_s": args.duration_s,
         "n_nodes": len(nodes),
+        "stats_source": stats_source,
         "data_sent": org["data_sent"],
         "acks": org["acks"],
         "pdr_pct": round(pdr, 2),
