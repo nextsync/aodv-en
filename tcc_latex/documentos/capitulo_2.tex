@@ -35,14 +35,14 @@ tipicamente dispositivos de recursos limitados, com restrições de
 processamento, memória, energia e largura de banda de comunicação. O
 projeto de WSNs deve considerar um conjunto de requisitos críticos que
 influenciam diretamente a viabilidade e eficácia das aplicações. O
-Quadro 1 sintetiza os principais requisitos e suas implicações para o
+Quadro~\ref{quadro:req-wsn} sintetiza os principais requisitos e suas implicações para o
 projeto de redes de sensores.
 
 {\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}
   >{\centering\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
   >{\centering\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}@{}}
-\caption{Requisitos críticos para projeto de Redes de Sensores Sem Fio}\\
+\caption{Requisitos críticos para projeto de Redes de Sensores Sem Fio}\label{quadro:req-wsn}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\centering
 Requisito
@@ -126,7 +126,7 @@ Fonte: \citeonline{espressif2024}.
 
 Uma característica diferencial do ESP32 para aplicações IoT é seu
 suporte a múltiplos modos de operação com diferentes perfis de consumo
-energético. O Quadro 3 apresenta os modos de energia disponíveis e seus
+energético. O Quadro~\ref{quadro:esp32-energia} apresenta os modos de energia disponíveis e seus
 respectivos consumos típicos, conforme especificado no \emph{datasheet}
 do fabricante.
 
@@ -135,7 +135,7 @@ do fabricante.
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
-\caption{Modos de operação e consumo energético do ESP32}\\
+\caption{Modos de operação e consumo energético do ESP32}\label{quadro:esp32-energia}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Modo de Operação
@@ -478,13 +478,13 @@ RERR.
 configuração}\label{paruxe2metros-de-configurauxe7uxe3o}
 
 A RFC 3561 define valores padrão para diversos parâmetros configuráveis
-que influenciam o comportamento e desempenho do protocolo. O Quadro 6
+que influenciam o comportamento e desempenho do protocolo. O Quadro~\ref{quadro:aodv-params}
 apresenta os principais parâmetros e seus valores padrão, que podem ser
 ajustados conforme as características específicas da rede.
 
 {\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}lll@{}}
-\caption{Parâmetros de configuração do AODV (RFC 3561)}\\
+\caption{Parâmetros de configuração do AODV (RFC 3561)}\label{quadro:aodv-params}\\
 \toprule\noalign{}
 Parâmetro & Valor Padrão & Descrição \\
 \midrule\noalign{}
