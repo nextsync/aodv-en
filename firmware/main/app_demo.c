@@ -710,6 +710,9 @@ static void app_protocol_task(void *arg)
 
         if (now_ms >= app->next_print_at_ms)
         {
+            char self_text[18];
+            app_format_mac(app->self_mac, self_text, sizeof(self_text));
+            ESP_LOGI(TAG, "RSSISELF self=%s", self_text);
             app_log_routes(&app->stack);
             app->next_print_at_ms = now_ms + app->print_interval_ms;
         }
