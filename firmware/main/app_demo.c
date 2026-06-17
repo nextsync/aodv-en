@@ -33,6 +33,8 @@
 #define APP_LOOP_DELAY_MS 10
 #define APP_STATSREP_MAGIC 0x53u
 #define APP_STATSREP_LEN 17u
+#define APP_NEIGHREP_MAGIC 0x4Eu
+#define APP_NEIGH_MAX 16u
 #define APP_MAX_FRAME_LEN ESP_NOW_MAX_DATA_LEN_V2
 #define APP_DRIVER_MAX_PEERS CONFIG_AODV_EN_APP_DRIVER_MAX_PEERS
 
@@ -101,6 +103,9 @@ typedef struct
     bool has_report;
     uint32_t report_interval_ms;
     uint32_t next_report_at_ms;
+    uint8_t neigh_mac[APP_NEIGH_MAX][AODV_EN_MAC_ADDR_LEN];
+    int16_t neigh_rssi[APP_NEIGH_MAX];
+    uint8_t neigh_count;
     app_driver_peer_entry_t driver_peers[APP_DRIVER_MAX_PEERS];
 } app_context_t;
 
@@ -515,6 +520,25 @@ static void app_deliver_data(
         return;
     }
 
+    if (payload_len >= 2u && payload[0] == APP_NEIGHREP_MAGIC)
+    {
+        uint8_t count = payload[1];
+        char line[320];
+        int pos = 0;
+        pos += snprintf(line + pos, sizeof(line) - pos, "NEIGHREP node=%s hears=", mac_text);
+        for (uint8_t i = 0; i < count && (size_t)(2u + (i + 1u) * 7u) <= payload_len; i++)
+        {
+            const uint8_t *e = &payload[2u + i * 7u];
+            char nb[18];
+            app_format_mac(e, nb, sizeof(nb));
+            int8_t rssi = (int8_t)e[6];
+            pos += snprintf(line + pos, sizeof(line) - pos, "%s%s:%d", (i == 0 ? "" : ","), nb, (int)rssi);
+            if (pos >= (int)sizeof(line) - 24) break;
+        }
+        ESP_LOGI(TAG, "%s", line);
+        return;
+    }
+
     ESP_LOGI(TAG, "DATA deliver from %s: %.*s", mac_text, payload_len, (const char *)payload);
 
     // Pulse curto no LED para feedback visual no destino
@@ -643,6 +667,24 @@ static void app_log_routes(const aodv_en_stack_t *stack)
     }
 }
 
+static void app_note_neigh(app_context_t *app, const uint8_t mac[AODV_EN_MAC_ADDR_LEN], int8_t rssi)
+{
+    for (uint8_t i = 0; i < app->neigh_count; i++)
+    {
+        if (memcmp(app->neigh_mac[i], mac, AODV_EN_MAC_ADDR_LEN) == 0)
+        {
+            app->neigh_rssi[i] = (int16_t)((app->neigh_rssi[i] * 3 + rssi) / 4);
+            return;
+        }
+    }
+    if (app->neigh_count < APP_NEIGH_MAX)
+    {
+        memcpy(app->neigh_mac[app->neigh_count], mac, AODV_EN_MAC_ADDR_LEN);
+        app->neigh_rssi[app->neigh_count] = rssi;
+        app->neigh_count++;
+    }
+}
+
 static void app_process_rx_queue(app_context_t *app)
 {
     app_rx_event_t event;
@@ -652,6 +694,7 @@ static void app_process_rx_queue(app_context_t *app)
         char src_text[18];
         app_format_mac(event.src_mac, src_text, sizeof(src_text));
         ESP_LOGI(TAG, "RSSIPROBE src=%s rssi=%d", src_text, (int)event.rssi);
+        app_note_neigh(app, event.src_mac, event.rssi);
 
         (void)aodv_en_stack_on_recv_at(
             &app->stack,
@@ -763,6 +806,22 @@ static void app_protocol_task(void *arg)
                 (void)aodv_en_stack_send_data_at(
                     &app->stack, app->report_to_mac, payload, APP_STATSREP_LEN, false, now_ms);
             }
+
+            {
+                uint8_t np[2u + APP_NEIGH_MAX * 7u];
+                uint16_t off = 0u;
+                np[off++] = APP_NEIGHREP_MAGIC;
+                np[off++] = app->neigh_count;
+                for (uint8_t i = 0; i < app->neigh_count; i++)
+                {
+                    memcpy(&np[off], app->neigh_mac[i], AODV_EN_MAC_ADDR_LEN);
+                    off += AODV_EN_MAC_ADDR_LEN;
+                    np[off++] = (uint8_t)(int8_t)app->neigh_rssi[i];
+                }
+                (void)aodv_en_stack_send_data_at(
+                    &app->stack, app->report_to_mac, np, off, false, now_ms);
+            }
+
             app->next_report_at_ms = now_ms + app->report_interval_ms;
         }
 
