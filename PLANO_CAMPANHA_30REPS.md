@@ -31,10 +31,12 @@ os demais no powerbank reportando via telemetria in-band.
 | 28:05:A5:33:B9:EC (B9EC) | node | sim |
 | 28:05:A5:34:99:34 (9934) | node | sim |
 | 28:05:A5:33:D6:1C (D61C) | node | sim |
-| 28:05:A5:34:03:50 | node | PENDENTE (porta caiu no hub) |
-| (2 ESPs em cabo so-carga) | node | PENDENTE (sem cabo de dados) |
+| 28:05:A5:34:03:50 | node | sim (reflash porta direta) |
+| 28:05:A5:34:0F:EC | node | sim (era cabo so-carga) |
+| 28:05:A5:33:DD:4C | node | sim (era cabo so-carga) |
 
-> 7 de 10 com firmware base. Faltam: 03:50 (reconectar porta direta) + 2 de alimentacao.
+> 10 de 10 com firmware base (1 coletor EB80 + 9 nodes report->EB80, TX 2dBm). Boot
+> verificado: 03:50/0F:EC/DD:4C descobrem vizinhos, RSSI -68..-78 dBm (links firmes).
 
 
 ### Topologia C1 (cadeia) CONFIRMADA por RSSI (TX=2 dBm)
