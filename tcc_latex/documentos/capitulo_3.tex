@@ -575,6 +575,138 @@ por envolver descoberta e manutenção de rotas, espera-se que ele
 proporcione menor carga de controle, menor consumo energético estimado e
 desempenho comparável em termos de taxa de entrega de pacotes.
 
+\section{Procedimento de Execução e Coleta}\label{procedimento-de-execucao-e-coleta}
+
+Esta seção descreve, de forma reprodutível, como as execuções
+experimentais em \emph{hardware} foram conduzidas, desde a construção da
+topologia física até a agregação estatística das métricas. O
+procedimento foi automatizado por um conjunto de ferramentas
+desenvolvidas especificamente para este trabalho, de modo a garantir
+repetibilidade e a reduzir o erro manual entre repetições.
+
+\subsection{Construção e verificação da topologia física}\label{construcao-topologia}
+
+O principal desafio na avaliação de um protocolo \emph{multi-hop} em
+bancada é que o ESP-NOW, operando em 2,4~GHz, alcança dezenas de metros
+em linha de visada; com os nós próximos, todos se escutam em um único
+salto, configurando uma topologia em estrela e não em malha. Para
+induzir saltos reais sem recorrer a filtros de vizinhança por
+\emph{software} (que descaracterizariam o enlace), adotaram-se duas
+medidas combinadas: (i) a redução da potência de transmissão dos rádios,
+configurável por compilação (parâmetro de potência máxima em unidades de
+0,25~dBm), levada ao mínimo prático para encurtar o alcance; e (ii) a
+separação física dos nós no ambiente, posicionando-os em distâncias e
+com obstáculos (paredes, móveis) que atenuassem o sinal entre nós não
+adjacentes.
+
+Como o alcance do rádio depende de distância e de barreiras de forma não
+determinística, a topologia resultante foi \emph{verificada por medição}
+antes de cada campanha, e não pressuposta. Para isso, cada nó registra,
+para cada quadro recebido, a intensidade do sinal (RSSI) do emissor; um
+nó coletor agrega essas informações e produz uma matriz de adjacência
+RSSI da rede inteira (qual nó escuta qual e com que intensidade). A
+topologia foi considerada adequada ao cenário quando os enlaces previstos
+apresentavam sinal firme (na faixa de $-70$ a $-82$~dBm) e os ``saltos''
+indesejados --- pares de nós que deveriam comunicar-se apenas por
+intermediários --- apresentavam sinal abaixo do limiar prático de
+recepção (inferior a $-90$~dBm). A título de exemplo, no cenário linear
+reduzido confirmou-se que os nós das extremidades não se escutavam
+diretamente ($\approx -88$~dBm, com perda da maioria dos quadros), de
+modo que o tráfego entre eles necessariamente percorria o nó
+intermediário, caracterizando \emph{multi-hop} físico genuíno.
+
+\subsection{Telemetria em banda e coleta por nó único}\label{telemetria-em-banda}
+
+Em uma topologia com nós espalhados, conectar cada dispositivo a uma
+porta serial é inviável: os nós distantes operam alimentados por
+bateria, sem cabo de dados. Para coletar as métricas de toda a rede a
+partir de um único ponto, adotou-se uma estratégia de \emph{telemetria
+em banda}: ao final de cada janela de medição, cada nó transmite seus
+contadores (quadros transmitidos, recebidos, de controle e entregues),
+encapsulados como uma mensagem de dados comum do próprio protocolo,
+endereçada ao nó coletor. A mensagem é, portanto, roteada pela própria
+malha --- inclusive em múltiplos saltos, a partir de nós que não são
+vizinhos diretos do coletor --- reutilizando o mecanismo de
+encaminhamento sob avaliação, sem nenhuma alteração no núcleo do
+protocolo. O coletor, único nó conectado à porta serial, registra os
+relatórios de todos os demais. Para evitar que o tráfego da própria
+telemetria contaminasse os valores reportados, os contadores são
+amostrados imediatamente antes do envio do relatório, de modo que o
+custo da transmissão do relatório não se reflete no número informado.
+
+Desse modo, a confiabilidade de entrega (PDR) e a latência são medidas
+diretamente no nó de origem (pela razão entre confirmações recebidas e
+pacotes enviados e pelo tempo de ida e volta, respectivamente), enquanto
+a carga de controle (NRL) e o consumo energético estimado, que dependem
+de contadores de \emph{toda} a rede, são reconstruídos no coletor a
+partir dos relatórios recebidos em banda.
+
+\subsection{Medição de latência}\label{medicao-de-latencia}
+
+A latência fim-a-fim é medida no próprio nó de origem, evitando o
+problema de sincronização de relógios entre dispositivos distintos: ao
+enviar um pacote de dados, a origem registra o instante de transmissão
+e, ao receber a confirmação (ACK) correspondente, calcula o tempo de ida
+e volta (\emph{round-trip time}, RTT) pela diferença em relação ao mesmo
+relógio local, de resolução de microssegundos. A latência unidirecional
+é obtida como metade do RTT. Para refinar a granularidade da medida, o
+laço de aplicação responsável por gerar tráfego e processar eventos foi
+reduzido a um período de 10~ms, limitando a quantização da latência a
+essa ordem de grandeza.
+
+\subsection{Automação da campanha e agregação estatística}\label{automacao-campanha}
+
+Cada combinação de cenário e algoritmo (AODV-EN ou \emph{flooding}) é
+avaliada por repetições sucessivas. Para cada repetição, captura-se o
+registro serial do nó coletor durante a janela de execução; ao término,
+um analisador extrai do registro as métricas daquela repetição (PDR,
+latência, NRL e energia estimada) e as acumula. Concluídas as
+repetições, calculam-se, para cada métrica, a média aritmética, o desvio
+padrão e o intervalo de confiança de 95\%, conforme previsto na Seção
+\ref{muxe9tricas-de-avaliauxe7uxe3o}. Toda a sequência --- captura,
+extração e agregação --- é orquestrada por um \emph{script} de campanha,
+de modo que as repetições sejam executadas de forma idêntica e
+sucessiva, sem intervenção manual entre elas.
+
+\subsection{Ferramentas de instrumentação desenvolvidas}\label{ferramentas-instrumentacao}
+
+A condução dos experimentos apoiou-se em um conjunto de ferramentas
+construídas como parte da contribuição de engenharia deste trabalho,
+formando um \emph{testbed} instrumentado e reprodutível:
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi})}
+\tightlist
+\item
+  uma ferramenta de sondagem de sinal, que lê os registros de RSSI dos
+  nós e monta a matriz de adjacência da rede, classificando cada enlace
+  quanto à sua intensidade, utilizada para validar a topologia antes de
+  cada campanha;
+\item
+  um monitor de malha em tempo real, que consome a telemetria em banda
+  recebida pelo coletor e apresenta, em uma interface \emph{web}
+  dinâmica, a topologia corrente disposta por número de saltos, a
+  intensidade de cada enlace, os contadores de cada nó e as rotas
+  ativas, atualizando-se continuamente e adaptando-se a qualquer número
+  de nós e de saltos;
+\item
+  um capturador serial, que registra simultaneamente a saída de uma ou
+  mais portas durante a janela de medição;
+\item
+  um extrator de métricas, que converte os registros serial em valores
+  de PDR, latência, NRL e energia estimada, agregando os contadores de
+  rede a partir dos relatórios de telemetria; e
+\item
+  um orquestrador de campanha, que encadeia captura, extração e
+  agregação ao longo das repetições, produzindo as estatísticas finais
+  (média, desvio padrão e intervalo de confiança).
+\end{enumerate}
+
+Essas ferramentas tornam o procedimento auditável e reexecutável: a
+mesma campanha pode ser repetida por terceiros a partir do código-fonte
+disponibilizado, e os dados intermediários (registros serial e métricas
+por repetição) ficam preservados para inspeção.
+
 \section{Coleta e Análise dos
 Dados}\label{coleta-e-anuxe1lise-dos-dados}
 
