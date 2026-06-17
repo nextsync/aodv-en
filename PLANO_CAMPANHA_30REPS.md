@@ -16,6 +16,27 @@
 
 (Os 10 ESPs finais serão enumerados do mesmo modo. Identificar sempre por MAC.)
 
+### Inventario dos 10 ESPs (campanha)
+
+Coletor = EB80 (REPORT vazio, fica na serial). Demais = node (REPORT->EB80).
+No desenho final: ate 3 na serial simultaneos (1 coletor + 2 nos-ancora p/ RSSI direto);
+os demais no powerbank reportando via telemetria in-band.
+
+| MAC | Papel | Firmware base flashado |
+|---|---|---|
+| 28:05:A5:33:EB:80 (EB80) | COLETOR | sim (collector) |
+| 28:05:A5:33:FF:44 | node | sim |
+| 28:05:A5:34:0B:98 | node | sim |
+| 28:05:A5:34:94:D4 | node | sim |
+| 28:05:A5:33:B9:EC (B9EC) | node | sim |
+| 28:05:A5:34:99:34 (9934) | node | sim |
+| 28:05:A5:33:D6:1C (D61C) | node | sim |
+| 28:05:A5:34:03:50 | node | PENDENTE (porta caiu no hub) |
+| (2 ESPs em cabo so-carga) | node | PENDENTE (sem cabo de dados) |
+
+> 7 de 10 com firmware base. Faltam: 03:50 (reconectar porta direta) + 2 de alimentacao.
+
+
 ### Topologia C1 (cadeia) CONFIRMADA por RSSI (TX=2 dBm)
 
 Medição real com `rssi_probe.py` (origem N1=EB80 na serial, N2/N3 espalhados):
