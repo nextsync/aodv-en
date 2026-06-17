@@ -63,9 +63,15 @@ reais**, multi-hop nativo por atenuação física (sem allowlist). É o C1 do TC
   no `app_flood.c`). Latência deixa de ser quantizada em 100 ms.
 - [x] **F0.2** Flood unicast → **broadcast** (baseline canônico): `app_flood.c` `app_emit_frame`
   passa a emitir 1 broadcast por (re)transmissão (decisão registrada anteriormente).
-- [ ] **F0.3** **Telemetria in-band de stats**: nova mensagem que, ao fim de cada run, carrega os
-  contadores (tx/rx/control/delivered) de cada nó até a origem; a origem loga linha
-  `STATSREP node= tx= rx= control= delivered=`. Núcleo + adaptador.
+- [x] **F0.3** **Telemetria in-band de stats** (arquitetura decidida via workflow — Abordagem A,
+  **zero alteração de núcleo**): ao fim da janela, cada nó não-origem envia seus contadores como
+  **DATA de aplicação normal** destinada ao MAC da origem (reusa roteamento existente — provado
+  por `aodv_en_node_send_ack`/`flood_en_send_ack`). Payload = magic 0x53 + 4×uint32 htonl
+  (tx/rx/control/delivered). A origem desserializa em `app_deliver_data` e loga
+  `STATSREP node=<mac> tx= rx= control= delivered=`. Parser `tcc_metrics.py` agrega por STATSREP
+  (fallback `--node` preservado). **3 mitigações de contaminação** (obrigatórias): (1) snapshot
+  dos contadores ANTES do envio; (2) envio só na drenagem pós-corte; (3) `ack_required=false`.
+  Toca: `app_demo.c`, `app_flood.c`, `Kconfig.projbuild` (REPORT_TO_MAC), `tcc_metrics.py`.
 - [x] **F0.4** **Controle de TX power** por config (`esp_wifi_set_max_tx_power`), p/ encurtar
   alcance e viabilizar saltos num espaço menor. Exposto em Kconfig.
 - [ ] **F0.5** **Scan de canal** (script): varre os 14 canais 2.4 GHz, reporta ocupação/RSSI,

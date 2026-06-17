@@ -28,6 +28,22 @@ config AODV_EN_APP_WIFI_CHANNEL
     range 1 13
     default 6
 
+config AODV_EN_APP_REPORT_TO_MAC
+    string "Telemetria in-band: MAC da origem p/ reportar stats (vazio = desliga)"
+    default ""
+    help
+      MAC do no de origem (coletor) para onde cada no nao-origem envia seus contadores
+      (tx/rx/control/delivered) ao fim de cada janela, como DATA de aplicacao. A origem
+      loga 'STATSREP node=<mac> ...'. Vazio desativa a telemetria in-band.
+
+config AODV_EN_APP_REPORT_INTERVAL_MS
+    int "Telemetria in-band: intervalo de envio do STATSREP (ms)"
+    default 5000
+    help
+      Periodo entre envios do relatorio de stats (drenagem). O snapshot dos contadores
+      e tirado ANTES do envio, entao o trafego da propria telemetria nao entra no valor
+      reportado.
+
 config AODV_EN_APP_TX_POWER_QDBM
     int "Max TX power (0.25 dBm units; 8..84 = 2..21 dBm; 0 = driver default)"
     range 0 84
