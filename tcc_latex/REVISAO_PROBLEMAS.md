@@ -109,7 +109,7 @@ _A introdução tem boa densidade técnica, encadeamento lógico coerente (ubiqu
 - **Problema:** Repetições e ecos: 'desenvolvido pela Espressif Systems' aparece duas vezes (l.22 e l.60); 'Espressif' aparece ainda em 'ecossistema Espressif' (l.90). 'paradigma' e 'visão' próximos. Há também repetição de 'baixo custo'/'baixo consumo'.
 - **Correção:** Eliminar a segunda atribuição redundante 'desenvolvido pela Espressif Systems' (o leitor já sabe), e variar vocabulário para reduzir ecos lexicais.
 
-### [ ] C1-012 · ⚪ BAIXO · `abnt-formatacao`
+### [x] C1-012 · ⚪ BAIXO · `abnt-formatacao`
 - **Local:** Linha 4 e linha 127
 - **Problema:** Inconsistência de caixa nos títulos: o capítulo e as seções OBJETIVOS estão em CAIXA ALTA, mas as seções do Capítulo 2 (ex.: 'O Microcontrolador ESP32') usam caixa de título normal. Convém padronizar o estilo de títulos em todo o trabalho.
 - **Correção:** Definir um padrão único (ABNT costuma usar caixa alta para seções primárias e caixa baixa/título para subseções) e aplicá-lo consistentemente entre capítulos.
@@ -119,7 +119,7 @@ _A introdução tem boa densidade técnica, encadeamento lógico coerente (ubiqu
 - **Problema:** Mistura de estilos de citação de números entre o português (vírgula decimal, ok) mas sem padronização do uso de 'ms', '%' colados/separados e sem espaço protegido (~) antes de unidades, podendo gerar quebras de linha indevidas em LaTeX.
 - **Correção:** Padronizar e usar espaço protegido em LaTeX antes de unidades e símbolos (ex.: '2,8~ms', 'PDR superior a 99\%', '55~metros'), conforme boas práticas tipográficas/ABNT.
 
-### [ ] C1-014 · ⚪ BAIXO · `escrita`
+### [x] C1-014 · ⚪ BAIXO · `escrita`
 - **Local:** Linha 4, \label{introduuxe7uxe3o} e linha 136 \label{objetivos-especuxedficos}
 - **Problema:** Labels com caracteres de escape Unicode automáticos (introduuxe7uxe3o, especuxedficos) gerados por conversão (provavelmente pandoc). São funcionais mas ilegíveis e propensos a erro em referências cruzadas.
 - **Correção:** Renomear os labels para formas limpas e ASCII (ex.: \label{cap:introducao}, \label{sec:objetivos-especificos}) para manutenção e referência cruzada mais robustas.
@@ -184,22 +184,22 @@ _Capítulo bem organizado e de leitura fluida, com PT-BR formal correto e progre
 - **Problema:** Inconsistência entre o texto (que diz 'IEEE 802.11' genérico) e o quadro (que afirma 'IEEE 802.11b'). Em referencial teórico, divergências entre prosa e tabela sobre o padrão-base do protocolo central minam a credibilidade técnica.
 - **Correção:** Unificar a designação do padrão (definir se é 802.11 genérico ou 802.11b especificamente) entre texto e Quadro, com citação da fonte que sustenta a escolha.
 
-### [ ] C2-024 · ⚪ BAIXO · `escrita`
+### [x] C2-024 · ⚪ BAIXO · `escrita`
 - **Local:** Seção 2.4.2, linhas 322-330 (parágrafo dos protocolos reativos)
 - **Problema:** O parágrafo que descreve protocolos reativos é notavelmente mais longo e detalhado que os de proativos e híbridos, criando desequilíbrio. Embora o AODV seja reativo (e o foco do trabalho), aqui o objetivo é classificar as três categorias com paralelismo.
 - **Correção:** Equilibrar os três parágrafos da subseção 2.4.2 (a justificativa de foco no reativo pode ser feita na transição para a seção 2.5, não inflando o item de classificação).
 
-### [ ] C2-025 · ⚪ BAIXO · `escrita`
+### [x] C2-025 · ⚪ BAIXO · `escrita`
 - **Local:** Linha 31-32 (seção 2.1)
 - **Problema:** Frase longa com lista 'temperatura, umidade, pressão, movimento ou luminosidade' sem vírgula antes do 'e transmitir', dificultando a leitura ('...ou luminosidade e transmitir os dados...').
 - **Correção:** Inserir vírgula/reorganizar: '...ou luminosidade, e transmitir os dados coletados...' ou fechar a enumeração entre parênteses.
 
-### [ ] C2-026 · ⚪ BAIXO · `tecnico`
+### [x] C2-026 · ⚪ BAIXO · `tecnico`
 - **Local:** Linha 169 (seção 2.2)
 - **Problema:** Preço em reais ('R$ 25,00 e R$ 40,00') sem data de referência/cotação. Valores monetários datam rapidamente e, sem ano-base, comprometem a atualidade da afirmação ao longo do tempo.
 - **Correção:** Acrescentar ano de referência da cotação (ex.: 'em valores de 2025') e/ou citar fonte de preço, ou converter para faixa em dólar com a mesma data-base.
 
-### [ ] C2-027 · ⚪ BAIXO · `argumentacao`
+### [x] C2-027 · ⚪ BAIXO · `argumentacao`
 - **Local:** Seção 2.2 (ESP32) — falta de fechamento crítico
 - **Problema:** A seção descreve o ESP32 de forma majoritariamente expositiva (specs e modos de energia) e termina na questão de custo (linha 168-172), sem amarrar explicitamente por que essas características (dual-core, modos de sleep, baixo custo) habilitam especificamente uma rede de sensores roteável — a ponte argumentativa para o restante do TCC fica implícita.
 - **Correção:** Acrescentar frase de fechamento conectando as capacidades do ESP32 (processamento para rodar lógica de roteamento + modos de baixo consumo) à viabilidade de implementar um protocolo como o AODV-EN no dispositivo.
@@ -260,22 +260,22 @@ _Capítulo metodologicamente bem estruturado e com escrita academica em geral cl
 - **Problema:** Dois tamanhos de buffer distintos (100 para deteccao de duplicatas do Flooding; 8 para cache de peers do AODV-EN) aparecem proximos sem deixar claro que sao estruturas de propositos diferentes. Risco de o leitor inferir inconsistencia.
 - **Correção:** Nenhuma mudanca de valor necessaria; apenas garantir que cada numero esteja inequivocamente associado a sua estrutura/algoritmo (p.ex. 'buffer de deteccao de duplicatas do Flooding (N=100)' vs 'cache LRU de peers do AODV-EN (8 entradas)').
 
-### [ ] C3-036 · ⚪ BAIXO · `escrita`
+### [x] C3-036 · ⚪ BAIXO · `escrita`
 - **Local:** Secao 3.7, ultima frase (l.637-640) — 'sera avaliado se o AODV-EN, apresenta ganhos em eficiencia'
 - **Problema:** Virgula indevida separando sujeito ('o AODV-EN') do verbo ('apresenta'). Erro de pontuacao.
 - **Correção:** Remover a virgula: 'sera avaliado se o AODV-EN apresenta ganhos em eficiencia...'. (E ajustar o verbo ao tempo padronizado conforme item de tempo verbal.)
 
-### [ ] C3-037 · ⚪ BAIXO · `escrita`
+### [x] C3-037 · ⚪ BAIXO · `escrita`
 - **Local:** Secao 3.1 (l.35) 'obtidos atraves de medicoes' e demais ocorrencias de 'atraves de' (l.333)
 - **Problema:** Uso de 'atraves de' com sentido de 'por meio de' e considerado impreciso/coloquial em registro academico formal ABNT (estritamente significa 'de um lado a outro').
 - **Correção:** Substituir 'atraves de' por 'por meio de' / 'mediante' nas duas ocorrencias.
 
-### [ ] C3-038 · ⚪ BAIXO · `abnt-formatacao`
+### [x] C3-038 · ⚪ BAIXO · `abnt-formatacao`
 - **Local:** Fonte dos quadros — 'Fonte: Elaborado pelos autores' (l.206, 400, 449, 505)
 - **Problema:** Atribuicao no plural ('autores'). Verificar se o TCC tem mais de um autor; em TCC de autor unico deve ser 'pelo autor'. Inconsistencia de autoria entre capa e atribuicoes prejudica a formalidade.
 - **Correção:** Confirmar o numero de autores e uniformizar para 'pelo autor' ou 'pelos autores' em todo o documento.
 
-### [ ] C3-039 · ⚪ BAIXO · `coesao`
+### [x] C3-039 · ⚪ BAIXO · `coesao`
 - **Local:** Secao 3.6 inicio (l.514) 'sera implementado um algoritmo de referencia baseado em Flooding' — repeticao
 - **Problema:** A expressao 'algoritmo de referencia baseado em Flooding' aparece de forma quase identica multiplas vezes em sequencia proxima (l.343-344, 514-515, 523, 623, 633), tornando a leitura repetitiva.
 - **Correção:** Apos a primeira definicao, alternar com formas reduzidas ('o baseline Flooding', 'o Flooding', 'o algoritmo de referencia') para reduzir redundancia lexical.
@@ -330,17 +330,17 @@ _Capítulo tecnicamente sólido e bem escrito, com registro acadêmico formal ad
 - **Problema:** O texto afirma que o RREP é gerado "quando a mensagem RREQ alcança o destino, ou um nó que possua rota válida para ele" (intermediate route reply). É preciso confirmar que esse caminho está implementado; se o firmware só gera RREP no destino final (gratuitous/intermediate reply não implementado), a afirmação seria uma promessa de design não cumprida. A Figura 5 só ilustra o caso do destino, o que pode mascarar a divergência.
 - **Correção:** Verificar no código (aodv_en_node.c, tratamento de RREQ) se há geração de RREP por nó intermediário com rota válida e número de sequência suficiente. Se não houver, remover a cláusula "ou um nó que possua rota válida" para não afirmar funcionalidade ausente; se houver, considerar ilustrá-la ou citá-la explicitamente.
 
-### [ ] C4-047 · ⚪ BAIXO · `escrita`
+### [x] C4-047 · ⚪ BAIXO · `escrita`
 - **Local:** Linha 137-138 — sigla RSSI e linha 169 EWMA
 - **Problema:** A sigla RSSI é expandida ("Received Signal Strength Indicator") apenas na Seção 4.2.3 (linha 137), mas o termo "RSSI" já havia sido implicitamente tratado antes; já EWMA é expandida na linha 169. Convém garantir que cada sigla seja definida na primeira ocorrência no corpo do capítulo e usada de forma consistente depois, conforme norma ABNT.
 - **Correção:** Revisar a primeira ocorrência de cada sigla no capítulo (RSSI, EWMA, LRU, TTL, MAC, ETX, WCETT) e expandi-la apenas na primeira menção, usando a sigla isolada nas seguintes. Padronizar.
 
-### [ ] C4-048 · ⚪ BAIXO · `escrita`
+### [x] C4-048 · ⚪ BAIXO · `escrita`
 - **Local:** Linhas 86 e 367 — repetição da definição de AODV_EN_PEER_CACHE_SIZE=8
 - **Problema:** A informação "cache de peers com 8 entradas, configurável, parâmetro AODV_EN_PEER_CACHE_SIZE" aparece quase idêntica em 4.2.1 (linha 86-92) e em 4.4.4 (linha 366-373), reforçando o problema geral de redundância entre seções de decisão e de estrutura.
 - **Correção:** Definir o parâmetro e seu valor uma única vez (na decisão de projeto) e, na Seção 4.4.4, descrever apenas o mecanismo (separação vizinhança lógica vs peers físicos, LRU, pinned) sem repetir o valor/nome do macro, ou remeter via \ref.
 
-### [ ] C4-049 · ⚪ BAIXO · `escrita`
+### [x] C4-049 · ⚪ BAIXO · `escrita`
 - **Local:** Linha 153 e 747 — apresentação dos pesos α e β
 - **Problema:** Os valores padrão dos pesos (α=8, β=1) são apresentados duas vezes; além da redundância já apontada, na linha 747 os nomes dos macros (AODV_EN_ROUTE_METRIC_HOP_WEIGHT/RSSI_WEIGHT) só aparecem na segunda ocorrência, criando assimetria informacional entre as duas exposições da mesma equação.
 - **Correção:** Consolidar a apresentação dos pesos e dos nomes de parâmetros configuráveis em um único ponto (na fundamentação da métrica), evitando que metade da informação esteja em uma seção e metade em outra.
@@ -624,22 +624,22 @@ _O texto tem boa redação acadêmica e estrutura de capítulos coerente, mas a 
 - **Problema:** O preâmbulo redefine \cleardoublepage como \clearpage e o ambiente quadro é declarado com placement=H; as figuras tikz/imagem usam \begin{figure}[H] (posicionamento forçado via float/H). O uso indiscriminado de [H] em todas as figuras pode gerar grandes espaços em branco e quebra ruim de página, e contraria a recomendação de deixar o LaTeX posicionar floats; além disso as figuras de imagem do cap.5 (L131, 141, 176, 216) usam \begin{figure} SEM especificador de posição, criando inconsistência com as demais que usam [H].
 - **Correção:** Padronizar o especificador de posição das figuras (escolher [htbp] ou [H] de forma consistente) e revisar se o uso de [H] é realmente necessário caso a caso para evitar páginas com excesso de espaço.
 
-### [ ] AB-091 · ⚪ BAIXO · `abnt-formatacao`
+### [x] AB-091 · ⚪ BAIXO · `abnt-formatacao`
 - **Local:** capitulo_1.tex L4 'INTRODUÇÃO', cap.2 L4 'REFERENCIAL TEÓRICO', cap.4 L4 'PROJETO E IMPLEMENTAÇÃO...' (todos caixa alta) vs. seções como cap.2 L16 'Internet das Coisas e Redes de Sensores Sem Fio' (caixa baixa) e subseções 'Tabela de Rotas' (Title Case) vs 'Características técnicas' (sentence case)
 - **Problema:** Inconsistência de capitalização de títulos. Capítulos em CAIXA ALTA (ok para ABNT nível 1), mas as seções/subseções misturam Title Case ('Tabela de Rotas', 'Cache de RREQ', 'Métrica Híbrida com Hop Count e RSSI') com sentence case ('Características técnicas', 'Desempenho e alcance', 'Conceitos fundamentais de redes mesh'). O padrão deve ser único em todo o documento.
 - **Correção:** Definir um padrão (recomendado: apenas primeira palavra maiúscula nos níveis 2+, conforme muitos manuais ABNT) e aplicar a todos os \section/\subsection. Ex.: 'Tabela de rotas', 'Cache de RREQ', 'Métrica híbrida com hop count e RSSI'.
 
-### [ ] AB-092 · ⚪ BAIXO · `tecnico`
+### [x] AB-092 · ⚪ BAIXO · `tecnico`
 - **Local:** capitulo_4.tex L685 (\label{...-2}) e L731 (\label{metrica-hibrida-com-hop-count-e-rssi-2})
 - **Problema:** Existem labels de subseção com sufixo '-2' (gerados pelo pandoc por colisão de slug, ex. flooding-controlado...-2 e metrica-hibrida...-2) porque há subseções com títulos quase idênticos no mesmo capítulo (Decisões de Projeto vs. Adaptações do AODV repetem 'Flooding controlado sobre broadcast' e 'Métrica híbrida'). Conteúdo redundante e labels poluídos.
 - **Correção:** Renomear os labels para nomes semânticos (\label{sec:flooding-adaptacao}) e avaliar se as duas subseções quase homônimas (4.2.2/4.7.2 sobre flooding; 4.2.3/4.7.4 sobre métrica) não deveriam ser fundidas para evitar repetição de conteúdo.
 
-### [ ] AB-093 · ⚪ BAIXO · `abnt-formatacao`
+### [x] AB-093 · ⚪ BAIXO · `abnt-formatacao`
 - **Local:** capitulo_3.tex L451-454 (nota de rodapé manual com \textsuperscript{a})
 - **Problema:** A nota explicativa dos valores ajustados da RFC é implementada manualmente com \textsuperscript{a} no quadro e um parágrafo \footnotesize solto abaixo, em vez de \footnote real. Não há vínculo automático nem numeração de nota gerenciada pelo LaTeX; o 'a' é fixo.
 - **Correção:** Usar \footnote{} ou, dentro de longtable, o mecanismo de nota de tabela apropriado (ex.: pacote threeparttablex), para que a marca e o texto da nota fiquem vinculados e formatados conforme a norma.
 
-### [ ] AB-094 · ⚪ BAIXO · `referencia`
+### [x] AB-094 · ⚪ BAIXO · `referencia`
 - **Local:** referencias.bib vs uso — chave arregui2025
 - **Problema:** A chave arregui2025 é citada apenas 1 vez (cap.1 L41) e gil2017 não é citada por \cite (ver problema separado). Vale auditar se todas as 21 entradas do .bib são efetivamente usadas após corrigir o caso GIL, para não deixar entradas órfãs nem, ao contrário, citações sem entrada.
 - **Correção:** Após corrigir '(GIL, 2017)' → \cite{gil2017}, rodar verificação (ex.: comparar chaves do .bib com as usadas) e remover do .bib qualquer entrada que não seja citada, garantindo lista de Referências enxuta e completa.
@@ -758,12 +758,12 @@ _A redação tem boa base técnica e registro formal predominante, mas há padr�
 - **Problema:** A fonte dos quadros declara autoria em primeira pessoa do plural ("Elaborado pelos autores"), enquanto todo o corpo do texto adota rigorosamente a impessoalidade ("foi concebida", "optou-se", "avaliou-se"). Há também tensão com a natureza do TCC (verificar se é individual ou em dupla — se individual, "pelos autores" no plural está incorreto). Essa coexistência de impessoal no texto e plural autoral nas fontes denota falta de decisão sobre a voz.
 - **Correção:** Se o trabalho é individual, corrigir para "Elaborado pelo autor". Manter coerência: como o texto é impessoal, a fórmula de fonte é aceitável por convenção ABNT, mas o número (singular/plural) deve refletir a autoria real e ser uniforme em todo o documento.
 
-### [ ] PT-112 · ⚪ BAIXO · `escrita`
+### [x] PT-112 · ⚪ BAIXO · `escrita`
 - **Local:** capitulo_4.tex, linha 469 ("A descoberta de rotas é iniciada quando um nó de\norigem...") e linha 525 ("Após a descoberta de uma rota válida, o\nencaminhamento...")
 - **Problema:** Quebras de linha no meio de sintagmas ("um nó de / origem", "o / encaminhamento") sugerem reflow automático de conversão (provavelmente de Markdown/Pandoc) que deixou rupturas visuais no fonte. Embora o LaTeX ignore a quebra na compilação, isso é sintoma de origem por conversão automática e pode ter introduzido outros artefatos.
 - **Correção:** Reformatar o fonte para fluxo de parágrafo limpo; revisar todo o arquivo em busca de outros resíduos de conversão automática (espaçamentos duplos, quebras estranhas).
 
-### [ ] PT-113 · ⚪ BAIXO · `escrita`
+### [x] PT-113 · ⚪ BAIXO · `escrita`
 - **Local:** capitulo_1.tex linha 53, 105; capitulo_4.tex linha 133 — "ad-hoc" / "Ad-hoc"
 - **Problema:** Grafia de "ad-hoc" inconsistente em maiúscula/minúscula e sem itálico (latinismo). Ora "redes ad-hoc", ora dentro de nome próprio "Ad-hoc On-Demand". Termos latinos como "ad hoc" convencionalmente vão em itálico no registro formal.
 - **Correção:** Padronizar grafia ("ad hoc" sem hífen é a forma latina; com hífen quando adjetivo composto, conforme a convenção adotada) e aplicar itálico de forma consistente, exceto quando parte de nome próprio de protocolo.
