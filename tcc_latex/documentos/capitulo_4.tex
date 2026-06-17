@@ -684,89 +684,49 @@ indicação direta do endereço MAC do peer de destino.
 
 \subsection{Flooding Controlado sobre Broadcast de Enlace}\label{flooding-controlado-sobre-broadcast-de-enlace-2}
 
-Uma das principais decisões de
-projeto na adaptação do AODV ao ESP-NOW está relacionada à disseminação
-das mensagens RREQ. No AODV original, a descoberta de rotas é realizada
-por meio da difusão da requisição de rota pela rede, utilizando
-broadcast. O ESP-NOW permite enviar quadros ao endereço de broadcast de
-enlace (FF:FF:FF:FF:FF:FF), ainda que sem confirmação de entrega. O
-AODV-EN adota a estratégia de flooding controlado sobre esse broadcast
-de enlace: cada nó retransmite uma única vez cada RREQ novo recebido,
-suprimindo duplicatas por meio do cache de identificadores (originador,
-RREQ ID) e limitando a propagação pelo TTL. Essa abordagem preserva
-fielmente a semântica de difusão do AODV e mantém a contagem de
-transmissões simétrica em relação ao algoritmo de referência. Em uma
-etapa intermediária do desenvolvimento, avaliou-se uma alternativa de
-flooding por unicast sequencial, na qual o nó percorreria a tabela de
-vizinhos e enviaria o RREQ individualmente a cada um, aproveitando a
-confirmação de enlace do unicast ESP-NOW. Essa alternativa foi
-descartada por introduzir um viés metodológico: o unicast ESP-NOW
-realiza retransmissões automáticas em nível de MAC (confirmação CTS-ACK)
-inexistentes no broadcast, o que inflaria artificialmente a
-confiabilidade medida, subcontaria as transmissões reais (uma
-transmissão lógica corresponderia a N quadros no ar) e descaracterizaria
-a comparação com o flooding canônico. Optou-se, assim, pela disseminação
-por broadcast de enlace, com confirmação realizada fim-a-fim por
-mensagens ACK em nível de aplicação.
+A disseminação das mensagens RREQ por \emph{flooding} controlado sobre o
+\emph{broadcast} de enlace do ESP-NOW, bem como a justificativa para o
+descarte da alternativa por unicast sequencial, foram detalhadas na
+Seção~\ref{flooding-controlado-sobre-broadcast-de-enlace}. No nível de
+implementação, cada nó retransmite uma única vez cada RREQ novo recebido,
+e a supressão de duplicatas é realizada pelo cache de RREQ
+(Seção~\ref{cache-de-rreq}), que mantém os pares (originador, RREQ ID)
+recentes; o limite de propagação é aplicado pelo decremento do TTL a cada
+salto. A confirmação de entrega, ausente no \emph{broadcast} de enlace, é
+suprida por mensagens ACK em nível de aplicação, processadas
+fim-a-fim pelo protocolo.
 
 \subsection{Gerenciamento Dinâmico de Peers}\label{gerenciamento-dinamico-de-peers}
 
-O ESP-NOW impõe restrições quanto ao número de peers que podem ser
-registrados simultaneamente para comunicação. Essa limitação afeta
-diretamente a construção de redes mesh, pois o número total de nós
-participantes pode ser superior ao número de peers mantidos fisicamente
-pelo dispositivo em determinado instante. Para lidar com essa restrição,
-o AODV-EN separa a vizinhança lógica utilizada pelo protocolo da tabela
-física de peers mantida pelo ESP-NOW. A tabela de vizinhos representa os
-nós conhecidos ou alcançáveis no contexto do roteamento, enquanto o
-cache de peers controla quais dispositivos estão efetivamente
-registrados para transmissão no momento. Quando a capacidade da tabela
-de peers é atingida, aplica-se uma política LRU (Least Recently Used),
-substituindo o peer menos recentemente utilizado por um novo peer
-necessário à comunicação. Essa estratégia permite que o protocolo opere
-dinamicamente em redes com mais nós do que o limite simultâneo de peers,
-preservando a compatibilidade com o ESP-NOW e reduzindo a necessidade de
-configuração manual da rede.
+Conforme apresentado na
+Seção~\ref{gerenciamento-de-peers-com-poluxedtica-lru}, o AODV-EN contorna
+o limite de \emph{peers} simultâneos do ESP-NOW por meio de uma política
+LRU. No nível de implementação, isso se traduz na separação entre a
+vizinhança lógica do protocolo --- os nós conhecidos ou alcançáveis no
+contexto do roteamento, mantidos na tabela de vizinhos
+(Seção~\ref{tabela-de-vizinhos}) --- e a tabela física de \emph{peers}
+registrados no ESP-NOW (Seção~\ref{gerenciamento-de-peers}). Quando a
+capacidade do cache de \emph{peers} é atingida, o \emph{peer} menos
+recentemente utilizado é substituído pelo novo \emph{peer} requisitado
+pela comunicação, permitindo que o protocolo opere em redes com mais nós
+do que o limite simultâneo de registros, sem configuração manual.
 
 \subsection{Métrica Híbrida com Hop Count e RSSI}\label{metrica-hibrida-com-hop-count-e-rssi-2}
 
-O AODV original utiliza, de forma predominante, a contagem de saltos
-como critério de seleção de rotas. Essa abordagem favorece caminhos mais
-curtos, mas pode desconsiderar a qualidade dos enlaces sem fio. Em redes
-baseadas em ESP-NOW, essa limitação é relevante, pois enlaces com menor
-número de saltos podem apresentar baixa qualidade de sinal, maior
-instabilidade ou maior probabilidade de perda de pacotes. Para
-considerar esse aspecto, o AODV-EN utiliza uma métrica híbrida que
-combina a distância lógica da rota, representada pelo número de saltos,
-com uma penalidade associada à qualidade do sinal recebido. A formulação geral da métrica é dada pela Equação~\ref{eq:custo_impl}:
-
-\begin{equation}\label{eq:custo_impl}
-  \text{Custo}(\text{rota}) = \alpha \times \text{HopCount} + \beta \times \text{Penalidade}(\overline{\text{RSSI}})
-\end{equation}
-
-\noindent onde $\alpha = 8$ e $\beta = 1$ são os pesos padrão (configuráveis por
+A métrica híbrida de roteamento, cuja fundamentação e formulação foram
+apresentadas na Seção~\ref{muxe9trica-huxedbrida-de-roteamento}
+(Equações~\ref{eq:custo} a~\ref{eq:ewma}), é concretizada no
+\emph{firmware} do AODV-EN. Os pesos $\alpha = 8$ e $\beta = 1$ são
+expostos como parâmetros de compilação
 \texttt{AODV\_EN\_ROUTE\_METRIC\_HOP\_WEIGHT} e
-\texttt{AODV\_EN\_ROUTE\_METRIC\_RSSI\_WEIGHT}). A função
-$\text{Penalidade}(\overline{\text{RSSI}})$ retorna um valor inteiro
-no intervalo $[0, 100]$, conforme a Equação~\ref{eq:penalidade_impl}:
-
-\begin{equation}\label{eq:penalidade_impl}
-  \text{Penalidade}(\overline{\text{RSSI}}) =
-  \operatorname{clamp}\!\left(
-    \frac{(\text{RSSI}_\text{best} - \overline{\text{RSSI}}) \times 100}
-         {\text{RSSI}_\text{best} - \text{RSSI}_\text{worst}},\;0,\;100
-  \right)
-\end{equation}
-
-\noindent com $\text{RSSI}_\text{best} = -55\,\text{dBm}$ e
-$\text{RSSI}_\text{worst} = -90\,\text{dBm}$. O valor $\overline{\text{RSSI}}$
-é atualizado por média móvel exponencial (EWMA, fator~$3/4$) a cada
-mensagem recebida do vizinho. Penalidade~$= 0$ indica sinal ótimo
-(acima de $-55\,\text{dBm}$); Penalidade~$= 100$ indica sinal mínimo
-(abaixo de $-90\,\text{dBm}$). Quanto menor o número de saltos e melhor
-o sinal, menor o custo da rota. Essa adaptação permite que a seleção de
-rotas considere não apenas o caminho mais curto, mas também a robustez
-dos enlaces envolvidos, contribuindo para maior estabilidade da
+\texttt{AODV\_EN\_ROUTE\_METRIC\_RSSI\_WEIGHT}, e os limiares de
+referência $\text{RSSI}_\text{best} = -55\,\text{dBm}$ e
+$\text{RSSI}_\text{worst} = -90\,\text{dBm}$ delimitam a função de
+penalidade. O RSSI médio por vizinho é mantido por média móvel
+exponencial e atualizado a cada mensagem recebida, sendo consultado no
+momento da seleção de rota. Dessa forma, a implementação permite que a
+escolha de caminho considere não apenas o número de saltos, mas também a
+robustez dos enlaces, contribuindo para maior estabilidade da
 comunicação em ambientes sem fio sujeitos a interferências, obstáculos e
 variações de sinal.
 

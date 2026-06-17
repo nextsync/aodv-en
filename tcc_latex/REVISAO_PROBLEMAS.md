@@ -300,12 +300,12 @@ _Capítulo tecnicamente sólido e bem escrito, com registro acadêmico formal ad
 - **Problema:** Todas as referências cruzadas a figuras e quadros usam números fixos digitados manualmente, enquanto as equações usam \ref corretamente (linhas 147, 156, 169). Além de inconsistente, isso quase garante numeração errada na versão final: as figuras nem têm \label, e qualquer inserção de figura/quadro em capítulos anteriores desalinha todas as chamadas. O "Figura 3/4/5/6" e "Quadro 12/13/14" sugerem numeração global manual que não acompanha o LaTeX.
 - **Correção:** Adicionar \label{fig:...} em cada \caption de figura e quadro e trocar todas as menções por \ref (ex.: "A Figura~\ref{fig:arquitetura} apresenta..."). Usar \autoref ou o padrão já adotado nas equações para uniformizar. Nunca digitar o número.
 
-### [ ] C4-041 · 🟠 ALTO · `coesao`
+### [x] C4-041 · 🟠 ALTO · `coesao`
 - **Local:** Seção 4.2 (Decisões de Projeto, linhas 76-183) vs Seção 4.7 (Adaptações, linhas 619-771)
 - **Problema:** Há duplicação substancial de conteúdo entre as duas seções: flooding controlado (4.2.2 e 4.7.2), métrica híbrida (4.2.3 e 4.7.4) e gerenciamento de peers/LRU (4.2.1 e 4.7.3) são explicados duas vezes, em parte com as mesmas frases (ex.: o argumento do unicast/CTS-ACK aparece quase idêntico em 113-124 e 699-710). Isso infla o capítulo, cansa o leitor e dilui a fronteira entre "decisão de projeto" e "adaptação".
 - **Correção:** Definir um papel distinto para cada seção: 4.2 fundamenta e justifica a decisão (o "porquê", com a literatura); 4.7 descreve sucintamente o resultado da adaptação (o "o quê") e remete a 4.2 via \ref em vez de reexplicar. Eliminar a reescrita do argumento do unicast em 4.7.2, substituindo por "conforme discutido na Seção~\ref{...}".
 
-### [ ] C4-042 · 🟠 ALTO · `coesao`
+### [x] C4-042 · 🟠 ALTO · `coesao`
 - **Local:** Equações: linhas 149-151/743-745 (custo) e 158-164/753-759 (penalidade)
 - **Problema:** As equações de custo (eq:custo e eq:custo_impl) e de penalidade (eq:penalidade e eq:penalidade_impl) são reproduzidas literalmente, idênticas, em duas seções. Duas equações numeradas iguais no mesmo capítulo são um defeito editorial: o leitor questiona qual é a "oficial" e por que diferem (não diferem).
 - **Correção:** Apresentar cada equação uma única vez (preferencialmente na Seção 4.2.3, onde é fundamentada) e, na Seção 4.7.4, referenciá-la por \ref em vez de reescrevê-la. Remover eq:custo_impl e eq:penalidade_impl.
