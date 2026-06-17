@@ -781,11 +781,13 @@ static void sim_aodv_deliver_data(
 static void sim_aodv_ack_received(
     void *user_ctx,
     const uint8_t ack_sender_mac[AODV_EN_MAC_ADDR_LEN],
-    uint32_t sequence_number)
+    uint32_t sequence_number,
+    uint32_t rtt_ms)
 {
     (void)user_ctx;
     (void)ack_sender_mac;
     (void)sequence_number;
+    (void)rtt_ms;
 }
 
 static void sim_context_prepare(
@@ -982,7 +984,7 @@ static void sim_write_csv_row(FILE *file, const sim_result_t *result)
 
 int main(int argc, char **argv)
 {
-    const uint32_t repetitions = 8u;
+    const uint32_t repetitions = 30u;
     const size_t scenario_count = sizeof(SIM_SCENARIOS) / sizeof(SIM_SCENARIOS[0]);
     const size_t profile_count = sizeof(SIM_AODV_PROFILES) / sizeof(SIM_AODV_PROFILES[0]);
     FILE *output;

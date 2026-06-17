@@ -79,7 +79,7 @@ reais**, multi-hop nativo por atenuação física (sem allowlist). É o C1 do TC
 - [x] **F0.6** **Harness de campanha** (script): build-por-nó (NODE_NAME/TARGET_MAC/topologia/
   TX power), flash dos N nós, 30 reps consecutivas/cenário, captura na origem,
   agregação → `tcc_metrics.py` → ledger com média/desvio/**IC95**.
-- [ ] **F0.7** **Validar em simulação** (já tem seed RNG real em `sim/campaign_compare.c`):
+- [x] **F0.7** **Validar em simulação** (já tem seed RNG real em `sim/campaign_compare.c`):
   rodar C1–C4 × 30 reps em sim, conferir que o pipeline de métricas/IC95 fecha, antes do HW.
 
 ## Fase 1 — coleta em hardware (quando usuário espalhar + conectar a origem)
