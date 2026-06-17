@@ -89,6 +89,14 @@ Etapa DSR
 Descrição
 \end{minipage} \\
 \midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Etapa DSR
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Descrição
+\end{minipage} \\
+\midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
@@ -163,6 +171,18 @@ respectiva etapa DSR, suas atividades específicas e produtos esperados.
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
 \caption{Mapeamento das fases do trabalho às etapas da DSR}\label{quad:mapeamento-fases}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Fase
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Etapa DSR
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Atividades
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Produtos
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Fase
@@ -358,7 +378,7 @@ Por limitação de disponibilidade de hardware no período de coleta, apenas
 uma versão reduzida do cenário C1 --- denominada C1-3n, com três nós em
 concentrador e seis repetições por algoritmo --- foi executada em
 hardware real; os demais cenários foram avaliados por simulação
-(Capítulo~\ref{resultados-e-discussuxe3o}, Seção~\ref{anuxe1lise-de-escalabilidade-por-simulauxe7uxe3o}).
+(Capítulo~\ref{resultados-e-discussuxe3o}, Seção~\ref{anuxe1lise-de-escalabilidade-por-simulauxe7uxe3o}). O Quadro~\ref{quad:cenarios} detalha a configuração de cada cenário experimental.
 
 {\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}
@@ -367,6 +387,18 @@ hardware real; os demais cenários foram avaliados por simulação
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
 \caption{Configuração dos cenários experimentais}\label{quad:cenarios}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Cenário
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Topologia
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Configuração
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Objetivo
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Cenário
@@ -411,7 +443,7 @@ específicos de cada abordagem. No caso do AODV-EN, são considerados
 parâmetros próprios do protocolo, como o intervalo de mensagens HELLO e
 o tempo de validade das rotas ativas. Para o Flooding, define-se o valor
 máximo de TTL, utilizado para limitar a propagação dos pacotes e evitar
-retransmissões indefinidas.
+retransmissões indefinidas. O Quadro~\ref{quad:parametros} apresenta os parâmetros adotados para cada algoritmo.
 
 {\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}
@@ -419,6 +451,16 @@ retransmissões indefinidas.
   >{\centering\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\centering\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
 \caption{Parâmetros dos experimentos}\label{quad:parametros}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+Parâmetro
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+AODV-EN
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Flooding
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\centering
 Parâmetro
@@ -464,7 +506,7 @@ fio com recursos limitados. O PDR permite avaliar a confiabilidade da
 comunicação; a latência fim-a-fim indica o desempenho temporal da
 entrega dos pacotes; o NRL mede o overhead de controle introduzido pelo
 protocolo; e o consumo energético estimado permite analisar o impacto
-das transmissões sobre a autonomia dos dispositivos.
+das transmissões sobre a autonomia dos dispositivos. O Quadro~\ref{quad:metricas} sintetiza as métricas, suas definições e fórmulas.
 
 {\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}
@@ -472,6 +514,16 @@ das transmissões sobre a autonomia dos dispositivos.
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
 \caption{Métricas de avaliação de desempenho}\label{quad:metricas}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Métrica
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Definição
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Fórmula
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Métrica
