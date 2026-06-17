@@ -74,9 +74,9 @@ reais**, multi-hop nativo por atenuação física (sem allowlist). É o C1 do TC
   Toca: `app_demo.c`, `app_flood.c`, `Kconfig.projbuild` (REPORT_TO_MAC), `tcc_metrics.py`.
 - [x] **F0.4** **Controle de TX power** por config (`esp_wifi_set_max_tx_power`), p/ encurtar
   alcance e viabilizar saltos num espaço menor. Exposto em Kconfig.
-- [ ] **F0.5** **Scan de canal** (script): varre os 14 canais 2.4 GHz, reporta ocupação/RSSI,
+- [~] **F0.5** (OPCIONAL, nao bloqueia) **Scan de canal** (script): varre os 14 canais 2.4 GHz, reporta ocupação/RSSI,
   sugere o mais limpo. Registra piso de ruído p/ documentação.
-- [ ] **F0.6** **Harness de campanha** (script): build-por-nó (NODE_NAME/TARGET_MAC/topologia/
+- [x] **F0.6** **Harness de campanha** (script): build-por-nó (NODE_NAME/TARGET_MAC/topologia/
   TX power), flash dos N nós, 30 reps consecutivas/cenário, captura na origem,
   agregação → `tcc_metrics.py` → ledger com média/desvio/**IC95**.
 - [ ] **F0.7** **Validar em simulação** (já tem seed RNG real em `sim/campaign_compare.c`):
