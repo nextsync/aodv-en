@@ -491,19 +491,16 @@ Fórmula
 \endlastfoot
 PDR (Packet Delivery Ratio) & Razão entre pacotes de dados recebidos no
 destino e pacotes enviados pela origem. Indica a confiabilidade da
-comunicação. & PDR = (Pacotes recebidos / Pacotes enviados) × 100\% \\
+comunicação. & $\text{PDR} = \dfrac{\text{Pacotes recebidos}}{\text{Pacotes enviados}} \times 100\%$ \\
 Latência Fim-a-Fim & Tempo decorrido entre o envio de um pacote pela
 origem e sua recepção no destino. Inclui tempo de processamento,
-enfileiramento e transmissão em cada salto. & L = t\_recepção -
-t\_envio \\
+enfileiramento e transmissão em cada salto. & $L = t_\text{recep} - t_\text{envio}$ \\
 NRL (Normalized Routing Load) & Razão entre o número de pacotes de
 controle transmitidos e o número de pacotes de dados entregues. Indica a
-eficiência do protocolo em termos de overhead. & NRL = Pacotes de
-controle / Pacotes de dados entregues \\
+eficiência do protocolo em termos de overhead. & $\text{NRL} = \dfrac{\text{Pacotes de controle}}{\text{Pacotes de dados entregues}}$ \\
 Consumo Energético Estimado & Estimativa do consumo de energia baseada
 no número de transmissões e no perfil de consumo do ESP32. Permite
-projetar autonomia com bateria. & E = Σ(N\_tx × E\_tx + N\_rx × E\_rx +
-t\_idle × P\_idle) \\
+projetar autonomia com bateria. & $E = \sum (N_\text{tx} \cdot E_\text{tx} + N_\text{rx} \cdot E_\text{rx} + t_\text{idle} \cdot P_\text{idle})$ \\
 \end{longtable}
 }
 

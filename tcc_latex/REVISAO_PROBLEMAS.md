@@ -94,7 +94,7 @@ _A introdução tem boa densidade técnica, encadeamento lógico coerente (ubiqu
 - **Problema:** Transições abruptas entre macroblocos temáticos. Ex.: 'A comunicação em redes IoT frequentemente enfrenta desafios...' surge logo após o ESP32 sem conector; e 'Os protocolos de roteamento para redes ad-hoc podem ser classificados...' entra sem ligação com o parágrafo de mesh. O problema é agravado por ser tudo um só parágrafo.
 - **Correção:** Ao quebrar em parágrafos, iniciar cada um com frase-tópico de transição que conecte ao bloco anterior (ex.: 'Embora versátil, o ESP32 enfrenta...', 'Para viabilizar o roteamento nessas redes mesh, ...').
 
-### [ ] C1-009 · 🟡 MÉDIO · `tecnico`
+### [x] C1-009 · 🟡 MÉDIO · `tecnico`
 - **Local:** Linhas 114-117, adaptação (i) e linha 115 'cache de 8 entradas'
 - **Problema:** Na introdução afirma-se 'cache de 8 entradas simultâneas (configurável)', mas no parágrafo das limitações (linha 84) menciona-se o limite de 20 peers do ESP-NOW. A introdução não explica por que o cache (8) é menor que o limite de hardware (20), o que pode confundir o leitor sobre a relação entre os dois valores.
 - **Correção:** Esclarecer brevemente que o cache LRU é uma escolha de projeto (não o limite físico), ou remover o número específico da introdução, deixando o detalhamento para a metodologia. Garantir consistência terminológica entre 'peers', 'cache' e 'tabela de pares'.
@@ -104,7 +104,7 @@ _A introdução tem boa densidade técnica, encadeamento lógico coerente (ubiqu
 - **Problema:** O trabalho compara AODV-EN com baseline de flooding (conforme escopo/metodologia), mas a introdução nunca introduz a abordagem por flooding/broadcast como alternativa concorrente nem motiva a comparação. O leitor chega ao problema sem saber que flooding é o termo de comparação central.
 - **Correção:** Acrescentar, na motivação ou no problema de pesquisa, uma menção à abordagem por flooding/broadcast como solução ingênua comum em ESP-NOW, justificando por que ela serve de baseline e por que um protocolo reativo poderia superá-la (latência/energia/overhead).
 
-### [ ] C1-011 · 🟡 MÉDIO · `escrita`
+### [x] C1-011 · 🟡 MÉDIO · `escrita`
 - **Local:** Linha 21 e linha 60 (repetição) e linha 11/15 ('décadas')
 - **Problema:** Repetições e ecos: 'desenvolvido pela Espressif Systems' aparece duas vezes (l.22 e l.60); 'Espressif' aparece ainda em 'ecossistema Espressif' (l.90). 'paradigma' e 'visão' próximos. Há também repetição de 'baixo custo'/'baixo consumo'.
 - **Correção:** Eliminar a segunda atribuição redundante 'desenvolvido pela Espressif Systems' (o leitor já sabe), e variar vocabulário para reduzir ecos lexicais.
@@ -164,7 +164,7 @@ _Capítulo bem organizado e de leitura fluida, com PT-BR formal correto e progre
 - **Problema:** Várias afirmações factuais e numéricas são atribuídas apenas em linhas 'Fonte:' fora do fluxo do texto (ex.: 'Fonte: Adaptado de Priyadarshi et al. (2025) e Chai e Zeng (2021)'), e algumas fontes aparecem escritas por extenso ('Becker et al. (2025)') em vez de \cite/\citeonline. Isso mistura estilos de citação e enfraquece a rastreabilidade ABNT (autor-data deve ser gerado pela ferramenta, não digitado).
 - **Correção:** Padronizar todas as atribuições via \citeonline/\cite (inclusive nas linhas 'Fonte:', usando \citeonline{...}). Evitar nomes de autor digitados manualmente como 'Becker et al. (2025)' na linha 229 — usar \citeonline{becker2025}.
 
-### [ ] C2-020 · 🟡 MÉDIO · `referencia`
+### [x] C2-020 · 🟡 MÉDIO · `referencia`
 - **Local:** Linhas 23-24 (seção 2.1)
 - **Problema:** Mark Weiser e o conceito de Computação Ubíqua (1991) são nomeados no texto sem citação, embora a entrada \cite{weiser1991} exista na .bib e seja usada no Cap. 1. Afirmação histórica relevante fica sem âncora bibliográfica neste capítulo.
 - **Correção:** Acrescentar \cite{weiser1991} após 'antecipada por Mark Weiser em 1991 sob o conceito de Computação Ubíqua'.
@@ -179,7 +179,7 @@ _Capítulo bem organizado e de leitura fluida, com PT-BR formal correto e progre
 - **Problema:** As seções principais começam de forma abrupta ('O ESP32 é...', 'O ESP-NOW é...', 'As Redes Mesh...', 'O AODV é...'), sem frases-ponte que liguem o fim de uma seção ao início da seguinte. A coesão inter-seções depende só do parágrafo introdutório do capítulo, não de transições locais.
 - **Correção:** Adicionar 1 frase de transição ao final/início de cada seção (ex.: ao fim de 2.2 sobre consumo do ESP32, ligar à necessidade de um protocolo de comunicação leve, introduzindo o ESP-NOW em 2.3).
 
-### [ ] C2-023 · 🟡 MÉDIO · `tecnico`
+### [x] C2-023 · 🟡 MÉDIO · `tecnico`
 - **Local:** Linha 216 (Quadro 'Padrão base: IEEE 802.11b') vs. linha 180 (texto: 'camada de enlace do padrão IEEE 802.11')
 - **Problema:** Inconsistência entre o texto (que diz 'IEEE 802.11' genérico) e o quadro (que afirma 'IEEE 802.11b'). Em referencial teórico, divergências entre prosa e tabela sobre o padrão-base do protocolo central minam a credibilidade técnica.
 - **Correção:** Unificar a designação do padrão (definir se é 802.11 genérico ou 802.11b especificamente) entre texto e Quadro, com citação da fonte que sustenta a escolha.
@@ -235,7 +235,7 @@ _Capítulo metodologicamente bem estruturado e com escrita academica em geral cl
 - **Problema:** Todas as referencias a quadros, figuras, secoes e capitulos usam numeros fixos digitados manualmente, sem \label/\ref. Os quadros usam \caption mas nenhum tem \label, e nenhum numero e gerado automaticamente. Qualquer insercao/remocao de um quadro ou figura quebra silenciosamente toda a numeracao e as remissoes, alem de tornar a citacao 'Capitulo 5, Secao 5.4' fragil a reorganizacao.
 - **Correção:** Adicionar \label{quad:dsr-etapas}, \label{fig:fluxo-metodologico} etc. a cada elemento flutuante e a cada \section/\subsection, e substituir os numeros literais por \ref{}/\autoref{}. Conferir que a numeracao gerada de fato corresponde (o 'Quadro 7' sugere que ha 6 quadros em capitulos anteriores — confirmar continuidade).
 
-### [ ] C3-031 · 🟡 MÉDIO · `abnt-formatacao`
+### [x] C3-031 · 🟡 MÉDIO · `abnt-formatacao`
 - **Local:** Secao 3.5, Quadro 10 (Metricas), coluna Formula, linhas 489-501
 - **Problema:** As formulas das quatro metricas estao escritas como texto puro dentro das celulas ('PDR = (Pacotes recebidos / Pacotes enviados) × 100%', 'L = t_recepcao - t_envio', 'E = Σ(N_tx × E_tx + N_rx × E_rx + t_idle × P_idle)'). Variaveis nao ficam em italico, o subscrito aparece como 't\_envio' (underscore literal), e o sinal de multiplicacao mistura '×' com nada — formatacao impropria para texto academico.
 - **Correção:** Tipografar em modo matematico LaTeX, idealmente como equacoes numeradas referenciaveis: $PDR = \frac{P_{rec}}{P_{env}} \times 100\%$, $L = t_{rec} - t_{env}$, $NRL = \frac{P_{ctrl}}{P_{dados}}$, $E = \sum (N_{tx}E_{tx} + N_{rx}E_{rx} + t_{idle}P_{idle})$. Definir cada simbolo logo apos a equacao.
@@ -325,7 +325,7 @@ _Capítulo tecnicamente sólido e bem escrito, com registro acadêmico formal ad
 - **Problema:** O tipo da mensagem ACK é descrito de forma ambígua ("Controle/aplicação") sem que o texto subsequente (linhas 445-450) esclareça a distinção. Como o próprio capítulo enfatiza que a confirmação é fim-a-fim em nível de aplicação (linha 710), classificá-la também como "Controle" gera inconsistência conceitual com o resto do texto.
 - **Correção:** Padronizar a classificação: se a confirmação é fim-a-fim em nível de aplicação (como afirma 4.7.2), rotular o ACK como "Aplicação" e remover a barra "Controle/". Garantir que a coluna Tipo do quadro seja coerente com a descrição textual.
 
-### [ ] C4-046 · 🟡 MÉDIO · `tecnico`
+### [x] C4-046 · 🟡 MÉDIO · `tecnico`
 - **Local:** Seção 4.6.1 / Figura 5 (linhas 479-481) — RREP a partir de nó intermediário com rota válida
 - **Problema:** O texto afirma que o RREP é gerado "quando a mensagem RREQ alcança o destino, ou um nó que possua rota válida para ele" (intermediate route reply). É preciso confirmar que esse caminho está implementado; se o firmware só gera RREP no destino final (gratuitous/intermediate reply não implementado), a afirmação seria uma promessa de design não cumprida. A Figura 5 só ilustra o caso do destino, o que pode mascarar a divergência.
 - **Correção:** Verificar no código (aodv_en_node.c, tratamento de RREQ) se há geração de RREP por nó intermediário com rota válida e número de sequência suficiente. Se não houver, remover a cláusula "ou um nó que possua rota válida" para não afirmar funcionalidade ausente; se houver, considerar ilustrá-la ou citá-la explicitamente.
@@ -604,12 +604,12 @@ _O texto tem boa redação acadêmica e estrutura de capítulos coerente, mas a 
 - **Problema:** A citação de Gil é feita em texto corrido manualmente como '(GIL, 2017)', fora do mecanismo abntex2cite. A chave gil2017 EXISTE no referencias.bib mas não é usada por \cite em lugar nenhum — ou seja, a referência não entrará na lista de Referências e o formato '(GIL, 2017)' não seguirá o estilo abntex2-alf do resto do documento.
 - **Correção:** Substituir '(GIL, 2017)' por '\cite{gil2017}'. Conferir que a entrada apareça na lista final. Fazer varredura por outras citações digitadas à mão.
 
-### [ ] AB-087 · 🟡 MÉDIO · `referencia`
+### [x] AB-087 · 🟡 MÉDIO · `referencia`
 - **Local:** capitulo_2.tex L75, L229, L367 (linhas 'Fonte:' dos quadros)
 - **Problema:** Nas linhas de fonte dos quadros, autores são digitados manualmente em formato autor-data ('Priyadarshi et al.~(2025)', 'Chai e Zeng (2021)', 'Becker et al.~(2025)') misturados com \citeonline. Isso gera inconsistência tipográfica (sobrenome manual vs. formatado pelo abntex2cite) e risco de divergência com a entrada real do .bib. 'et al.' manual também deveria ser itálico ou seguir a norma do estilo.
 - **Correção:** Usar \citeonline{priyadarshi2025}, \citeonline{chaizeng2021}, \citeonline{becker2025} também nas linhas de Fonte, deixando o estilo formatar o et al./e. Padronizar todas as fontes de quadro com o mesmo mecanismo.
 
-### [ ] AB-088 · 🟡 MÉDIO · `abnt-formatacao`
+### [x] AB-088 · 🟡 MÉDIO · `abnt-formatacao`
 - **Local:** capitulo_4.tex L308, L427, L667 vs capitulo_2.tex L75/L125/L166/L229 e capitulo_3.tex L206/L400/L449/L505
 - **Problema:** Inconsistência de formatação da linha 'Fonte:' dos quadros. Em vários quadros do Capítulo 4 a fonte está em negrito ('\textbf{Fonte: Elaborado pelos autores.}'), enquanto nos Capítulos 2, 3 e 5 a mesma linha está em texto normal ('Fonte: ...'). A ABNT pede fonte em fonte menor (ex.: \footnotesize/\small) e padronizada, normalmente sem negrito.
 - **Correção:** Padronizar todas as linhas de Fonte: remover \textbf, aplicar tamanho reduzido uniforme (ex.: definir um comando \fonte{...}) e mantê-las imediatamente abaixo do quadro/figura sem linha em branco extra.
@@ -669,17 +669,17 @@ _O conjunto de referências é coerente com o tema e a cobertura conceitual é b
 - **Problema:** Uso de 'and others' no campo author. No estilo author-date abntex2-alf isso renderiza 'et al.' na própria lista de Referências. A NBR 6023 só admite 'et al.' nas citações no texto (mais de três autores); na seção Referências todos os autores devem ser nomeados (ou, na convenção tolerada, até três). Listar 'Becker, M. et al.' como entrada bibliográfica é não conformidade ABNT.
 - **Correção:** Substituir 'and others' pela lista completa de autores de cada artigo. Se a banca/orientador adotar a convenção de truncar, manter pelo menos os três primeiros antes de 'et al.', mas o ideal ABNT é listar todos.
 
-### [ ] BIB-097 · 🟡 MÉDIO · `referencia`
+### [x] BIB-097 · 🟡 MÉDIO · `referencia`
 - **Local:** referencias.bib: gil2017 (l.113-120)
 - **Problema:** A entrada gil2017 (Gil, Como Elaborar Projetos de Pesquisa) está definida no .bib mas nunca é citada em nenhum capítulo (confirmado por grep: zero ocorrências de \cite{gil2017} fora do .bib). Como o estilo é author-date, a entrada não aparece na lista compilada (o .bbl tem 20 itens, não 21) — vira referência morta. Pior: sendo a fonte metodológica clássica em PT-BR sobre tipologia de pesquisa, sua ausência de citação é uma lacuna, pois o cap.3 caracteriza a pesquisa (natureza, abordagem) sem ancorá-la em Gil.
 - **Correção:** Citar gil2017 no capítulo 3 ao classificar a pesquisa quanto à natureza/abordagem/objetivos/procedimentos (uso canônico de Gil), ou remover a entrada do .bib se não for usada. Não deixar entrada órfã.
 
-### [ ] BIB-098 · 🟡 MÉDIO · `abnt-formatacao`
+### [x] BIB-098 · 🟡 MÉDIO · `abnt-formatacao`
 - **Local:** documentos/capitulo_2.tex, l.229
 - **Problema:** A linha 'Fonte: Becker et al.~(2025); \citeonline{espressif2024}.' mistura citação digitada manualmente ('Becker et al.~(2025)') com comando \citeonline. Isso quebra a consistência (em todo o resto do texto becker2025 é citado via comando), não fica sincronizado com o .bib e pode divergir da forma gerada pelo estilo (ex.: caixa do nome, ponto-e-vírgula, ano).
 - **Correção:** Trocar por '\citeonline{becker2025}; \citeonline{espressif2024}.' (ou \cite com múltiplas chaves) para que a formatação seja gerada pelo estilo ABNT de forma consistente.
 
-### [ ] BIB-099 · 🟡 MÉDIO · `referencia`
+### [x] BIB-099 · 🟡 MÉDIO · `referencia`
 - **Local:** documentos/capitulo_2.tex, l.23-24
 - **Problema:** Menção 'Essa visão, antecipada por Mark Weiser em 1991 sob o conceito de Computação Ubíqua' atribui afirmação a autor e ano específicos sem anexar \cite{weiser1991}. A chave weiser1991 só é citada uma vez (cap.1, l.10); esta segunda menção nominal-datada no cap.2 deveria igualmente ancorar a citação formal.
 - **Correção:** Acrescentar \cite{weiser1991} (ou reescrever com \citeonline{weiser1991} como sujeito) ao fim do trecho da l.24, garantindo que toda atribuição autoral nomeada tenha citação formal correspondente.
@@ -743,7 +743,7 @@ _A redação tem boa base técnica e registro formal predominante, mas há padr�
 - **Problema:** Frases excessivamente longas com múltiplas subordinadas encadeadas. Ex. cap.4 l.701-710: período único de ~7 linhas com três orações coordenadas listando consequências ("inflaria... subcontaria... descaracterizaria") aninhadas em explicações entre travessões e parênteses. O cap.1 também concentra períodos de 5-6 linhas. A densidade dificulta a leitura e a localização do núcleo da oração.
 - **Correção:** Quebrar períodos com mais de 3-4 linhas em duas ou três frases. No exemplo do unicast, separar a decisão ("A alternativa foi descartada.") das três justificativas em frases curtas ou em lista, em vez de um único período sobrecarregado.
 
-### [ ] PT-109 · 🟡 MÉDIO · `escrita`
+### [x] PT-109 · 🟡 MÉDIO · `escrita`
 - **Local:** capitulo_1.tex, linhas 107-108: "Dessa forma, o ESP-NOW possui restrições específicas de hardware e comunicação."
 - **Problema:** Conectivo "Dessa forma" mal empregado: a frase anterior introduz a proposta do AODV-EN como adaptação do AODV, e a seguinte afirma que o ESP-NOW tem restrições — não há relação de consequência/conclusão entre as duas, então o conectivo é semanticamente incoerente. A frase também repete informação já estabelecida várias vezes no capítulo (as limitações do ESP-NOW já foram detalhadas nas linhas 75-96), soando redundante e deslocada.
 - **Correção:** Remover a frase ou reposicioná-la, e eliminar o conectivo "Dessa forma". Se a intenção é fechar o parágrafo justificando a escolha do AODV, ligar diretamente: "A escolha do AODV como protocolo base justifica-se..." sem a sentença intermediária redundante.
@@ -753,7 +753,7 @@ _A redação tem boa base técnica e registro formal predominante, mas há padr�
 - **Problema:** O mesmo estrangeirismo aparece ora em itálico (\emph), ora em redondo, ao longo dos capítulos e às vezes na mesma seção. A norma exige tratamento tipográfico uniforme para termos em língua estrangeira. A inconsistência é visível e recorrente (peers, broadcast, flooding, hop count).
 - **Correção:** Definir uma lista de termos estrangeiros e aplicar \emph{} (ou a macro padronizada do template) a TODAS as ocorrências, ou — após a primeira definição — decidir aportuguesar/manter em redondo de forma consistente. Fazer uma varredura por termo.
 
-### [ ] PT-111 · 🟡 MÉDIO · `coerencia`
+### [x] PT-111 · 🟡 MÉDIO · `coerencia`
 - **Local:** capitulo_4.tex linha 308, 427, 667: "\textbf{Fonte: Elaborado pelos autores.}" e linha 25 "a arquitetura proposta" (impessoal) vs. autoria plural
 - **Problema:** A fonte dos quadros declara autoria em primeira pessoa do plural ("Elaborado pelos autores"), enquanto todo o corpo do texto adota rigorosamente a impessoalidade ("foi concebida", "optou-se", "avaliou-se"). Há também tensão com a natureza do TCC (verificar se é individual ou em dupla — se individual, "pelos autores" no plural está incorreto). Essa coexistência de impessoal no texto e plural autoral nas fontes denota falta de decisão sobre a voz.
 - **Correção:** Se o trabalho é individual, corrigir para "Elaborado pelo autor". Manter coerência: como o texto é impessoal, a fórmula de fonte é aceitável por convenção ABNT, mas o número (singular/plural) deve refletir a autoria real e ser uniforme em todo o documento.
