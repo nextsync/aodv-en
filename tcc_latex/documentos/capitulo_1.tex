@@ -18,20 +18,22 @@ Redes de Sensores Sem Fio (\emph{Wireless Sensor Networks} -- WSNs),
 tecnologias que conectam bilhões de dispositivos embarcados mundialmente
 em aplicações que vão desde automação residencial e agricultura de
 precisão até monitoramento ambiental e sistemas industriais inteligentes
-\cite{priyadarshi2025}. Nesse contexto, o microcontrolador ESP32,
-desenvolvido pela Espressif Systems, destaca-se como uma plataforma
-versátil e amplamente adotada, combinando conectividade Wi-Fi e
-Bluetooth integradas, elevado poder de processamento e custo acessível.
-Características que o tornam ideal para prototipagem e implantação de
-soluções IoT em escala. A comunicação em redes IoT frequentemente
-enfrenta desafios relacionados à cobertura, escalabilidade e
-resiliência. Topologias centralizadas, como a estrela, apresentam
-limitações significativas: a dependência de um ponto de acesso único
-constitui um gargalo de desempenho e um ponto único de falha,
-comprometendo a robustez do sistema \cite{chaizeng2021}. Como
-alternativa, as Redes Mesh Sem Fio (\emph{Wireless Mesh Networks} --
-WMNs) emergem como uma solução promissora, oferecendo características de
-auto-organização (\emph{self-configuration}), auto-recuperação
+\cite{priyadarshi2025}.
+
+Nesse contexto, o microcontrolador ESP32, desenvolvido pela Espressif
+Systems, destaca-se como uma plataforma versátil e amplamente adotada,
+combinando conectividade Wi-Fi e Bluetooth integradas, elevado poder de
+processamento e custo acessível, características que o tornam ideal para
+prototipagem e implantação de soluções IoT em escala. Entretanto, a
+comunicação em redes IoT frequentemente enfrenta desafios relacionados à
+cobertura, escalabilidade e resiliência. Topologias centralizadas, como
+a estrela, apresentam limitações significativas: a dependência de um
+ponto de acesso único constitui um gargalo de desempenho e um ponto
+único de falha, comprometendo a robustez do sistema \cite{chaizeng2021}.
+
+Como alternativa, as Redes Mesh Sem Fio (\emph{Wireless Mesh Networks}
+-- WMNs) emergem como uma solução promissora, oferecendo características
+de auto-organização (\emph{self-configuration}), auto-recuperação
 (\emph{self-healing}) e comunicação ponto-a-ponto entre os nós
 participantes. Nas redes mesh, a comunicação em múltiplos saltos
 (\emph{multi-hop}) permite que pacotes de dados sejam encaminhados
@@ -40,82 +42,101 @@ estendendo significativamente o alcance da rede sem a necessidade de
 aumentar a potência de transmissão dos dispositivos individuais
 \cite{arregui2025}. Essa abordagem possibilita a implantação de redes em
 áreas extensas utilizando dispositivos de baixa potência, reduzindo
-custos e consumo energético. Entretanto, a comunicação multi-hop
+custos e consumo energético. Em contrapartida, a comunicação multi-hop
 introduz desafios adicionais relacionados ao roteamento de pacotes,
 gerenciamento de interferência e manutenção da topologia da rede,
 exigindo algoritmos especializados para garantir a entrega confiável dos
-dados. Os protocolos de roteamento para redes ad-hoc podem ser
-classificados em três categorias principais: proativos, reativos e
-híbridos. Os protocolos proativos, como o \emph{Optimized Link State
-Routing} (OLSR), mantêm tabelas de roteamento constantemente
+dados.
+
+Para enfrentar esses desafios, os protocolos de roteamento para redes
+ad-hoc podem ser classificados em três categorias principais: proativos,
+reativos e híbridos. Os protocolos proativos, como o \emph{Optimized
+Link State Routing} (OLSR), mantêm tabelas de roteamento constantemente
 atualizadas, oferecendo baixa latência na descoberta de rotas às custas
-de maior overhead de controle. Os protocolos reativos, como o
+de maior \emph{overhead} de controle. Os protocolos reativos, como o
 \emph{Ad-hoc On-Demand Distance Vector} (AODV), descobrem rotas apenas
 quando necessário, reduzindo o tráfego de controle em redes com tráfego
 esporádico. Já os protocolos híbridos combinam características de ambas
 as abordagens, adaptando-se às diferentes condições da rede
-\cite{chaizeng2021}. Entre os mecanismos de comunicação disponíveis no
-ecossistema ESP32, o protocolo ESP-NOW destaca-se como uma alternativa
-de alto desempenho para comunicação direta entre dispositivos.
-Desenvolvido pela Espressif Systems, operando de forma
-\emph{connectionless} sobre a camada de enlace do padrão IEEE 802.11,
-permitindo a troca de mensagens curtas (até 250 bytes de payload) sem a
-necessidade de estabelecimento prévio de conexão ou associação a um
-ponto de acesso Wi-Fi \cite{becker2025}. Estudos experimentais recentes
-demonstram as vantagens do ESP-NOW em relação a outras tecnologias de
-comunicação sem fio. \citeonline{becker2025}, em experimentos de campo
-conduzidos em ambientes abertos e florestais, reportaram latências
-médias de 2,8 ms e \emph{Packet Delivery Ratio} (PDR) superior a 99\% em
-distâncias de até 55 metros em condições de linha de visada.
-\citeonline{urazayev2023}, avaliando o protocolo em ambiente interno,
-constataram que o ESP-NOW apresenta alcance 15\% superior e consumo
-energético 30\% inferior quando comparado a soluções baseadas em Wi-Fi
-TCP convencional. Essas características tornam o ESP-NOW especialmente
-atrativo para aplicações IoT em ambientes remotos ou alimentados por
-baterias de capacidade limitada. Apesar de suas vantagens, o protocolo
-apresenta limitações estruturais que restringem sua aplicabilidade em
-cenários que demandam redes de maior escala ou alcance estendido. A
-primeira limitação refere-se à ausência de suporte nativo a roteamento
-multi-hop: o ESP-NOW foi concebido exclusivamente para comunicações
-ponto-a-ponto ou em topologia estrela, não oferecendo mecanismos
-intrínsecos para encaminhamento de pacotes através de nós intermediários
-\cite{becker2025}. A segunda limitação diz respeito ao número máximo de
-\emph{peers} simultâneos suportados: cada dispositivo ESP32 pode manter
-no máximo 20 \emph{peers} registrados em sua tabela de pares, o que
-impõe restrições severas à escalabilidade da rede. A terceira limitação
-relaciona-se à ausência de mecanismo de broadcast nativo eficiente,
-dificultando a disseminação de mensagens de controle necessárias para
-protocolos de descoberta de rotas. Essa lacuna torna-se evidente ao se
-analisarem soluções de redes em malha amplamente utilizadas no
-ecossistema Espressif, como o ESP-WIFI-MESH e a biblioteca PainlessMesh,
-que operam sobre a pilha Wi-Fi convencional (IEEE 802.11). Conforme
-discutido por \citeonline{sestak2022}, o uso do Wi-Fi padrão para
-manutenção da topologia mesh impõe elevado \emph{overhead} de
-processamento e consumo energético, inviabilizando sua aplicação em
-dispositivos estritamente alimentados por baterias e comprometendo a
-principal vantagem competitiva do ESP-NOW. Trabalhos recentes têm
-buscado preencher essa lacuna: \citeonline{cujilema2023} propuseram o
-algoritmo BRAM-NOW para criação de redes mesh seguras sobre ESP-NOW,
-demonstrando latência média de 75 ms e taxa de perda de pacotes de
-9,25\% em ambiente residencial. Entretanto, tal abordagem não se
-fundamenta em protocolos de roteamento padronizados, o que dificulta sua
-comparação com soluções estabelecidas na literatura e limita sua
-extensibilidade. Diante dessa lacuna, o presente trabalho propõe o
+\cite{chaizeng2021}.
+
+Entre os mecanismos de comunicação disponíveis no ecossistema ESP32, o
+protocolo ESP-NOW destaca-se como uma alternativa de alto desempenho
+para comunicação direta entre dispositivos. Desenvolvido pela Espressif
+Systems, o ESP-NOW opera de forma \emph{connectionless} sobre a camada
+de enlace do padrão IEEE 802.11 e permite a troca de mensagens curtas
+(até 250 bytes de \emph{payload}) sem a necessidade de estabelecimento
+prévio de conexão ou associação a um ponto de acesso Wi-Fi
+\cite{becker2025}. Estudos experimentais recentes demonstram as
+vantagens do ESP-NOW em relação a outras tecnologias de comunicação sem
+fio. \citeonline{becker2025}, em experimentos de campo conduzidos em
+ambientes abertos e florestais, reportaram latências médias de 2,8 ms e
+\emph{Packet Delivery Ratio} (PDR) superior a 99\% em distâncias de até
+55 metros em condições de linha de visada. \citeonline{urazayev2023},
+avaliando o protocolo em ambiente interno, constataram que o ESP-NOW
+apresenta alcance 15\% superior e consumo energético 30\% inferior
+quando comparado a soluções baseadas em Wi-Fi TCP convencional. Essas
+características tornam o ESP-NOW especialmente atrativo para aplicações
+IoT em ambientes remotos ou alimentados por baterias de capacidade
+limitada.
+
+Apesar de suas vantagens, o protocolo apresenta limitações estruturais
+que restringem sua aplicabilidade em cenários que demandam redes de
+maior escala ou alcance estendido. A primeira limitação refere-se à
+ausência de suporte nativo a roteamento multi-hop: o ESP-NOW foi
+concebido exclusivamente para comunicações ponto-a-ponto ou em topologia
+estrela, não oferecendo mecanismos intrínsecos para encaminhamento de
+pacotes através de nós intermediários \cite{becker2025}. A segunda
+limitação diz respeito ao número máximo de \emph{peers} simultâneos
+suportados: cada dispositivo ESP32 pode manter no máximo 20 \emph{peers}
+registrados em sua tabela de pares, o que impõe restrições severas à
+escalabilidade da rede. A terceira limitação relaciona-se à ausência de
+mecanismo de \emph{broadcast} nativo eficiente, dificultando a
+disseminação de mensagens de controle necessárias para protocolos de
+descoberta de rotas. Essa lacuna torna-se evidente ao se analisarem
+soluções de redes em malha amplamente utilizadas no ecossistema
+Espressif, como o ESP-WIFI-MESH e a biblioteca PainlessMesh, que operam
+sobre a pilha Wi-Fi convencional (IEEE 802.11). Conforme discutido por
+\citeonline{sestak2022}, o uso do Wi-Fi padrão para manutenção da
+topologia mesh impõe elevado \emph{overhead} de processamento e consumo
+energético, inviabilizando sua aplicação em dispositivos estritamente
+alimentados por baterias e comprometendo a principal vantagem
+competitiva do ESP-NOW. Trabalhos recentes têm buscado preencher essa
+lacuna: \citeonline{cujilema2023} propuseram o algoritmo BRAM-NOW para
+criação de redes mesh seguras sobre ESP-NOW, demonstrando latência média
+de 75 ms e taxa de perda de pacotes de 9,25\% em ambiente residencial.
+Entretanto, tal abordagem não se fundamenta em protocolos de roteamento
+padronizados, o que dificulta sua comparação com soluções estabelecidas
+na literatura e limita sua extensibilidade.
+
+Diante desse cenário, formula-se a seguinte questão de pesquisa: é
+viável adaptar um protocolo de roteamento padronizado e amplamente
+validado, como o AODV, para operar sobre o ESP-NOW, contornando suas
+restrições de \emph{peers}, ausência de \emph{broadcast} confiável e de
+suporte a multi-hop, mantendo desempenho competitivo frente a uma
+abordagem de referência baseada em inundação (\emph{flooding})? Como
+hipótese central, admite-se que um roteamento reativo sob demanda,
+adaptado a essas restrições, é capaz de entregar pacotes em múltiplos
+saltos sobre ESP-NOW com taxa de entrega comparável à da inundação
+controlada, porém a um custo de controle e de ocupação de canal
+significativamente menor à medida que a rede cresce em tamanho e
+diâmetro.
+
+Para responder a essa questão, o presente trabalho propõe o
 desenvolvimento e a avaliação de um algoritmo de roteamento denominado
 AODV-EN (\emph{Ad-hoc On-Demand Distance Vector for ESP-NOW}), uma
-adaptação do protocolo AODV, especificado na RFC 3561
-\cite{perkins2003}. Dessa forma, o ESP-NOW possui restrições específicas
-de hardware e comunicação. A escolha do AODV como protocolo base
-justifica-se por suas características de roteamento reativo sob demanda,
-que minimizam o tráfego de controle em redes com comunicação
-intermitente, e por sua ampla documentação e validação na literatura
-acadêmica, facilitando comparações e extensões futuras. As principais
-adaptações propostas para adequar o AODV às restrições do ESP-NOW
-incluem: (i) gerenciamento dinâmico de \emph{peers} utilizando política
-LRU (\emph{Least Recently Used}), com cache de 8 entradas simultâneas
-(configurável), permitindo que o protocolo alcance nós em número
-superior ao limite do cache ao longo do tempo; (ii) disseminação das
-mensagens RREQ (\emph{Route Request}) por \emph{flooding} controlado
+adaptação do protocolo AODV, especificado na RFC 3561 \cite{perkins2003}.
+A escolha do AODV como protocolo base justifica-se por suas
+características de roteamento reativo sob demanda, que minimizam o
+tráfego de controle em redes com comunicação intermitente, e por sua
+ampla documentação e validação na literatura acadêmica, facilitando
+comparações e extensões futuras. As principais adaptações propostas para
+adequar o AODV às restrições do ESP-NOW incluem: (i) gerenciamento
+dinâmico de \emph{peers} utilizando política LRU (\emph{Least Recently
+Used}), com cache configurável de entradas ativas, permitindo que o
+protocolo alcance nós em número superior ao do cache ao longo do tempo,
+dentro do limite físico de 20 \emph{peers} do ESP-NOW; (ii) disseminação
+das mensagens RREQ (\emph{Route Request}) por \emph{flooding} controlado
 sobre \emph{broadcast} de enlace do ESP-NOW (FF:FF:FF:FF:FF:FF), com
 supressão de duplicatas por cache de identificadores e limite de
 propagação (TTL), preservando a semântica clássica do AODV; e (iii)
@@ -126,14 +147,17 @@ lógica e melhor qualidade de enlace.
 
 \section{OBJETIVOS}\label{objetivos}
 
-\section{OBJETIVO GERAL}\label{objetivo-geral}
+Esta seção apresenta o objetivo geral e os objetivos específicos que
+orientam o desenvolvimento deste trabalho.
+
+\subsection{Objetivo geral}\label{objetivo-geral}
 
 Propor, implementar e avaliar um algoritmo de roteamento multi-hop
 baseado no protocolo AODV, adaptado para operação em redes mesh
 construídas sobre o protocolo ESP-NOW, considerando as restrições
 específicas dessa tecnologia e utilizando hardware de baixo custo.
 
-\section{OBJETIVOS ESPECÍFICOS}\label{objetivos-especuxedficos}
+\subsection{Objetivos específicos}\label{objetivos-especuxedficos}
 
 Para alcançar o objetivo geral, foram definidos os seguintes objetivos
 específicos:
@@ -165,3 +189,23 @@ específicos:
   posicionando a contribuição do AODV-EN em relação às soluções
   existentes para redes mesh sobre ESP-NOW e outras tecnologias.
 \end{enumerate}
+
+\section{ESTRUTURA DO TRABALHO}\label{estrutura-do-trabalho}
+
+Além desta introdução, este trabalho está organizado em mais cinco
+capítulos. O Capítulo~\ref{cap:referencial} apresenta o referencial
+teórico, abordando as redes de sensores sem fio e redes mesh, o
+protocolo ESP-NOW e suas limitações, os protocolos de roteamento ad-hoc
+e o protocolo AODV, o algoritmo de inundação utilizado como referência e
+as métricas de avaliação de desempenho. O Capítulo~\ref{cap:metodologia}
+descreve a metodologia adotada, fundamentada na \emph{Design Science
+Research}, detalhando os cenários experimentais, os parâmetros de
+configuração e o procedimento de coleta e análise dos dados. O
+Capítulo~\ref{cap:implementacao} apresenta o projeto e a implementação
+do AODV-EN, incluindo a arquitetura do firmware, as estruturas de dados,
+o formato das mensagens e as adaptações propostas. O
+Capítulo~\ref{cap:resultados} reporta e discute os resultados obtidos na
+avaliação experimental em \emph{hardware} e em simulação, comparando o
+AODV-EN com o algoritmo de referência e com a literatura correlata. Por
+fim, o Capítulo~\ref{cap:conclusao} apresenta as conclusões, as
+limitações do estudo e as propostas de trabalhos futuros.
