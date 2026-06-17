@@ -69,22 +69,22 @@ _A introdução tem boa densidade técnica, encadeamento lógico coerente (ubiqu
 - **Problema:** Ausência da seção de ESTRUTURA/ORGANIZAÇÃO DO TRABALHO, que descreve o conteúdo de cada capítulo subsequente. É item estrutural esperado em TCC e exigido pela maioria das bancas/normas institucionais.
 - **Correção:** Adicionar uma seção final 'ESTRUTURA DO TRABALHO' (ou parágrafo de organização) resumindo, em um parágrafo, o conteúdo dos Capítulos 2 a 6 (referencial teórico, metodologia/desenvolvimento, resultados, conclusões).
 
-### [ ] C1-004 · 🟠 ALTO · `completude`
+### [x] C1-004 · 🟠 ALTO · `completude`
 - **Local:** Introdução, transição para a proposta (linhas 96-107)
 - **Problema:** O problema de pesquisa nunca é enunciado de forma explícita como pergunta ou afirmação-problema. Ele permanece implícito ('Diante dessa lacuna...'), sem uma sentença que diga claramente qual é a questão central que o trabalho responde.
 - **Correção:** Inserir, antes da apresentação da proposta, uma formulação explícita do problema, idealmente como pergunta de pesquisa (ex.: 'Diante disso, coloca-se a questão: é viável adaptar o protocolo AODV para operar sobre ESP-NOW, contornando suas restrições de hardware, mantendo desempenho competitivo frente a abordagens por flooding?').
 
-### [ ] C1-005 · 🟠 ALTO · `coesao`
+### [x] C1-005 · 🟠 ALTO · `coesao`
 - **Local:** Linhas 107-108
 - **Problema:** Frase órfã e desconexa: 'Dessa forma, o ESP-NOW possui restrições específicas de hardware e comunicação.' O conector 'Dessa forma' não tem relação causal com a frase anterior (que apresenta a RFC 3561), e a afirmação repete o que já foi exposto nas três limitações anteriores, quebrando a coesão.
 - **Correção:** Remover a frase ou reescrevê-la integrada à justificativa, sem o conector indevido. Ex.: ligar diretamente a apresentação do AODV-EN à justificativa da escolha do AODV, sem essa sentença intermediária redundante.
 
-### [ ] C1-006 · 🟠 ALTO · `escrita`
+### [x] C1-006 · 🟠 ALTO · `escrita`
 - **Local:** Linhas 24-26
 - **Problema:** Período sem verbo principal (fragmento de frase): 'Características que o tornam ideal para prototipagem e implantação de soluções IoT em escala.' Inicia com pronome relativo sem oração principal, constituindo erro gramatical.
 - **Correção:** Unir à frase anterior com vírgula: '...custo acessível, características que o tornam ideal para prototipagem e implantação de soluções IoT em escala.'
 
-### [ ] C1-007 · 🟠 ALTO · `escrita`
+### [x] C1-007 · 🟠 ALTO · `escrita`
 - **Local:** Linhas 60-64
 - **Problema:** Período sem oração principal: 'Desenvolvido pela Espressif Systems, operando de forma connectionless sobre a camada de enlace do padrão IEEE 802.11, permitindo a troca de mensagens curtas...' — sequência de orações reduzidas (particípio/gerúndio) sem verbo finito que sustente a frase.
 - **Correção:** Reescrever com verbo principal, ex.: 'Desenvolvido pela Espressif Systems, o ESP-NOW opera de forma connectionless sobre a camada de enlace do padrão IEEE 802.11 e permite a troca de mensagens curtas (até 250 bytes de payload) sem necessidade de associação prévia a um ponto de acesso Wi-Fi.'
@@ -159,7 +159,7 @@ _Capítulo bem organizado e de leitura fluida, com PT-BR formal correto e progre
 - **Problema:** Três dos seis quadros nunca são referenciados na prosa: Quadro 2 (Especificações do ESP32, linha 106), Quadro 4 (Características do ESP-NOW, linha 205) e Quadro 5 (Comparativo de protocolos, linha 343). Em texto acadêmico ABNT, todo elemento flutuante deve ser chamado e comentado no corpo do texto; tabelas 'órfãs' são apontadas em banca.
 - **Correção:** Inserir frase de chamada para cada quadro não referenciado (ex.: 'A Tabela X sintetiza as especificações...', 'O Quadro Y compara as três categorias quanto a latência, overhead e memória'), idealmente com uma leitura interpretativa, não apenas 'ver Quadro X'.
 
-### [ ] C2-019 · 🟠 ALTO · `referencia`
+### [x] C2-019 · 🟠 ALTO · `referencia`
 - **Local:** Linhas 75, 125, 166, 229, 367, 507 ('Fonte: ...')
 - **Problema:** Várias afirmações factuais e numéricas são atribuídas apenas em linhas 'Fonte:' fora do fluxo do texto (ex.: 'Fonte: Adaptado de Priyadarshi et al. (2025) e Chai e Zeng (2021)'), e algumas fontes aparecem escritas por extenso ('Becker et al. (2025)') em vez de \cite/\citeonline. Isso mistura estilos de citação e enfraquece a rastreabilidade ABNT (autor-data deve ser gerado pela ferramenta, não digitado).
 - **Correção:** Padronizar todas as atribuições via \citeonline/\cite (inclusive nas linhas 'Fonte:', usando \citeonline{...}). Evitar nomes de autor digitados manualmente como 'Becker et al. (2025)' na linha 229 — usar \citeonline{becker2025}.
@@ -528,12 +528,12 @@ _A cadeia objetivo → resultado → conclusão é parcialmente coerente, mas ap
 - **Problema:** A conclusão não retoma o objetivo (e). O posicionamento frente à literatura aparece apenas como promessa futura ('Tais extensões consolidariam o AODV-EN como uma alternativa padronizada...', l. 58-59) e como nota metodológica sobre o flooding canônico (l. 42-43). Como o problema da introdução é a falta de solução padronizada E comparável com a literatura, a conclusão deixa metade do problema sem resposta: demonstra viabilidade (objetivo geral), mas não fecha a comparabilidade prometida.
 - **Correção:** Adicionar à conclusão um parágrafo que responda diretamente à comparação com correlatos (espelhando a nova seção do Cap. 5), afirmando onde o AODV-EN se situa em relação a BRAM-NOW e às tecnologias avaliadas em becker2025/urazayev2023. Conectar de volta à frase 'dificulta sua comparação com soluções estabelecidas' da introdução, mostrando que o trabalho supera essa limitação.
 
-### [ ] AL-075 · 🟠 ALTO · `coerencia`
+### [x] AL-075 · 🟠 ALTO · `coerencia`
 - **Local:** Cap. 5, l. 258 ('Capítulo 5') vs. Cap. 6, l. 18-19 ('Capítulo 4')
 - **Problema:** Contradição direta entre os dois capítulos sobre onde as adaptações (LRU, métrica híbrida) foram projetadas/descritas. O Cap. 5 (l. 257-259) diz: 'embora projetadas e descritas no Capítulo 5'. O Cap. 6 (l. 18-19) diz: 'projetadas e implementadas as adaptações necessárias (Capítulo 4)'. A estrutura real do documento (verificada nos includes) é: Cap. 4 = 'PROJETO E IMPLEMENTAÇÃO DO ALGORITMO'. Logo o Cap. 5 está errado (autorreferência: o Cap. 5 é o próprio capítulo de Resultados) e o Cap. 6 está certo. Um avaliador que cruzar as duas frases percebe a inconsistência, o que mina a credibilidade da retomada de objetivos.
 - **Correção:** Corrigir o Cap. 5, l. 258: trocar 'descritas no Capítulo 5' por 'projetadas e descritas no Capítulo 4'. Conferir todas as autorreferências do Cap. 5.
 
-### [ ] AL-076 · 🟠 ALTO · `referencia`
+### [x] AL-076 · 🟠 ALTO · `referencia`
 - **Local:** Cap. 5, l. 22 ('Seção 4.4') e l. 26 ('Seção 6.4')
 - **Problema:** Duas referências cruzadas erradas/quebradas, ambas em pontos que sustentam o alinhamento com a metodologia. (1) L. 22: 'o planejamento experimental (Seção 4.4) preveja cenários de até cinco saltos e trinta repetições' — o Planejamento Experimental é uma seção do Cap. 3 (METODOLOGIA), não do Cap. 4 (Projeto/Implementação). (2) L. 26: 'os cenários de maior diâmetro e escala foram avaliados por simulação (Seção 6.4)' — a análise de escalabilidade por simulação está DENTRO do próprio Cap. 5 (seção 'Análise de Escalabilidade por Simulação', l. 201); o Cap. 6 é a Conclusão e não tem seção 6.4. As referências estão hardcoded como texto literal (não \ref), então não quebram na compilação, mas apontam para o lugar errado.
 - **Correção:** Substituir os números literais por \ref{} com labels reais: l. 22 deve apontar para a seção de Planejamento Experimental do Cap. 3 (label cenuxe1rios-experimentais/planejamento-experimental); l. 26 deve apontar para a seção de escalabilidade do próprio Cap. 5 (label anuxe1lise-de-escalabilidade-por-simulauxe7uxe3o). Preferir \ref/\autoref a números fixos para evitar reincidência.
