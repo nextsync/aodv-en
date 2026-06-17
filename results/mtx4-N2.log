@@ -1,0 +1,141 @@
+I (10667) aodv_en_app: RSSIPROBE src=28:05:A5:34:99:34 rssi=-55
+I (10787) aodv_en_app: RSSIPROBE src=28:05:A5:33:EB:80 rssi=-66
+I (10897) aodv_en_app: RSSIPROBE src=28:05:A5:33:B9:EC rssi=-72
+I (11667) aodv_en_app: RSSIPROBE src=28:05:A5:34:99:34 rssi=-57
+I (11787) aodv_en_app: RSSIPROBE src=28:05:A5:33:EB:80 rssi=-66
+I (11897) aodv_en_app: RSSIPROBE src=28:05:A5:33:B9:EC rssi=-73
+I (12667) aodv_en_app: RSSIPROBE src=28:05:A5:34:99:34 rssi=-57
+I (12717) aodv_en_app: RSSISELF self=28:05:A5:33:D6:1C
+I (12717) aodv_en_app: routes=3 neighbors=3 tx=12 rx=36 delivered=0 control=12 acks=0
+I (12717) aodv_en_app: route[0] dest=28:05:A5:33:EB:80 via=28:05:A5:33:EB:80 hops=1 metric=36 state=2 expires=41311
+I (12727) aodv_en_app: route[1] dest=28:05:A5:33:B9:EC via=28:05:A5:33:B9:EC hops=1 metric=56 state=2 expires=41421
+I (12737) aodv_en_app: route[2] dest=28:05:A5:34:99:34 via=28:05:A5:34:99:34 hops=1 metric=8 state=2 expires=42191
+I (12787) aodv_en_app: RSSIPROBE src=28:05:A5:33:EB:80 rssi=-66
+I (12897) aodv_en_app: RSSIPROBE src=28:05:A5:33:B9:EC rssi=-73
+I (13667) aodv_en_app: RSSIPROBE src=28:05:A5:34:99:34 rssi=-56
+I (13787) aodv_en_app: RSSIPROBE src=28:05:A5:33:EB:80 rssi=-66
+I (13897) aodv_en_app: RSSIPROBE src=28:05:A5:33:B9:EC rssi=-72
+I (14667) aodv_en_app: RSSIPROBE src=28:05:A5:34:99:34 rssi=-56
+I (14787) aodv_en_app: RSSIPROBE src=28:05:A5:33:EB:80 rssi=-66
+I (14897) aodv_en_app: RSSIPROBE src=28:05:A5:33:B9:EC rssi=-74
+I (15667) aodv_en_app: RSSIPROBE src=28:05:A5:34:99:34 rssi=-56
+I (15717) aodv_en_app: RSSISELF self=28:05:A5:33:D6:1C
+I (15717) aodv_en_app: routes=3 neighbors=3 tx=15 rx=45 delivered=0 control=15 acks=0
+I (15717) aodv_en_app: route[0] dest=28:05:A5:33:EB:80 via=28:05:A5:33:EB:80 hops=1 metric=36 state=2 expires=44311
+I (15727) aodv_en_app: route[1] dest=28:05:A5:33:B9:EC via=28:05:A5:33:B9:EC hops=1 metric=56 state=2 expires=44421
+I (15737) aodv_en_app: route[2] dest=28:05:A5:34:99:34 via=28:05:A5:34:99:34 hops=1 metric=8 state=2 expires=45191
+I (15787) aodv_en_app: RSSIPROBE src=28:05:A5:33:EB:80 rssi=-66
+I (15897) aodv_en_app: RSSIPROBE src=28:05:A5:33:B9:EC rssi=-72
+I (16667) aodv_en_app: RSSIPROBE src=28:05:A5:34:99:34 rssi=-56
+I (16787) aodv_en_app: RSSIPROBE src=28:05:A5:33:EB:80 rssi=-66
+I (16897) aodv_en_app: RSSIPROBE src=28:05:A5:33:B9:EC rssi=-73
+I (17657) aodv_en_app: RSSIPROBE src=28:05:A5:34:99:34 rssi=-56
+I (17787) aodv_en_app: RSSIPROBE src=28:05:A5:33:EB:80 rssi=-66
+I (17897) aodv_en_app: RSSIPROBE src=28:05:A5:33:B9:EC rssi=-72
+I (18657) aodv_en_app: RSSIPROBE src=28:05:A5:34:99:34 rssi=-55
+I (18717) aodv_en_app: RSSISELF self=28:05:A5:33:D6:1C
+I (18717) aodv_en_app: routes=3 neighbors=3 tx=18 rx=54 delivered=0 control=18 acks=0
+I (18717) aodv_en_app: route[0] dest=28:05:A5:33:EB:80 via=28:05:A5:33:EB:80 hops=1 metric=36 state=2 expires=47311
+I (18727) aodv_en_app: route[1] dest=28:05:A5:33:B9:EC via=28:05:A5:33:B9:EC hops=1 metric=56 state=2 expires=47421
+I (18737) aodv_en_app: route[2] dest=28:05:A5:34:99:34 via=28:05:A5:34:99:34 hops=1 metric=8 state=2 expires=48181
+I (18787) aodv_en_app: RSSIPROBE src=28:05:A5:33:EB:80 rssi=-66
+I (18897) aodv_en_app: RSSIPROBE src=28:05:A5:33:B9:EC rssi=-73
+I (19667) aodv_en_app: RSSIPROBE src=28:05:A5:34:99:34 rssi=-56
+I (19787) aodv_en_app: RSSIPROBE src=28:05:A5:33:EB:80 rssi=-66
+I (19897) aodv_en_app: RSSIPROBE src=28:05:A5:33:B9:EC rssi=-72
+I (20667) aodv_en_app: RSSIPROBE src=28:05:A5:34:99:34 rssi=-55
+I (20787) aodv_en_app: RSSIPROBE src=28:05:A5:33:EB:80 rssi=-66
+I (20897) aodv_en_app: RSSIPROBE src=28:05:A5:33:B9:EC rssi=-72
+I (21667) aodv_en_app: RSSIPROBE src=28:05:A5:34:99:34 rssi=-56
+I (21717) aodv_en_app: RSSISELF self=28:05:A5:33:D6:1C
+I (21717) aodv_en_app: routes=3 neighbors=3 tx=21 rx=63 delivered=0 control=21 acks=0
+I (21717) aodv_en_app: route[0] dest=28:05:A5:33:EB:80 via=28:05:A5:33:EB:80 hops=1 metric=36 state=2 expires=50311
+I (21727) aodv_en_app: route[1] dest=28:05:A5:33:B9:EC via=28:05:A5:33:B9:EC hops=1 metric=56 state=2 expires=50421
+I (21737) aodv_en_app: route[2] dest=28:05:A5:34:99:34 via=28:05:A5:34:99:34 hops=1 metric=8 state=2 expires=51191
+I (21787) aodv_en_app: RSSIPROBE src=28:05:A5:33:EB:80 rssi=-66
+I (21897) aodv_en_app: RSSIPROBE src=28:05:A5:33:B9:EC rssi=-73
+I (22667) aodv_en_app: RSSIPROBE src=28:05:A5:34:99:34 rssi=-57
+I (22787) aodv_en_app: RSSIPROBE src=28:05:A5:33:EB:80 rssi=-66
+I (22897) aodv_en_app: RSSIPROBE src=28:05:A5:33:B9:EC rssi=-74
+I (23667) aodv_en_app: RSSIPROBE src=28:05:A5:34:99:34 rssi=-57
+I (23787) aodv_en_app: RSSIPROBE src=28:05:A5:33:EB:80 rssi=-66
+I (23897) aodv_en_app: RSSIPROBE src=28:05:A5:33:B9:EC rssi=-72
+I (24667) aodv_en_app: RSSIPROBE src=28:05:A5:34:99:34 rssi=-56
+I (24717) aodv_en_app: RSSISELF self=28:05:A5:33:D6:1C
+I (24717) aodv_en_app: routes=3 neighbors=3 tx=24 rx=72 delivered=0 control=24 acks=0
+I (24717) aodv_en_app: route[0] dest=28:05:A5:33:EB:80 via=28:05:A5:33:EB:80 hops=1 metric=36 state=2 expires=53311
+I (24727) aodv_en_app: route[1] dest=28:05:A5:33:B9:EC via=28:05:A5:33:B9:EC hops=1 metric=56 state=2 expires=53421
+I (24737) aodv_en_app: route[2] dest=28:05:A5:34:99:34 via=28:05:A5:34:99:34 hops=1 metric=8 state=2 expires=54191
+I (24787) aodv_en_app: RSSIPROBE src=28:05:A5:33:EB:80 rssi=-66
+I (24897) aodv_en_app: RSSIPROBE src=28:05:A5:33:B9:EC rssi=-73
+I (25667) aodv_en_app: RSSIPROBE src=28:05:A5:34:99:34 rssi=-56
+I (25787) aodv_en_app: RSSIPROBE src=28:05:A5:33:EB:80 rssi=-66
+I (25897) aodv_en_app: RSSIPROBE src=28:05:A5:33:B9:EC rssi=-73
+I (26667) aodv_en_app: RSSIPROBE src=28:05:A5:34:99:34 rssi=-55
+I (26787) aodv_en_app: RSSIPROBE src=28:05:A5:33:EB:80 rssi=-66
+I (26897) aodv_en_app: RSSIPROBE src=28:05:A5:33:B9:EC rssi=-74
+I (27667) aodv_en_app: RSSIPROBE src=28:05:A5:34:99:34 rssi=-56
+I (27717) aodv_en_app: RSSISELF self=28:05:A5:33:D6:1C
+I (27717) aodv_en_app: routes=3 neighbors=3 tx=27 rx=81 delivered=0 control=27 acks=0
+I (27717) aodv_en_app: route[0] dest=28:05:A5:33:EB:80 via=28:05:A5:33:EB:80 hops=1 metric=36 state=2 expires=56311
+I (27727) aodv_en_app: route[1] dest=28:05:A5:33:B9:EC via=28:05:A5:33:B9:EC hops=1 metric=56 state=2 expires=56421
+I (27737) aodv_en_app: route[2] dest=28:05:A5:34:99:34 via=28:05:A5:34:99:34 hops=1 metric=8 state=2 expires=57191
+I (27797) aodv_en_app: RSSIPROBE src=28:05:A5:33:EB:80 rssi=-65
+I (27897) aodv_en_app: RSSIPROBE src=28:05:A5:33:B9:EC rssi=-72
+I (28657) aodv_en_app: RSSIPROBE src=28:05:A5:34:99:34 rssi=-58
+I (28787) aodv_en_app: RSSIPROBE src=28:05:A5:33:EB:80 rssi=-66
+I (28897) aodv_en_app: RSSIPROBE src=28:05:A5:33:B9:EC rssi=-72
+I (29667) aodv_en_app: RSSIPROBE src=28:05:A5:34:99:34 rssi=-55
+I (29797) aodv_en_app: RSSIPROBE src=28:05:A5:33:EB:80 rssi=-66
+I (29897) aodv_en_app: RSSIPROBE src=28:05:A5:33:B9:EC rssi=-74
+I (30667) aodv_en_app: RSSIPROBE src=28:05:A5:34:99:34 rssi=-57
+I (30717) aodv_en_app: RSSISELF self=28:05:A5:33:D6:1C
+I (30717) aodv_en_app: routes=3 neighbors=3 tx=30 rx=90 delivered=0 control=30 acks=0
+I (30717) aodv_en_app: route[0] dest=28:05:A5:33:EB:80 via=28:05:A5:33:EB:80 hops=1 metric=36 state=2 expires=59321
+I (30727) aodv_en_app: route[1] dest=28:05:A5:33:B9:EC via=28:05:A5:33:B9:EC hops=1 metric=56 state=2 expires=59421
+I (30737) aodv_en_app: route[2] dest=28:05:A5:34:99:34 via=28:05:A5:34:99:34 hops=1 metric=8 state=2 expires=60191
+I (30787) aodv_en_app: RSSIPROBE src=28:05:A5:33:EB:80 rssi=-66
+I (30897) aodv_en_app: RSSIPROBE src=28:05:A5:33:B9:EC rssi=-73
+I (31667) aodv_en_app: RSSIPROBE src=28:05:A5:34:99:34 rssi=-55
+I (31787) aodv_en_app: RSSIPROBE src=28:05:A5:33:EB:80 rssi=-65
+I (31897) aodv_en_app: RSSIPROBE src=28:05:A5:33:B9:EC rssi=-73
+I (32667) aodv_en_app: RSSIPROBE src=28:05:A5:34:99:34 rssi=-55
+I (32787) aodv_en_app: RSSIPROBE src=28:05:A5:33:EB:80 rssi=-66
+I (32897) aodv_en_app: RSSIPROBE src=28:05:A5:33:B9:EC rssi=-72
+I (33667) aodv_en_app: RSSIPROBE src=28:05:A5:34:99:34 rssi=-57
+I (33717) aodv_en_app: RSSISELF self=28:05:A5:33:D6:1C
+I (33717) aodv_en_app: routes=3 neighbors=3 tx=33 rx=99 delivered=0 control=33 acks=0
+I (33717) aodv_en_app: route[0] dest=28:05:A5:33:EB:80 via=28:05:A5:33:EB:80 hops=1 metric=36 state=2 expires=62311
+I (33727) aodv_en_app: route[1] dest=28:05:A5:33:B9:EC via=28:05:A5:33:B9:EC hops=1 metric=56 state=2 expires=62421
+I (33737) aodv_en_app: route[2] dest=28:05:A5:34:99:34 via=28:05:A5:34:99:34 hops=1 metric=8 state=2 expires=63191
+I (33787) aodv_en_app: RSSIPROBE src=28:05:A5:33:EB:80 rssi=-66
+I (33897) aodv_en_app: RSSIPROBE src=28:05:A5:33:B9:EC rssi=-73
+I (34667) aodv_en_app: RSSIPROBE src=28:05:A5:34:99:34 rssi=-58
+I (34787) aodv_en_app: RSSIPROBE src=28:05:A5:33:EB:80 rssi=-66
+I (34897) aodv_en_app: RSSIPROBE src=28:05:A5:33:B9:EC rssi=-74
+I (35667) aodv_en_app: RSSIPROBE src=28:05:A5:34:99:34 rssi=-55
+I (35787) aodv_en_app: RSSIPROBE src=28:05:A5:33:EB:80 rssi=-66
+I (35897) aodv_en_app: RSSIPROBE src=28:05:A5:33:B9:EC rssi=-73
+I (36667) aodv_en_app: RSSIPROBE src=28:05:A5:34:99:34 rssi=-56
+I (36717) aodv_en_app: RSSISELF self=28:05:A5:33:D6:1C
+I (36717) aodv_en_app: routes=3 neighbors=3 tx=36 rx=108 delivered=0 control=36 acks=0
+I (36717) aodv_en_app: route[0] dest=28:05:A5:33:EB:80 via=28:05:A5:33:EB:80 hops=1 metric=36 state=2 expires=65311
+I (36727) aodv_en_app: route[1] dest=28:05:A5:33:B9:EC via=28:05:A5:33:B9:EC hops=1 metric=56 state=2 expires=65421
+I (36737) aodv_en_app: route[2] dest=28:05:A5:34:99:34 via=28:05:A5:34:99:34 hops=1 metric=8 state=2 expires=66191
+I (36787) aodv_en_app: RSSIPROBE src=28:05:A5:33:EB:80 rssi=-66
+I (36897) aodv_en_app: RSSIPROBE src=28:05:A5:33:B9:EC rssi=-72
+I (37657) aodv_en_app: RSSIPROBE src=28:05:A5:34:99:34 rssi=-57
+I (37787) aodv_en_app: RSSIPROBE src=28:05:A5:33:EB:80 rssi=-66
+I (37897) aodv_en_app: RSSIPROBE src=28:05:A5:33:B9:EC rssi=-72
+I (38667) aodv_en_app: RSSIPROBE src=28:05:A5:34:99:34 rssi=-57
+I (38787) aodv_en_app: RSSIPROBE src=28:05:A5:33:EB:80 rssi=-66
+I (38897) aodv_en_app: RSSIPROBE src=28:05:A5:33:B9:EC rssi=-73
+I (39657) aodv_en_app: RSSIPROBE src=28:05:A5:34:99:34 rssi=-57
+I (39717) aodv_en_app: RSSISELF self=28:05:A5:33:D6:1C
+I (39717) aodv_en_app: routes=3 neighbors=3 tx=39 rx=117 delivered=0 control=39 acks=0
+I (39717) aodv_en_app: route[0] dest=28:05:A5:33:EB:80 via=28:05:A5:33:EB:80 hops=1 metric=36 state=2 expires=68311
+I (39727) aodv_en_app: route[1] dest=28:05:A5:33:B9:EC via=28:05:A5:33:B9:EC hops=1 metric=56 state=2 expires=68421
+I (39737) aodv_en_app: route[2] dest=28:05:A5:34:99:34 via=28:05:A5:34:99:34 hops=1 metric=8 state=2 expires=69181
+I (39787) aodv_en_app: RSSIPROBE src=28:05:A5:33:EB:80 rssi=-66
+I (39897) aodv_en_app: RSSIPROBE src=28:05:A5:33:B9:EC rssi=-73
+I (40667) aodv_en_app: RSSIPROBE src=28:05:A5:34:99:34 rssi=-57
