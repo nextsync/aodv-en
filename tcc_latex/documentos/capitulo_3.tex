@@ -17,26 +17,7 @@ dados experimentais.
 \section{Caracterização da
 Pesquisa}\label{caracterizauxe7uxe3o-da-pesquisa}
 
-Quanto à sua natureza, esta pesquisa classifica-se como aplicada, pois
-visa desenvolver uma solução prática para um problema concreto: a
-ausência de suporte nativo a roteamento multi-hop no protocolo ESP-NOW.
-Diferentemente da pesquisa básica, que busca ampliar o conhecimento
-teórico sem preocupação imediata com aplicação, a pesquisa aplicada
-objetiva gerar conhecimento para aplicação prática dirigida à solução de
-problemas específicos \cite{gil2017}. Quanto aos procedimentos técnicos, a
-pesquisa é caracterizada como experimental, uma vez que envolve a
-implementação de um protótipo funcional (o algoritmo AODV-EN) e a
-realização de testes controlados em ambiente de laboratório. A
-experimentação permite manipular variáveis independentes (topologia da
-rede, número de nós, padrões de tráfego) e observar seus efeitos sobre
-variáveis dependentes (taxa de entrega, latência, consumo energético),
-estabelecendo relações de causa e efeito. Quanto à abordagem do
-problema, a pesquisa é predominantemente quantitativa, fundamentando-se
-na coleta e análise de dados numéricos obtidos através de medições
-sistemáticas durante os experimentos. As métricas de desempenho ---
-Packet Delivery Ratio (PDR), latência fim-a-fim, Normalized Routing Load
-(NRL) e consumo energético --- são quantificadas e submetidas à análise
-estatística para validação das hipóteses formuladas.
+Quanto à natureza, esta pesquisa é aplicada, pois desenvolve uma solução prática para um problema concreto: a ausência de roteamento multi-hop nativo no ESP-NOW \cite{gil2017}. Quanto aos procedimentos, é experimental, pois implementa um protótipo funcional (o AODV-EN) e o submete a testes controlados, manipulando variáveis independentes (topologia, número de nós e padrões de tráfego) e medindo seus efeitos sobre variáveis dependentes (taxa de entrega, latência, carga de controle e consumo energético). Quanto à abordagem, é quantitativa: as métricas --- PDR, latência fim-a-fim, NRL e consumo energético --- são obtidas por medição sistemática e tratadas estatisticamente.
 
 \section{Design Science Research}\label{design-science-research}
 
@@ -348,8 +329,7 @@ A quinta fase correspondeu às etapas de Avaliação e Comunicação da DSR.
 Os dados coletados foram submetidos a análise descritiva (média e desvio
 padrão) para as quatro métricas definidas. A avaliação comparou os
 resultados do AODV-EN com o algoritmo Flooding implementado localmente,
-com posicionamento qualitativo em relação a soluções da literatura, como
-o BRAM-NOW \cite{cujilema2023}. A comunicação dos resultados é realizada
+com comparação quantitativa e posicionamento em relação a soluções da literatura, como o BRAM-NOW \cite{cujilema2023} (Seção~\ref{comparacao-literatura}). A comunicação dos resultados é realizada
 através deste TCC.
 
 \section{Planejamento Experimental}\label{planejamento-experimental}
