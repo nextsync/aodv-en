@@ -373,9 +373,11 @@ ESP-NOW. O cache de \emph{peers} da implementação mantém até
 padrão, configurável). Quando o cache está cheio e uma nova comunicação
 é necessária, aplica-se a política LRU (\emph{Least Recently Used}),
 substituindo o par menos recentemente utilizado. Entradas podem ser
-marcadas como \emph{pinned} para impedir remoção (usado para nós fixos
-como o coordenador). Essa estratégia preserva a compatibilidade com o
-ESP-NOW sem comprometer a dinâmica de descoberta e manutenção de rotas.
+marcadas como \emph{pinned} (fixas) para impedir sua remoção pela
+política LRU; no protótipo, o endereço de \emph{broadcast} de enlace é
+mantido fixo, por ser necessário à disseminação de RREQ em qualquer
+instante. Essa estratégia preserva a compatibilidade com o ESP-NOW sem
+comprometer a dinâmica de descoberta e manutenção de rotas.
 
 \section{Mensagens do Protocolo}\label{mensagens-do-protocolo}
 
@@ -557,8 +559,9 @@ sua tabela de vizinhos, registrando informações como instante da última
 comunicação, estado do enlace e intensidade do sinal recebido. Essas
 informações contribuem para identificar vizinhos ativos e subsidiar o
 cálculo da métrica híbrida de roteamento. Além da manutenção da
-vizinhança, cada rota possui um tempo de validade associado. Rotas que
-permanecem sem uso ou ultrapassam seu tempo de expiração deixam de ser
+vizinhança, cada rota possui um tempo de validade associado, renovado a
+cada mensagem de controle que confirma a rota (HELLO, RREQ ou RREP).
+Rotas cujo tempo de validade expira sem renovação deixam de ser
 consideradas válidas para encaminhamento. Esse mecanismo reduz o uso de
 informações obsoletas e contribui para evitar encaminhamentos por
 caminhos indisponíveis. A manutenção de rotas também está relacionada ao
