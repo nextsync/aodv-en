@@ -50,6 +50,14 @@ Requisito
 Descrição e Implicações
 \end{minipage} \\
 \midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+Requisito
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Descrição e Implicações
+\end{minipage} \\
+\midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
@@ -99,13 +107,17 @@ SoC integra interfaces Wi-Fi 802.11 b/g/n e Bluetooth 4.2 (incluindo
 BLE), além de um amplo conjunto de periféricos como conversores
 analógico-digitais (ADC), conversores digital-analógicos (DAC),
 interfaces SPI, I²C, I²S, UART, PWM, sensores de toque capacitivo e
-sensor de efeito Hall. O Quadro~\ref{quad:esp32-specs} sintetiza as principais especificações técnicas do dispositivo.
+sensor de efeito Hall.
 
 O Quadro~\ref{quadro:esp32-specs} resume as principais especificações técnicas do ESP32.
 
 {\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}cl@{}}
 \caption{Especificações técnicas do microcontrolador ESP32}\label{quadro:esp32-specs}\\
+\toprule\noalign{}
+Característica & Especificação \\
+\midrule\noalign{}
+\endfirsthead
 \toprule\noalign{}
 Característica & Especificação \\
 \midrule\noalign{}
@@ -138,6 +150,16 @@ do fabricante.
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
 \caption{Modos de operação e consumo energético do ESP32}\label{quadro:esp32-energia}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Modo de Operação
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Consumo Típico
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Descrição
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Modo de Operação
@@ -198,7 +220,7 @@ Cada mensagem ESP-NOW pode transportar até 250 bytes de \emph{payload}
 protocolo suporta criptografia opcional utilizando o algoritmo AES-128
 no modo CCMP, permitindo comunicação segura quando necessário. A
 identificação dos dispositivos é realizada através de seus endereços MAC
-de 6 bytes. O Quadro~\ref{quad:espnow-specs} resume as características técnicas do protocolo.
+de 6 bytes.
 
 O Quadro~\ref{quadro:espnow-carac} sintetiza as principais características técnicas do ESP-NOW.
 
@@ -207,6 +229,14 @@ O Quadro~\ref{quadro:espnow-carac} sintetiza as principais características téc
   >{\centering\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
   >{\centering\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}@{}}
 \caption{Características técnicas do protocolo ESP-NOW}\label{quadro:espnow-carac}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+Parâmetro
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Valor
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\centering
 Parâmetro
@@ -337,7 +367,7 @@ protocolos híbridos, como o \emph{Zone Routing Protocol} (ZRP), combinam
 características de ambas as abordagens: utilizam roteamento proativo
 dentro de zonas locais e roteamento reativo para comunicação entre
 zonas. Essa estratégia busca balancear as vantagens de ambas as
-abordagens, mas introduz complexidade adicional na implementação. O Quadro~\ref{quad:protocolos-comparativo} sintetiza o comparativo entre as três categorias.
+abordagens, mas introduz complexidade adicional na implementação.
 
 O Quadro~\ref{quadro:comp-protocolos} apresenta um comparativo entre as categorias de protocolos de roteamento ad-hoc.
 
@@ -348,6 +378,18 @@ O Quadro~\ref{quadro:comp-protocolos} apresenta um comparativo entre as categori
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
 \caption{Comparativo entre categorias de protocolos de roteamento ad-hoc}\label{quadro:comp-protocolos}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Característica
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Proativo
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Reativo
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Híbrido
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Característica
@@ -492,6 +534,10 @@ ajustados conforme as características específicas da rede.
 {\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}lll@{}}
 \caption{Parâmetros de configuração do AODV (RFC 3561)}\label{quadro:aodv-params}\\
+\toprule\noalign{}
+Parâmetro & Valor Padrão & Descrição \\
+\midrule\noalign{}
+\endfirsthead
 \toprule\noalign{}
 Parâmetro & Valor Padrão & Descrição \\
 \midrule\noalign{}

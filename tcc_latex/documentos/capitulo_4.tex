@@ -285,6 +285,10 @@ o baixo acoplamento e a separação de interesses adotados.
 \toprule\noalign{}
 Módulo & Responsabilidade & Arquivo \\
 \midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+Módulo & Responsabilidade & Arquivo \\
+\midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
@@ -318,6 +322,16 @@ implementação do AODV-EN e sua função no funcionamento do protocolo.
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
 \caption{Estruturas de dados utilizadas no AODV-EN}\label{quadro:estruturas}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Estrutura
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Função principal
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Papel no protocolo
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Estrutura
@@ -499,6 +513,18 @@ Função principal
 Uso no protocolo
 \end{minipage} \\
 \midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Mensagem
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Tipo
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Função principal
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Uso no protocolo
+\end{minipage} \\
+\midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
@@ -557,6 +583,10 @@ bytes, conforme implementado no \emph{firmware}.
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.60}}
   >{\centering\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.22}}@{}}
 \caption{Formato das unidades de dados de protocolo (PDUs) do AODV-EN}\label{quadro:pdus}\\
+\toprule\noalign{}
+Mensagem & Campos do corpo (após o cabeçalho de 13~B) & Total (B) \\
+\midrule\noalign{}
+\endfirsthead
 \toprule\noalign{}
 Mensagem & Campos do corpo (após o cabeçalho de 13~B) & Total (B) \\
 \midrule\noalign{}
@@ -859,6 +889,16 @@ AODV original
 Adaptação no AODV-EN
 \end{minipage} \\
 \midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Aspecto
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+AODV original
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Adaptação no AODV-EN
+\end{minipage} \\
+\midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
@@ -912,13 +952,13 @@ fim-a-fim pelo protocolo.
 \subsection{Gerenciamento Dinâmico de Peers}\label{gerenciamento-dinamico-de-peers}
 
 Conforme apresentado na
-Seção~\ref{gerenciamento-de-\emph{peers}-com-poluxedtica-lru}, o AODV-EN contorna
+Seção~\ref{gerenciamento-de-peers-com-poluxedtica-lru}, o AODV-EN contorna
 o limite de \emph{peers} simultâneos do ESP-NOW por meio de uma política
 LRU. No nível de implementação, isso se traduz na separação entre a
 vizinhança lógica do protocolo --- os nós conhecidos ou alcançáveis no
 contexto do roteamento, mantidos na tabela de vizinhos
 (Seção~\ref{tabela-de-vizinhos}) --- e a tabela física de \emph{peers}
-registrados no ESP-NOW (Seção~\ref{gerenciamento-de-\emph{peers}}). Quando a
+registrados no ESP-NOW (Seção~\ref{gerenciamento-de-peers}). Quando a
 capacidade do cache de \emph{peers} é atingida, o \emph{peer} menos
 recentemente utilizado é substituído pelo novo \emph{peer} requisitado
 pela comunicação, permitindo que o protocolo opere em redes com mais nós
@@ -981,6 +1021,10 @@ metodologia (Seção~\ref{paruxe2metros-dos-experimentos}).
   >{\centering\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.20}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.28}}@{}}
 \caption{Parâmetros de configuração do \emph{firmware} do AODV-EN (valores padrão)}\label{quadro:constantes}\\
+\toprule\noalign{}
+Parâmetro & Valor & Função \\
+\midrule\noalign{}
+\endfirsthead
 \toprule\noalign{}
 Parâmetro & Valor & Função \\
 \midrule\noalign{}
