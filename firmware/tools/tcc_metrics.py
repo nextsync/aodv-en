@@ -118,16 +118,19 @@ def main():
     p.add_argument("--duration-s", type=float, required=True)
     p.add_argument("--scenario", default="C1-3n-hub")
     p.add_argument("--seed", type=int, default=0)
+    p.add_argument("--target-mac", default="",
+                   help="MAC do destino do DATA; ativa PDR de entrega (delivered do destino / enviados)")
     for k, v in ENERGY_DEFAULTS.items():
         p.add_argument(f"--{k}", type=float, default=v)
     args = p.parse_args()
 
     org = parse_origin(args.origin)
-    pdr_raw = (100.0 * org["acks"] / org["data_sent"]) if org["data_sent"] > 0 else 0.0
-    # PDR nao pode exceder 100%: acks>data_sent indica efeito de borda de janela
-    # (acks de DATA enviados antes do inicio da captura). Clampa e sinaliza.
-    pdr = min(100.0, pdr_raw)
-    pdr_boundary = pdr_raw > 100.0
+    # PDR ida-e-volta por ACK (secundario): acks recebidos na origem / DATA enviados.
+    # Injusto com flooding (ACK volta por flood lossy); mantido como confiabilidade
+    # bidirecional. acks>data_sent = efeito de borda de janela -> clampa e sinaliza.
+    pdr_ack_raw = (100.0 * org["acks"] / org["data_sent"]) if org["data_sent"] > 0 else 0.0
+    pdr_ack = min(100.0, pdr_ack_raw)
+    pdr_boundary = pdr_ack_raw > 100.0
     lat_rtt = stats_summary(org["rtts"])
     lat_oneway = stats_summary([r / 2.0 for r in org["rtts"]])
 
@@ -156,6 +159,22 @@ def main():
     sum_control = sum(n["control"] for n in nodes)
     sum_delivered = sum(n["delivered"] for n in nodes)
 
+    # PDR de entrega (principal, padrao MANET): delivered distinto do DESTINO / enviados.
+    # Justo p/ aodv e flooding (so conta DATA que chegou no destino, ignora ACK de volta).
+    target_mac = args.target_mac.upper()
+    target_delivered = None
+    pdr_delivery = None
+    pdr_delivery_boundary = False
+    if target_mac and statsrep.get(target_mac, {}).get("n", 0) >= 2:
+        s = statsrep[target_mac]
+        target_delivered = max(0, s["last"]["delivered"] - s["first"]["delivered"])
+        if org["data_sent"] > 0:
+            pdr_delivery_raw = 100.0 * target_delivered / org["data_sent"]
+            pdr_delivery = min(100.0, pdr_delivery_raw)
+            pdr_delivery_boundary = pdr_delivery_raw > 100.0
+    pdr = pdr_delivery if pdr_delivery is not None else pdr_ack
+    pdr_source = "delivery_dest" if pdr_delivery is not None else "ack_roundtrip"
+
     nrl = (sum_control / sum_delivered) if sum_delivered > 0 else 0.0
 
     e_tx = args.v * args.i_tx * args.t_pkt
@@ -173,9 +192,13 @@ def main():
         "insufficient_statsrep": insufficient if statsrep else [],
         "data_sent": org["data_sent"],
         "acks": org["acks"],
+        "target_mac": target_mac,
+        "target_delivered": target_delivered,
+        "pdr_source": pdr_source,
         "pdr_pct": round(pdr, 2),
-        "pdr_raw_pct": round(pdr_raw, 2),
-        "pdr_boundary_effect": pdr_boundary,
+        "pdr_delivery_pct": round(pdr_delivery, 2) if pdr_delivery is not None else None,
+        "pdr_ack_pct": round(pdr_ack, 2),
+        "pdr_boundary_effect": pdr_boundary or pdr_delivery_boundary,
         "latency_rtt_ms": lat_rtt,
         "latency_oneway_ms": lat_oneway,
         "sum_tx": sum_tx,

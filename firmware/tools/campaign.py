@@ -91,11 +91,12 @@ def shoot_from_log(log_path, http_port, chrome, png_path):
     return ok
 
 
-def run_metrics(algo, origin_log, duration_s, scenario, seed):
-    r = subprocess.run(
-        [IDFPY, str(METRICS), "--algo", algo, "--origin", str(origin_log),
-         "--duration-s", str(duration_s), "--scenario", scenario, "--seed", str(seed)],
-        check=True, capture_output=True, text=True)
+def run_metrics(algo, origin_log, duration_s, scenario, seed, target_mac=""):
+    cmd = [IDFPY, str(METRICS), "--algo", algo, "--origin", str(origin_log),
+           "--duration-s", str(duration_s), "--scenario", scenario, "--seed", str(seed)]
+    if target_mac:
+        cmd += ["--target-mac", target_mac]
+    r = subprocess.run(cmd, check=True, capture_output=True, text=True)
     return json.loads(r.stdout)
 
 
@@ -126,6 +127,8 @@ def main():
     ap.add_argument("--baud", type=int, default=115200)
     ap.add_argument("--no-prints", action="store_true", help="nao gerar print da rede por rep")
     ap.add_argument("--monitor-port", type=int, default=8097, help="porta http do monitor p/ os prints")
+    ap.add_argument("--target-mac", default="",
+                    help="MAC do destino do DATA -> PDR de entrega (delivered do destino / enviados)")
     args = ap.parse_args()
 
     duration_s = args.duration_s if args.duration_s is not None else float(args.rep_seconds)
@@ -143,11 +146,11 @@ def main():
         if chrome:
             png = PRINTS / f"{prefix}.png"
             shoot_from_log(log, args.monitor_port, chrome, png)
-        m = run_metrics(args.algo, log, duration_s, args.scenario, rep)
+        m = run_metrics(args.algo, log, duration_s, args.scenario, rep, args.target_mac)
         per_rep.append(m)
-        print(f"  rep {rep:02d}: PDR={m['pdr_pct']:.1f} "
+        print(f"  rep {rep:02d}: PDR={m['pdr_pct']:.1f} (ack={m.get('pdr_ack_pct')}) "
               f"lat_ow={m['latency_oneway_ms']['mean']} "
-              f"NRL={m['nrl']} E={m['energy_j']} nodes={m['n_nodes']} src={m['stats_source']}")
+              f"NRL={m['nrl']} E={m['energy_j']} nodes={m['n_nodes']} src={m['pdr_source']}")
         if rep < args.reps:
             time.sleep(args.settle)
 
@@ -157,6 +160,8 @@ def main():
         "reps": len(per_rep),
         "rep_seconds": args.rep_seconds,
         "pdr_pct": agg([m["pdr_pct"] for m in per_rep]),
+        "pdr_ack_pct": agg([m["pdr_ack_pct"] for m in per_rep if m.get("pdr_ack_pct") is not None]),
+        "pdr_delivery_pct": agg([m["pdr_delivery_pct"] for m in per_rep if m.get("pdr_delivery_pct") is not None]),
         "latency_oneway_ms": agg([m["latency_oneway_ms"]["mean"] for m in per_rep]),
         "nrl": agg([m["nrl"] for m in per_rep]),
         "energy_j": agg([m["energy_j"] for m in per_rep]),
@@ -166,7 +171,7 @@ def main():
     out = RESULTS / f"campaign-{args.scenario}-{args.algo}.json"
     out.write_text(json.dumps(summary, indent=2, ensure_ascii=False))
     print(f"\n=== {args.scenario}/{args.algo} ({len(per_rep)} reps) ===")
-    for k in ("pdr_pct", "latency_oneway_ms", "nrl", "energy_j"):
+    for k in ("pdr_pct", "pdr_ack_pct", "latency_oneway_ms", "nrl", "energy_j"):
         s = summary[k]
         print(f"  {k:18} mean={s['mean']} std={s['std']} ic95={s['ic95']} (n={s['n']})")
     print(f"gravado: {out}")
