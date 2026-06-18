@@ -1,7 +1,7 @@
 % -----------------------------------------------------------------------------
 % Conteudo AODV-EN. Template base: Prof. Wesley Pacheco Calixto (IFG).
 % -----------------------------------------------------------------------------
-\chapter{METODOLOGIA}\label{metodologia}
+\chapter{METODOLOGIA}\label{cap:metodologia}\label{metodologia}
 
 Este capítulo apresenta a metodologia adotada para o desenvolvimento e
 avaliação do algoritmo AODV-EN. Inicialmente, realiza-se a
@@ -17,7 +17,26 @@ dados experimentais.
 \section{Caracterização da
 Pesquisa}\label{caracterizauxe7uxe3o-da-pesquisa}
 
-Quanto à natureza, esta pesquisa é aplicada, pois desenvolve uma solução prática para um problema concreto: a ausência de roteamento multi-hop nativo no ESP-NOW \cite{gil2017}. Quanto aos procedimentos, é experimental, pois implementa um protótipo funcional (o AODV-EN) e o submete a testes controlados, manipulando variáveis independentes (topologia, número de nós e padrões de tráfego) e medindo seus efeitos sobre variáveis dependentes (taxa de entrega, latência, carga de controle e consumo energético). Quanto à abordagem, é quantitativa: as métricas --- PDR, latência fim-a-fim, NRL e consumo energético --- são obtidas por medição sistemática e tratadas estatisticamente.
+Quanto à sua natureza, esta pesquisa classifica-se como aplicada, pois
+visa desenvolver uma solução prática para um problema concreto: a
+ausência de suporte nativo a roteamento multi-hop no protocolo ESP-NOW.
+Diferentemente da pesquisa básica, que busca ampliar o conhecimento
+teórico sem preocupação imediata com aplicação, a pesquisa aplicada
+objetiva gerar conhecimento para aplicação prática dirigida à solução de
+problemas específicos \cite{gil2017}. Quanto aos procedimentos técnicos, a
+pesquisa é caracterizada como experimental, uma vez que envolve a
+implementação de um protótipo funcional (o algoritmo AODV-EN) e a
+realização de testes controlados em ambiente de laboratório. A
+experimentação permite manipular variáveis independentes (topologia da
+rede, número de nós, padrões de tráfego) e observar seus efeitos sobre
+variáveis dependentes (taxa de entrega, latência, consumo energético),
+estabelecendo relações de causa e efeito. Quanto à abordagem do
+problema, a pesquisa é predominantemente quantitativa, fundamentando-se
+na coleta e análise de dados numéricos obtidos por meio de medições
+sistemáticas durante os experimentos. As métricas de desempenho ---
+Packet Delivery Ratio (PDR), latência fim-a-fim, Normalized Routing Load
+(NRL) e consumo energético --- são quantificadas e submetidas à análise
+estatística para validação das hipóteses formuladas.
 
 \section{Design Science Research}\label{design-science-research}
 
@@ -56,21 +75,13 @@ ESP32). \citeonline{peffers2007} propuseram um modelo de processo para
 condução de pesquisas em DSR composto por seis atividades: (1)
 identificação do problema e motivação; (2) definição dos objetivos da
 solução; (3) design e desenvolvimento; (4) demonstração; (5) avaliação;
-e (6) comunicação. O Quadro~\ref{quad:etapas-dsr} apresenta estas etapas e suas descrições.
+e (6) comunicação. O Quadro~\ref{quadro:dsr-etapas} apresenta estas etapas e suas descrições.
 
 {\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
   >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}@{}}
-\caption{Etapas do Design Science Research segundo \citeauthor{peffers2007} (\citeyear{peffers2007})}\label{quad:etapas-dsr}\\
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-Etapa DSR
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Descrição
-\end{minipage} \\
-\midrule\noalign{}
-\endfirsthead
+\caption{Etapas do Design Science Research segundo \citeauthor{peffers2007} (\citeyear{peffers2007})}\label{quadro:dsr-etapas}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Etapa DSR
@@ -142,7 +153,7 @@ DSR}\label{mapeamento-das-fases-do-trabalho-uxe0s-etapas-da-dsr}
 
 O presente trabalho está organizado em cinco fases, que foram mapeadas
 às etapas do modelo de processo DSR de \citeonline{peffers2007}. O
-Quadro~\ref{quad:mapeamento-fases} apresenta este mapeamento, relacionando cada fase do trabalho à
+Quadro~\ref{quadro:dsr-map} apresenta este mapeamento, relacionando cada fase do trabalho à
 respectiva etapa DSR, suas atividades específicas e produtos esperados.
 
 {\def\LTcaptype{quadro}
@@ -151,19 +162,7 @@ respectiva etapa DSR, suas atividades específicas e produtos esperados.
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
-\caption{Mapeamento das fases do trabalho às etapas da DSR}\label{quad:mapeamento-fases}\\
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-Fase
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Etapa DSR
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Atividades
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Produtos
-\end{minipage} \\
-\midrule\noalign{}
-\endfirsthead
+\caption{Mapeamento das fases do trabalho às etapas da DSR}\label{quadro:dsr-map}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Fase
@@ -308,7 +307,7 @@ composto por três módulos ESP32 DevKit V1 disponíveis no período de
 coleta, alimentados por fontes USB 5V --- a disponibilidade de hardware
 limitou a campanha a três nós, com os demais cenários avaliados por
 simulação. Cada nó executou o mesmo firmware, configurado com
-identificador único através de variáveis de compilação.
+identificador único por meio de variáveis de compilação.
 
 \subsection{Fase 4: Execução dos Experimentos e Coleta de
 Dados}\label{fase-4-execuuxe7uxe3o-dos-experimentos-e-coleta-de-dados}
@@ -358,7 +357,8 @@ Por limitação de disponibilidade de hardware no período de coleta, apenas
 uma versão reduzida do cenário C1 --- denominada C1-3n, com três nós em
 concentrador e seis repetições por algoritmo --- foi executada em
 hardware real; os demais cenários foram avaliados por simulação
-(Capítulo~\ref{resultados-e-discussuxe3o}, Seção~\ref{anuxe1lise-de-escalabilidade-por-simulauxe7uxe3o}). O Quadro~\ref{quad:cenarios} detalha a configuração de cada cenário experimental.
+(Capítulo~\ref{cap:resultados}). O Quadro~\ref{quadro:cenarios} apresenta a
+configuração dos quatro cenários experimentais.
 
 {\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}
@@ -366,19 +366,7 @@ hardware real; os demais cenários foram avaliados por simulação
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
-\caption{Configuração dos cenários experimentais}\label{quad:cenarios}\\
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-Cenário
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Topologia
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Configuração
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Objetivo
-\end{minipage} \\
-\midrule\noalign{}
-\endfirsthead
+\caption{Configuração dos cenários experimentais}\label{quadro:cenarios}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Cenário
@@ -425,22 +413,14 @@ o tempo de validade das rotas ativas. Para o Flooding, define-se o valor
 máximo de TTL, utilizado para limitar a propagação dos pacotes e evitar
 retransmissões indefinidas. O Quadro~\ref{quad:parametros} apresenta os parâmetros adotados para cada algoritmo.
 
+O Quadro~\ref{quadro:params-exp} resume os parâmetros adotados nos experimentos.
+
 {\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}
   >{\centering\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\centering\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\centering\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
-\caption{Parâmetros dos experimentos}\label{quad:parametros}\\
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\centering
-Parâmetro
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-AODV-EN
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Flooding
-\end{minipage} \\
-\midrule\noalign{}
-\endfirsthead
+\caption{Parâmetros dos experimentos}\label{quadro:params-exp}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\centering
 Parâmetro
@@ -477,7 +457,7 @@ transitórias em redes embarcadas de baixo custo.
 
 \section{Métricas de Avaliação}\label{muxe9tricas-de-avaliauxe7uxe3o}
 
-A avaliação do desempenho do algoritmo AODV-EN será realizada por meio
+A avaliação do desempenho do algoritmo AODV-EN é realizada por meio
 de quatro métricas complementares: Packet Delivery Ratio (PDR), latência
 fim-a-fim, Normalized Routing Load (NRL) e consumo energético estimado.
 Essas métricas foram selecionadas por sua recorrência na literatura de
@@ -488,22 +468,26 @@ entrega dos pacotes; o NRL mede o overhead de controle introduzido pelo
 protocolo; e o consumo energético estimado permite analisar o impacto
 das transmissões sobre a autonomia dos dispositivos. O Quadro~\ref{quad:metricas} sintetiza as métricas, suas definições e fórmulas.
 
+O consumo energético é obtido por um modelo analítico, e não por medição
+com instrumentação física. A energia é estimada a partir do número de
+quadros transmitidos e recebidos por cada nó, ponderados pelas correntes
+típicas de operação do ESP32-WROOM-32 informadas em \emph{datasheet}
+($I_\text{tx}$ no modo de transmissão de rádio, $I_\text{rx}$ na recepção
+e $I_\text{idle}$ em repouso), sob tensão nominal de 3,3~V. Trata-se,
+portanto, de uma estimativa fundamentada em valores de referência do
+fabricante --- abordagem usual na literatura de redes de sensores sem
+fio \cite{heinzelman2000} ---, e não de uma medida direta de corrente. A
+medição instrumentada do consumo (por exemplo, com um sensor de corrente
+INA219 em série com a alimentação) é registrada como trabalho futuro.
+
+O Quadro~\ref{quadro:metricas} sintetiza as métricas de avaliação de desempenho adotadas.
+
 {\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
-\caption{Métricas de avaliação de desempenho}\label{quad:metricas}\\
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-Métrica
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Definição
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Fórmula
-\end{minipage} \\
-\midrule\noalign{}
-\endfirsthead
+\caption{Métricas de avaliação de desempenho}\label{quadro:metricas}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Métrica
@@ -518,32 +502,29 @@ Fórmula
 \endlastfoot
 PDR (Packet Delivery Ratio) & Razão entre pacotes de dados recebidos no
 destino e pacotes enviados pela origem. Indica a confiabilidade da
-comunicação. & PDR = (Pacotes recebidos / Pacotes enviados) × 100\% \\
+comunicação. & $\text{PDR} = \dfrac{\text{Pacotes recebidos}}{\text{Pacotes enviados}} \times 100\%$ \\
 Latência Fim-a-Fim & Tempo decorrido entre o envio de um pacote pela
 origem e sua recepção no destino. Inclui tempo de processamento,
-enfileiramento e transmissão em cada salto. & L = t\_recepção -
-t\_envio \\
+enfileiramento e transmissão em cada salto. & $L = t_\text{recep} - t_\text{envio}$ \\
 NRL (Normalized Routing Load) & Razão entre o número de pacotes de
 controle transmitidos e o número de pacotes de dados entregues. Indica a
-eficiência do protocolo em termos de overhead. & NRL = Pacotes de
-controle / Pacotes de dados entregues \\
+eficiência do protocolo em termos de overhead. & $\text{NRL} = \dfrac{\text{Pacotes de controle}}{\text{Pacotes de dados entregues}}$ \\
 Consumo Energético Estimado & Estimativa do consumo de energia baseada
 no número de transmissões e no perfil de consumo do ESP32. Permite
-projetar autonomia com bateria. & E = Σ(N\_tx × E\_tx + N\_rx × E\_rx +
-t\_idle × P\_idle) \\
+projetar autonomia com bateria. & $E = \sum (N_\text{tx} \cdot E_\text{tx} + N_\text{rx} \cdot E_\text{rx} + t_\text{idle} \cdot P_\text{idle})$ \\
 \end{longtable}
 }
 
 Fonte: Elaborado pelos autores.
 
-Para cada métrica, serão calculados: média aritmética, desvio padrão e
-intervalo de confiança de 95\%. Os resultados serão apresentados em
+Para cada métrica, são calculados: média aritmética, desvio padrão e
+intervalo de confiança de 95\%. Os resultados são apresentados em
 tabelas e gráficos comparativos entre AODV-EN e Flooding.
 
 \section{Algoritmo de Referência para Comparação:
 Flooding}\label{algoritmo-de-referuxeancia-para-comparauxe7uxe3o-flooding}
 
-Para estabelecer uma base de comparação experimental, será implementado
+Para estabelecer uma base de comparação experimental, implementou-se
 um algoritmo de referência baseado em Flooding sobre ESP-NOW. O Flooding
 é a abordagem mais básica para disseminação de mensagens em redes sem
 infraestrutura, consistindo na retransmissão de cada pacote recebido
@@ -552,7 +533,7 @@ para todos os vizinhos, exceto aquele de quem o pacote foi recebido.
 \subsection{Especificação do algoritmo
 Flooding}\label{especificauxe7uxe3o-do-algoritmo-flooding}
 
-O algoritmo de referência baseado em Flooding será implementado com as
+O algoritmo de referência baseado em Flooding foi implementado com as
 seguintes características: a) \textbf{Estrutura do pacote}: cada pacote
 contém identificador único (origem + número de sequência), endereço de
 origem, endereço de destino, TTL (Time-To-Live) e payload de dados; b)
@@ -576,24 +557,159 @@ referência}\label{justificativa-da-escolha-do-flooding-como-algoritmo-de-referu
 A escolha do Flooding como algoritmo de comparação justifica-se por: a)
 \textbf{Simplicidade}: é o algoritmo mais simples possível para
 comunicação multi-hop, servindo como limite inferior de complexidade de
-implementação; b) \textbf{Garantia de entrega}: em redes conectadas, o
-Flooding garante que o pacote alcançará o destino (se existir caminho),
-servindo como referência de PDR máximo alcançável; c) \textbf{Overhead
+implementação; b) \textbf{Garantia de entrega}: em redes conectadas e na ausência de
+colisões e perdas, o Flooding tende a alcançar o destino sempre que
+existir caminho, servindo como referência de PDR máximo alcançável ---
+ressalvando-se que, sobre \emph{broadcast} sem confirmação de enlace, a
+redundância da inundação pode degradar-se pelo problema da tempestade de
+\emph{broadcast} em redes densas; c) \textbf{Overhead
 elevado}: o Flooding representa o extremo oposto em termos de
 eficiência, permitindo quantificar os ganhos obtidos pelo roteamento
 inteligente do AODV-EN; d) \textbf{Ausência de estado}: não requer
 tabelas de roteamento ou manutenção de rotas, isolando o impacto desses
 mecanismos no AODV-EN. A comparação entre o AODV-EN e o Flooding
-permitirá avaliar a relação entre complexidade de implementação e
+permite avaliar a relação entre complexidade de implementação e
 eficiência de comunicação. Embora o AODV-EN apresente maior complexidade
 por envolver descoberta e manutenção de rotas, espera-se que ele
 proporcione menor carga de controle, menor consumo energético estimado e
 desempenho comparável em termos de taxa de entrega de pacotes.
 
+\section{Procedimento de Execução e Coleta}\label{procedimento-de-execucao-e-coleta}
+
+Esta seção descreve, de forma reprodutível, como as execuções
+experimentais em \emph{hardware} foram conduzidas, desde a construção da
+topologia física até a agregação estatística das métricas. O
+procedimento foi automatizado por um conjunto de ferramentas
+desenvolvidas especificamente para este trabalho, de modo a garantir
+repetibilidade e a reduzir o erro manual entre repetições.
+
+\subsection{Construção e verificação da topologia física}\label{construcao-topologia}
+
+O principal desafio na avaliação de um protocolo \emph{multi-hop} em
+bancada é que o ESP-NOW, operando em 2,4~GHz, alcança dezenas de metros
+em linha de visada; com os nós próximos, todos se escutam em um único
+salto, configurando uma topologia em estrela e não em malha. Para
+induzir saltos reais sem recorrer a filtros de vizinhança por
+\emph{software} (que descaracterizariam o enlace), adotaram-se duas
+medidas combinadas: (i) a redução da potência de transmissão dos rádios,
+configurável por compilação (parâmetro de potência máxima em unidades de
+0,25~dBm), levada ao mínimo prático para encurtar o alcance; e (ii) a
+separação física dos nós no ambiente, posicionando-os em distâncias e
+com obstáculos (paredes, móveis) que atenuassem o sinal entre nós não
+adjacentes.
+
+Como o alcance do rádio depende de distância e de barreiras de forma não
+determinística, a topologia resultante foi \emph{verificada por medição}
+antes de cada campanha, e não pressuposta. Para isso, cada nó registra,
+para cada quadro recebido, a intensidade do sinal (RSSI) do emissor; um
+nó coletor agrega essas informações e produz uma matriz de adjacência
+RSSI da rede inteira (qual nó escuta qual e com que intensidade). A
+topologia foi considerada adequada ao cenário quando os enlaces previstos
+apresentavam sinal firme (na faixa de $-70$ a $-82$~dBm) e os ``saltos''
+indesejados --- pares de nós que deveriam comunicar-se apenas por
+intermediários --- apresentavam sinal abaixo do limiar prático de
+recepção (inferior a $-90$~dBm). A título de exemplo, no cenário linear
+reduzido confirmou-se que os nós das extremidades não se escutavam
+diretamente ($\approx -88$~dBm, com perda da maioria dos quadros), de
+modo que o tráfego entre eles necessariamente percorria o nó
+intermediário, caracterizando \emph{multi-hop} físico genuíno.
+
+\subsection{Telemetria em banda e coleta por nó único}\label{telemetria-em-banda}
+
+Em uma topologia com nós espalhados, conectar cada dispositivo a uma
+porta serial é inviável: os nós distantes operam alimentados por
+bateria, sem cabo de dados. Para coletar as métricas de toda a rede a
+partir de um único ponto, adotou-se uma estratégia de \emph{telemetria
+em banda}: ao final de cada janela de medição, cada nó transmite seus
+contadores (quadros transmitidos, recebidos, de controle e entregues),
+encapsulados como uma mensagem de dados comum do próprio protocolo,
+endereçada ao nó coletor. A mensagem é, portanto, roteada pela própria
+malha --- inclusive em múltiplos saltos, a partir de nós que não são
+vizinhos diretos do coletor --- reutilizando o mecanismo de
+encaminhamento sob avaliação, sem nenhuma alteração no núcleo do
+protocolo. O coletor, único nó conectado à porta serial, registra os
+relatórios de todos os demais. Para evitar que o tráfego da própria
+telemetria contaminasse os valores reportados, os contadores são
+amostrados imediatamente antes do envio do relatório, de modo que o
+custo da transmissão do relatório não se reflete no número informado.
+
+Desse modo, a confiabilidade de entrega (PDR) e a latência são medidas
+diretamente no nó de origem (pela razão entre confirmações recebidas e
+pacotes enviados e pelo tempo de ida e volta, respectivamente), enquanto
+a carga de controle (NRL) e o consumo energético estimado, que dependem
+de contadores de \emph{toda} a rede, são reconstruídos no coletor a
+partir dos relatórios recebidos em banda.
+
+\subsection{Medição de latência}\label{medicao-de-latencia}
+
+A latência fim-a-fim é medida no próprio nó de origem, evitando o
+problema de sincronização de relógios entre dispositivos distintos: ao
+enviar um pacote de dados, a origem registra o instante de transmissão
+e, ao receber a confirmação (ACK) correspondente, calcula o tempo de ida
+e volta (\emph{round-trip time}, RTT) pela diferença em relação ao mesmo
+relógio local, de resolução de microssegundos. A latência unidirecional
+é obtida como metade do RTT. Para refinar a granularidade da medida, o
+laço de aplicação responsável por gerar tráfego e processar eventos foi
+reduzido a um período de 10~ms, limitando a quantização da latência a
+essa ordem de grandeza.
+
+\subsection{Automação da campanha e agregação estatística}\label{automacao-campanha}
+
+Cada combinação de cenário e algoritmo (AODV-EN ou \emph{flooding}) é
+avaliada por repetições sucessivas. Para cada repetição, captura-se o
+registro serial do nó coletor durante a janela de execução; ao término,
+um analisador extrai do registro as métricas daquela repetição (PDR,
+latência, NRL e energia estimada) e as acumula. Concluídas as
+repetições, calculam-se, para cada métrica, a média aritmética, o desvio
+padrão e o intervalo de confiança de 95\%, conforme previsto na Seção
+\ref{muxe9tricas-de-avaliauxe7uxe3o}. Toda a sequência --- captura,
+extração e agregação --- é orquestrada por um \emph{script} de campanha,
+de modo que as repetições sejam executadas de forma idêntica e
+sucessiva, sem intervenção manual entre elas.
+
+\subsection{Ferramentas de instrumentação desenvolvidas}\label{ferramentas-instrumentacao}
+
+A condução dos experimentos apoiou-se em um conjunto de ferramentas
+construídas como parte da contribuição de engenharia deste trabalho,
+formando um \emph{testbed} instrumentado e reprodutível:
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi})}
+\tightlist
+\item
+  uma ferramenta de sondagem de sinal, que lê os registros de RSSI dos
+  nós e monta a matriz de adjacência da rede, classificando cada enlace
+  quanto à sua intensidade, utilizada para validar a topologia antes de
+  cada campanha;
+\item
+  um monitor de malha em tempo real, que consome a telemetria em banda
+  recebida pelo coletor e apresenta, em uma interface \emph{web}
+  dinâmica, a topologia corrente disposta por número de saltos, a
+  intensidade de cada enlace, os contadores de cada nó e as rotas
+  ativas, atualizando-se continuamente e adaptando-se a qualquer número
+  de nós e de saltos;
+\item
+  um capturador serial, que registra simultaneamente a saída de uma ou
+  mais portas durante a janela de medição;
+\item
+  um extrator de métricas, que converte os registros serial em valores
+  de PDR, latência, NRL e energia estimada, agregando os contadores de
+  rede a partir dos relatórios de telemetria; e
+\item
+  um orquestrador de campanha, que encadeia captura, extração e
+  agregação ao longo das repetições, produzindo as estatísticas finais
+  (média, desvio padrão e intervalo de confiança).
+\end{enumerate}
+
+Essas ferramentas tornam o procedimento auditável e reexecutável: a
+mesma campanha pode ser repetida por terceiros a partir do código-fonte
+disponibilizado, e os dados intermediários (registros serial e métricas
+por repetição) ficam preservados para inspeção.
+
 \section{Coleta e Análise dos
 Dados}\label{coleta-e-anuxe1lise-dos-dados}
 
-Os dados experimentais serão coletados a partir dos registros gerados
+Os dados experimentais são coletados a partir dos registros gerados
 durante a execução dos cenários de teste. Esses registros incluirão
 informações sobre pacotes enviados, pacotes recebidos, mensagens de
 controle, eventos de retransmissão, falhas de comunicação, atualizações
@@ -654,19 +770,19 @@ A Figura~\ref{fig:fluxo-execucao} sintetiza o fluxo de execução dos experiment
 tratamento dos dados, desde a configuração do ambiente experimental até
 a comparação dos resultados obtidos para o AODV-EN e o algoritmo de
 referência baseado em Flooding. Para garantir a rastreabilidade dos
-experimentos, cada execução deverá ser identificada pelo cenário
+experimentos, cada execução é identificada pelo cenário
 avaliado, algoritmo utilizado, número da repetição, configuração dos nós
-e arquivos de log correspondentes. Essa organização permitirá relacionar
+e arquivos de log correspondentes. Essa organização permite relacionar
 os resultados obtidos às condições específicas de cada execução
-experimental. Após a coleta, os dados serão organizados em tabelas e
+experimental. Após a coleta, os dados são organizados em tabelas e
 submetidos à análise estatística descritiva, considerando média, desvio
 padrão e intervalo de confiança de 95\% para cada métrica avaliada. A
-análise será realizada por cenário e por algoritmo, possibilitando a
+análise é realizada por cenário e por algoritmo, possibilitando a
 comparação direta entre os resultados do AODV-EN e do algoritmo de
 referência baseado em Flooding. Execuções com falhas de instrumentação,
 perda de registros, reinicialização inesperada dos dispositivos ou
-divergência de configuração serão desconsideradas e repetidas, a fim de
+divergência de configuração são desconsideradas e repetidas, a fim de
 preservar a consistência dos dados analisados. A partir dos resultados
-consolidados, será avaliado se o AODV-EN, apresenta ganhos em eficiência
+consolidados, avalia-se se o AODV-EN apresenta ganhos em eficiência
 de comunicação, mantendo desempenho compatível em termos de
 confiabilidade e latência.
