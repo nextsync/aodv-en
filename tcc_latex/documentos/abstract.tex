@@ -23,9 +23,12 @@ Simulation analysis confirmed that the channel-occupancy disadvantage of floodin
 with network scale, with an efficiency crossover around 9 to 11 nodes. A second hardware
 scenario (C4, six nodes), with cyclic failure of an on-path relay, demonstrated the
 protocol's self-healing: AODV-EN sustained 62.8\% delivery by rediscovering the route
-through an alternative relay after each outage. It is concluded that AODV-EN's reactive routing becomes
-advantageous as the network grows in size and diameter, enabling standardized, low-cost,
-and energy-efficient mesh networks over ESP-NOW.
+through an alternative relay after each outage. Regarding estimated energy efficiency,
+although AODV-EN's raw aggregate consumption is higher, its energy per successfully
+delivered packet is about eight times lower than flooding's (0.69 versus 5.66~J/packet),
+since routing delivers far more. It is concluded that AODV-EN's reactive routing becomes
+advantageous as the network grows in size and diameter, enabling standardized, low-cost
+mesh networks over ESP-NOW that are energy-efficient per useful delivery.
 
 \vspace{1cm}
 
