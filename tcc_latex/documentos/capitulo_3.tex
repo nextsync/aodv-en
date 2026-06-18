@@ -89,6 +89,14 @@ Etapa DSR
 Descrição
 \end{minipage} \\
 \midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Etapa DSR
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Descrição
+\end{minipage} \\
+\midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
@@ -163,6 +171,18 @@ respectiva etapa DSR, suas atividades específicas e produtos esperados.
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
 \caption{Mapeamento das fases do trabalho às etapas da DSR}\label{quadro:dsr-map}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Fase
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Etapa DSR
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Atividades
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Produtos
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Fase
@@ -315,7 +335,7 @@ Dados}\label{fase-4-execuuxe7uxe3o-dos-experimentos-e-coleta-de-dados}
 A quarta fase correspondeu à etapa de Demonstração da DSR, onde o
 artefato foi exercitado em cenários representativos para demonstrar sua
 eficácia na resolução do problema. Os experimentos seguiram o
-planejamento detalhado na Seção 3.4, com execução parcial em hardware
+planejamento detalhado na Seção~\ref{planejamento-experimental}, com execução parcial em hardware
 --- seis repetições no cenário C1-3n (três nós em concentrador) --- e
 complementação por simulação para os cenários de maior escala e
 diâmetro. As métricas foram coletadas automaticamente pelo firmware e
@@ -328,8 +348,7 @@ A quinta fase correspondeu às etapas de Avaliação e Comunicação da DSR.
 Os dados coletados foram submetidos a análise descritiva (média e desvio
 padrão) para as quatro métricas definidas. A avaliação comparou os
 resultados do AODV-EN com o algoritmo Flooding implementado localmente,
-com posicionamento qualitativo em relação a soluções da literatura, como
-o BRAM-NOW \cite{cujilema2023}. A comunicação dos resultados é realizada
+com comparação quantitativa e posicionamento em relação a soluções da literatura, como o BRAM-NOW \cite{cujilema2023} (Seção~\ref{comparacao-literatura}). A comunicação dos resultados é realizada
 através deste TCC.
 
 \section{Planejamento Experimental}\label{planejamento-experimental}
@@ -368,6 +387,18 @@ configuração dos quatro cenários experimentais.
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
 \caption{Configuração dos cenários experimentais}\label{quadro:cenarios}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Cenário
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Topologia
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Configuração
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Objetivo
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Cenário
@@ -422,6 +453,16 @@ O Quadro~\ref{quadro:params-exp} resume os parâmetros adotados nos experimentos
   >{\centering\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\centering\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
 \caption{Parâmetros dos experimentos}\label{quadro:params-exp}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+Parâmetro
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+AODV-EN
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Flooding
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\centering
 Parâmetro
@@ -489,6 +530,16 @@ O Quadro~\ref{quadro:metricas} sintetiza as métricas de avaliação de desempen
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
 \caption{Métricas de avaliação de desempenho}\label{quadro:metricas}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Métrica
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Definição
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Fórmula
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Métrica
