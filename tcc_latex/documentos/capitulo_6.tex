@@ -20,20 +20,20 @@ adaptações necessárias (Capítulo~\ref{cap:implementacao}), e avaliado o dese
 algoritmo frente a um algoritmo de referência baseado em \emph{flooding}
 (Capítulo~\ref{cap:resultados}).
 
-A avaliação experimental, conduzida no cenário reduzido C1-3n com seis repetições por
-algoritmo, indicou confiabilidade equivalente entre as abordagens (PDR de 98,93\% para
-o AODV-EN contra 98,77\% para o \emph{flooding}), com vantagem do AODV-EN em latência
---- menor e mais previsível (60,0 ms estáveis contra 62 a 100 ms do \emph{flooding}) ---
-e em consumo energético estimado (cerca de 21\% inferior). O \emph{flooding}, por não
-manter plano de roteamento, apresentou carga de controle normalizada nula, mas a um
-custo estrutural de ocupação de canal: aproximadamente 1,89 vez mais recepções
-agregadas na rede. A análise de escalabilidade por simulação confirmou que essa
-desvantagem do \emph{flooding} cresce com o tamanho e o diâmetro da rede, com
-cruzamento de eficiência em torno de 9 a 11 nós e impossibilidade de alcance além do
-limite de TTL. Conclui-se, portanto, que o roteamento reativo do AODV-EN paga um
-\emph{overhead} de controle aproximadamente constante para evitar o custo de
-disseminação que cresce com a rede, tornando-se progressivamente mais vantajoso à
-medida que a malha se expande.
+A avaliação experimental, conduzida no cenário C1 com dez nós em cadeia multi-hop (três
+a quatro saltos) e trinta repetições por algoritmo, evidenciou a superioridade decisiva
+do roteamento reativo no regime multi-hop: o AODV-EN entregou 94,1\% dos pacotes contra
+apenas 12,7\% do \emph{flooding}, que colapsa por não dispor de rota nem de
+retransmissão fim-a-fim sob enlaces reais a 2~dBm. O AODV-EN apresentou, ainda, cerca de
+metade das transmissões por pacote entregue (54 contra 103) --- métrica justa de custo
+de canal, pois a carga de controle normalizada clássica não contabiliza as
+retransmissões por inundação do \emph{flooding}. A análise de escalabilidade por
+simulação confirmou que essa desvantagem do \emph{flooding} cresce com o tamanho e o
+diâmetro da rede, com cruzamento de eficiência em torno de 9 a 11 nós e impossibilidade
+de alcance além do limite de TTL. Conclui-se, portanto, que o roteamento reativo do
+AODV-EN paga um \emph{overhead} de controle aproximadamente constante para garantir a
+entrega multi-hop --- inviável por inundação pura ---, tornando-se progressivamente mais
+vantajoso à medida que a malha se expande.
 
 Um resultado metodológico relevante decorreu da revisão da estratégia de disseminação:
 a avaliação preliminar de um transporte por unicast sequencial revelou um viés
@@ -43,10 +43,12 @@ RREQ do AODV-EN quanto para o algoritmo de referência, restabeleceu a simetria
 metodológica da comparação e alinhou o \emph{baseline} à definição canônica de
 \emph{flooding} da literatura.
 
-Como limitações, destacam-se a amostragem reduzida (seis repetições em um único cenário,
-aquém das trinta repetições e dos cenários C2 a C4 planejados), a topologia de
-concentrador com aproximadamente um salto, a quantização da latência pelo laço da
-aplicação e o caráter estimado do consumo energético. As adaptações de gerenciamento de
+Como limitações, destacam-se a cobertura de cenários --- a campanha em hardware cobre o
+cenário C1 (cadeia multi-hop de dez nós, trinta repetições), restando os cenários C2 a
+C4 (árvore, malha redundante e falha induzida) como extensão direta sobre a mesma
+infraestrutura ---, o caráter estimado do consumo energético e a coleta sequencial das
+campanhas do AODV-EN e do \emph{flooding}, com nova distribuição física dos nós entre
+elas. As adaptações de gerenciamento de
 \emph{peers} por política LRU e de métrica híbrida (saltos combinados com RSSI)
 foram projetadas e implementadas no firmware (Capítulo~\ref{cap:implementacao}); contudo, a campanha
 experimental utilizou exclusivamente o núcleo reativo com métrica de contagem de

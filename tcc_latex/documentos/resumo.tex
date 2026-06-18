@@ -15,14 +15,14 @@ números de sequência e confirmação fim-a-fim. Adotando o paradigma \emph{Des
 Research}, o núcleo do protocolo foi implementado em linguagem C como componente
 reutilizável e comparado a um algoritmo de referência baseado em \emph{flooding},
 medindo-se \emph{Packet Delivery Ratio} (PDR), latência fim-a-fim, \emph{Normalized
-Routing Load} (NRL) e consumo energético estimado. No cenário avaliado em hardware (três
-ESP32, seis repetições), os dois algoritmos apresentaram confiabilidade equivalente
-(PDR de 98,93\% para o AODV-EN e 98,77\% para o \emph{flooding}), com vantagem do AODV-EN
-em latência (60,0 ms estáveis contra 62 a 100 ms) e em consumo energético estimado
-(aproximadamente 21\% inferior), ao custo de uma carga de controle normalizada de 0,77.
-A análise por simulação evidenciou que a desvantagem de ocupação de canal do
-\emph{flooding} cresce com a escala da rede, com cruzamento de eficiência em torno de
-9 a 11 nós. Conclui-se que o roteamento reativo do AODV-EN é vantajoso à medida que a
+Routing Load} (NRL) e consumo energético estimado. No cenário C1 avaliado em hardware
+(dez ESP32 em cadeia multi-hop de três a quatro saltos, trinta repetições por
+algoritmo), o AODV-EN entregou 94,1\% dos pacotes contra apenas 12,7\% do
+\emph{flooding} --- diferença expressiva no regime multi-hop, em que o \emph{flooding}
+colapsa por não dispor de rota nem retransmissão ---, com cerca de metade das
+transmissões por pacote entregue (54 contra 103). A análise por simulação confirmou que
+a desvantagem de ocupação de canal do \emph{flooding} cresce com a escala da rede, com
+cruzamento de eficiência em torno de 9 a 11 nós. Conclui-se que o roteamento reativo do AODV-EN é vantajoso à medida que a
 rede cresce em tamanho e diâmetro, viabilizando redes mesh padronizadas, de baixo custo
 e eficientes em energia sobre ESP-NOW.
 
