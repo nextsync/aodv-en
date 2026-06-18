@@ -415,19 +415,20 @@ Objetivo
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-C1: Linear & Cadeia & • 5 nós em linha (N1→N2→N3→N4→N5) • Distância
-entre nós: 10m • Comunicação: N1↔N5 • 4 saltos obrigatórios & Avaliar
-comportamento multi-hop básico e latência acumulada por salto \\
-C2: Árvore & Hierárquica & • 7 nós em estrutura de árvore • 1 raiz, 2
-nós nível 1, 4 folhas • Comunicação: folhas↔raiz • Máximo 2 saltos &
+C1: Linear & Cadeia & • 10 nós em cadeia multi-hop • Origem (coletor) →
+destino na extremidade • 3--4 saltos reais sob potência de 2~dBm &
+Avaliar comportamento multi-hop básico e latência acumulada por salto \\
+C2: Árvore & Hierárquica & • 10 nós em estrutura de árvore • 1 raiz, 3
+nós de nível 1, 6 folhas • Comunicação: folhas↔raiz • Máximo 2--3 saltos &
 Avaliar encaminhamento hierárquico e agregação de tráfego \\
-C3: Mesh Parcial & Redundante & • 6 nós com múltiplos caminhos • Cada nó
-alcança 2-3 vizinhos • Comunicação: extremidades • Rotas alternativas
-disponíveis & Avaliar seleção de rotas e capacidade de utilizar caminhos
+C3: Mesh Parcial & Redundante & • 10 nós em malha redundante (grade) •
+Múltiplos caminhos entre extremidades • Cada nó alcança 2--3 vizinhos &
+Avaliar seleção de rotas e capacidade de utilizar caminhos
 alternativos \\
-C4: Falha & Linear com interrupção & • Cenário C1 com falha induzida •
-Nó N3 desligado após 60s • Observação da recuperação & Avaliar detecção
-de falha e capacidade de auto-recuperação (self-healing) \\
+C4: Falha & Multi-hop com interrupção & • Cenário multi-hop com falha
+induzida • Nó intermediário desligado após 60s • Observação da
+recuperação & Avaliar detecção de falha e capacidade de
+auto-recuperação (self-healing) \\
 \end{longtable}
 }
 
@@ -477,7 +478,7 @@ Flooding
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-Número de nós & 5-10 (conforme cenário) & 5-10 (conforme cenário) \\
+Número de nós & 10 & 10 \\
 Tamanho do payload & 32 bytes & 32 bytes \\
 Taxa de envio (steady state) & 1 pacote/segundo & 1 pacote/segundo \\
 Duração de cada execução & 300 segundos (5 min) & 300 segundos (5
