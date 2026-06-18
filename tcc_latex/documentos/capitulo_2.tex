@@ -1,7 +1,7 @@
 % -----------------------------------------------------------------------------
 % Conteudo AODV-EN. Template base: Prof. Wesley Pacheco Calixto (IFG).
 % -----------------------------------------------------------------------------
-\chapter{REFERENCIAL TEÓRICO}\label{referencial-teuxf3rico}
+\chapter{REFERENCIAL TEÓRICO}\label{cap:referencial}\label{referencial-teuxf3rico}
 
 Este capítulo apresenta os fundamentos teóricos que embasam o
 desenvolvimento da pesquisa. Inicialmente, são discutidos os conceitos
@@ -21,7 +21,7 @@ paradigma tecnológico no qual objetos físicos dotados de capacidade
 computacional, sensores e conectividade de rede integram-se ao ambiente
 de forma ubíqua, coletando e compartilhando dados sem intervenção humana
 direta \cite{priyadarshi2025}. Essa visão, antecipada por Mark Weiser em
-1991 sob o conceito de Computação Ubíqua, materializa-se atualmente em
+1991 sob o conceito de Computação Ubíqua \cite{weiser1991}, materializa-se atualmente em
 bilhões de dispositivos conectados mundialmente, permeando setores como
 saúde, agricultura, indústria, cidades inteligentes e automação
 residencial. As Redes de Sensores Sem Fio (\emph{Wireless Sensor
@@ -29,28 +29,20 @@ Networks} -- WSNs) constituem uma das principais infraestruturas para
 implementação de aplicações IoT. Uma WSN é composta por um conjunto de
 nós sensores distribuídos espacialmente, capazes de monitorar fenômenos
 físicos ou ambientais, como temperatura, umidade, pressão, movimento ou
-luminosidade e transmitir os dados coletados através de enlaces sem fio
+luminosidade, e transmitir os dados coletados por meio de enlaces sem fio
 até uma estação base ou gateway \cite{chaizeng2021}. Os nós sensores são
 tipicamente dispositivos de recursos limitados, com restrições de
 processamento, memória, energia e largura de banda de comunicação. O
 projeto de WSNs deve considerar um conjunto de requisitos críticos que
 influenciam diretamente a viabilidade e eficácia das aplicações. O
-Quadro~\ref{quad:requisitos-rssf} sintetiza os principais requisitos e suas implicações para o
+Quadro~\ref{quadro:req-wsn} sintetiza os principais requisitos e suas implicações para o
 projeto de redes de sensores.
 
 {\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}
   >{\centering\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
   >{\centering\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}@{}}
-\caption{Requisitos críticos para projeto de Redes de Sensores Sem Fio}\label{quad:requisitos-rssf}\\
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\centering
-Requisito
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Descrição e Implicações
-\end{minipage} \\
-\midrule\noalign{}
-\endfirsthead
+\caption{Requisitos críticos para projeto de Redes de Sensores Sem Fio}\label{quadro:req-wsn}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\centering
 Requisito
@@ -109,13 +101,11 @@ analógico-digitais (ADC), conversores digital-analógicos (DAC),
 interfaces SPI, I²C, I²S, UART, PWM, sensores de toque capacitivo e
 sensor de efeito Hall. O Quadro~\ref{quad:esp32-specs} sintetiza as principais especificações técnicas do dispositivo.
 
+O Quadro~\ref{quadro:esp32-specs} resume as principais especificações técnicas do ESP32.
+
 {\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}cl@{}}
-\caption{Especificações técnicas do microcontrolador ESP32}\label{quad:esp32-specs}\\
-\toprule\noalign{}
-Característica & Especificação \\
-\midrule\noalign{}
-\endfirsthead
+\caption{Especificações técnicas do microcontrolador ESP32}\label{quadro:esp32-specs}\\
 \toprule\noalign{}
 Característica & Especificação \\
 \midrule\noalign{}
@@ -138,7 +128,7 @@ Fonte: \citeonline{espressif2024}.
 
 Uma característica diferencial do ESP32 para aplicações IoT é seu
 suporte a múltiplos modos de operação com diferentes perfis de consumo
-energético. O Quadro~\ref{quad:esp32-energia} apresenta os modos de energia disponíveis e seus
+energético. O Quadro~\ref{quadro:esp32-energia} apresenta os modos de energia disponíveis e seus
 respectivos consumos típicos, conforme especificado no \emph{datasheet}
 do fabricante.
 
@@ -147,17 +137,7 @@ do fabricante.
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
-\caption{Modos de operação e consumo energético do ESP32}\label{quad:esp32-energia}\\
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-Modo de Operação
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Consumo Típico
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Descrição
-\end{minipage} \\
-\midrule\noalign{}
-\endfirsthead
+\caption{Modos de operação e consumo energético do ESP32}\label{quadro:esp32-energia}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Modo de Operação
@@ -189,7 +169,7 @@ Fonte: \citeonline{espressif2024}.
 
 A disponibilidade de módulos de desenvolvimento (DevKit) a preços
 acessíveis, tipicamente entre R\$ 25,00 e R\$ 40,00 no mercado
-brasileiro, democratiza o acesso à tecnologia e viabiliza a construção
+brasileiro em 2024, democratiza o acesso à tecnologia e viabiliza a construção
 de redes de sensores com dezenas de nós a custos compatíveis com
 aplicações em países em desenvolvimento.
 
@@ -220,19 +200,13 @@ no modo CCMP, permitindo comunicação segura quando necessário. A
 identificação dos dispositivos é realizada através de seus endereços MAC
 de 6 bytes. O Quadro~\ref{quad:espnow-specs} resume as características técnicas do protocolo.
 
+O Quadro~\ref{quadro:espnow-carac} sintetiza as principais características técnicas do ESP-NOW.
+
 {\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}
   >{\centering\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
   >{\centering\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}@{}}
-\caption{Características técnicas do protocolo ESP-NOW}\label{quad:espnow-specs}\\
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\centering
-Parâmetro
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Valor
-\end{minipage} \\
-\midrule\noalign{}
-\endfirsthead
+\caption{Características técnicas do protocolo ESP-NOW}\label{quadro:espnow-carac}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\centering
 Parâmetro
@@ -243,7 +217,7 @@ Valor
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-Padrão base & IEEE 802.11b (action frames vendor-specific) \\
+Padrão base & IEEE 802.11 b/g/n (\emph{action frames} vendor-specific) \\
 Frequência de operação & 2.4 GHz (canais 1-14) \\
 Taxa de transmissão & 1 Mbit/s \\
 Payload máximo & 250 bytes \\
@@ -285,10 +259,11 @@ multi-hop}\label{limitauxe7uxf5es-para-comunicauxe7uxe3o-multi-hop}
 Apesar de suas vantagens, o ESP-NOW apresenta limitações estruturais que
 restringem sua aplicação direta em redes de maior escala. A primeira e
 mais significativa limitação é a ausência de suporte nativo a roteamento
-multi-hop. O protocolo foi concebido exclusivamente para comunicações
+em múltiplos saltos (\emph{multi-hop}), isto é, ao encaminhamento de
+pacotes por nós intermediários até um destino fora do alcance direto. O
+protocolo foi concebido exclusivamente para comunicações
 ponto-a-ponto ou em topologia estrela, não oferecendo mecanismos para
-encaminhamento de pacotes através de nós intermediários
-\cite{becker2025}. A segunda limitação refere-se ao número máximo de
+esse encaminhamento \cite{becker2025}. A segunda limitação refere-se ao número máximo de
 \emph{peers} simultâneos: cada dispositivo ESP32 suporta no máximo
 20 \emph{peers} registrados na tabela de pares, sendo que apenas 6
 desses podem ter criptografia AES-128 habilitada individualmente
@@ -364,25 +339,15 @@ dentro de zonas locais e roteamento reativo para comunicação entre
 zonas. Essa estratégia busca balancear as vantagens de ambas as
 abordagens, mas introduz complexidade adicional na implementação. O Quadro~\ref{quad:protocolos-comparativo} sintetiza o comparativo entre as três categorias.
 
+O Quadro~\ref{quadro:comp-protocolos} apresenta um comparativo entre as categorias de protocolos de roteamento ad-hoc.
+
 {\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
-\caption{Comparativo entre categorias de protocolos de roteamento ad-hoc}\label{quad:protocolos-comparativo}\\
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-Característica
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Proativo
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Reativo
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Híbrido
-\end{minipage} \\
-\midrule\noalign{}
-\endfirsthead
+\caption{Comparativo entre categorias de protocolos de roteamento ad-hoc}\label{quadro:comp-protocolos}\\
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Característica
@@ -520,17 +485,13 @@ RERR.
 configuração}\label{paruxe2metros-de-configurauxe7uxe3o}
 
 A RFC 3561 define valores padrão para diversos parâmetros configuráveis
-que influenciam o comportamento e desempenho do protocolo. O Quadro~\ref{quad:aodv-parametros}
+que influenciam o comportamento e desempenho do protocolo. O Quadro~\ref{quadro:aodv-params}
 apresenta os principais parâmetros e seus valores padrão, que podem ser
 ajustados conforme as características específicas da rede.
 
 {\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}lll@{}}
-\caption{Parâmetros de configuração do AODV (RFC 3561)}\label{quad:aodv-parametros}\\
-\toprule\noalign{}
-Parâmetro & Valor Padrão & Descrição \\
-\midrule\noalign{}
-\endfirsthead
+\caption{Parâmetros de configuração do AODV (RFC 3561)}\label{quadro:aodv-params}\\
 \toprule\noalign{}
 Parâmetro & Valor Padrão & Descrição \\
 \midrule\noalign{}

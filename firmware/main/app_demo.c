@@ -30,7 +30,11 @@
 
 #define APP_RX_QUEUE_LEN 8
 #define APP_TX_RESULT_QUEUE_LEN 16
-#define APP_LOOP_DELAY_MS 100
+#define APP_LOOP_DELAY_MS 10
+#define APP_STATSREP_MAGIC 0x53u
+#define APP_STATSREP_LEN 17u
+#define APP_NEIGHREP_MAGIC 0x4Eu
+#define APP_NEIGH_MAX 16u
 #define APP_MAX_FRAME_LEN ESP_NOW_MAX_DATA_LEN_V2
 #define APP_DRIVER_MAX_PEERS CONFIG_AODV_EN_APP_DRIVER_MAX_PEERS
 
@@ -95,6 +99,13 @@ typedef struct
     uint32_t next_hello_at_ms;
     uint32_t next_send_at_ms;
     uint32_t next_print_at_ms;
+    uint8_t report_to_mac[AODV_EN_MAC_ADDR_LEN];
+    bool has_report;
+    uint32_t report_interval_ms;
+    uint32_t next_report_at_ms;
+    uint8_t neigh_mac[APP_NEIGH_MAX][AODV_EN_MAC_ADDR_LEN];
+    int16_t neigh_rssi[APP_NEIGH_MAX];
+    uint8_t neigh_count;
     app_driver_peer_entry_t driver_peers[APP_DRIVER_MAX_PEERS];
 } app_context_t;
 
@@ -473,6 +484,20 @@ static void app_led_pulse_task(void *arg)
     vTaskDelete(NULL);
 }
 
+static void app_put_u32_be(uint8_t *buf, uint32_t value)
+{
+    buf[0] = (uint8_t)(value >> 24);
+    buf[1] = (uint8_t)(value >> 16);
+    buf[2] = (uint8_t)(value >> 8);
+    buf[3] = (uint8_t)(value);
+}
+
+static uint32_t app_get_u32_be(const uint8_t *buf)
+{
+    return ((uint32_t)buf[0] << 24) | ((uint32_t)buf[1] << 16) |
+           ((uint32_t)buf[2] << 8) | (uint32_t)buf[3];
+}
+
 static void app_deliver_data(
     void *user_ctx,
     const uint8_t originator_mac[AODV_EN_MAC_ADDR_LEN],
@@ -483,6 +508,37 @@ static void app_deliver_data(
 
     (void)user_ctx;
     app_format_mac(originator_mac, mac_text, sizeof(mac_text));
+
+    if (payload_len >= APP_STATSREP_LEN && payload[0] == APP_STATSREP_MAGIC)
+    {
+        uint32_t tx = app_get_u32_be(&payload[1]);
+        uint32_t rx = app_get_u32_be(&payload[5]);
+        uint32_t control = app_get_u32_be(&payload[9]);
+        uint32_t delivered = app_get_u32_be(&payload[13]);
+        ESP_LOGI(TAG, "STATSREP node=%s tx=%" PRIu32 " rx=%" PRIu32 " control=%" PRIu32 " delivered=%" PRIu32,
+                 mac_text, tx, rx, control, delivered);
+        return;
+    }
+
+    if (payload_len >= 2u && payload[0] == APP_NEIGHREP_MAGIC)
+    {
+        uint8_t count = payload[1];
+        char line[320];
+        int pos = 0;
+        pos += snprintf(line + pos, sizeof(line) - pos, "NEIGHREP node=%s hears=", mac_text);
+        for (uint8_t i = 0; i < count && (size_t)(2u + (i + 1u) * 7u) <= payload_len; i++)
+        {
+            const uint8_t *e = &payload[2u + i * 7u];
+            char nb[18];
+            app_format_mac(e, nb, sizeof(nb));
+            int8_t rssi = (int8_t)e[6];
+            pos += snprintf(line + pos, sizeof(line) - pos, "%s%s:%d", (i == 0 ? "" : ","), nb, (int)rssi);
+            if (pos >= (int)sizeof(line) - 24) break;
+        }
+        ESP_LOGI(TAG, "%s", line);
+        return;
+    }
+
     ESP_LOGI(TAG, "DATA deliver from %s: %.*s", mac_text, payload_len, (const char *)payload);
 
     // Pulse curto no LED para feedback visual no destino
@@ -611,12 +667,35 @@ static void app_log_routes(const aodv_en_stack_t *stack)
     }
 }
 
+static void app_note_neigh(app_context_t *app, const uint8_t mac[AODV_EN_MAC_ADDR_LEN], int8_t rssi)
+{
+    for (uint8_t i = 0; i < app->neigh_count; i++)
+    {
+        if (memcmp(app->neigh_mac[i], mac, AODV_EN_MAC_ADDR_LEN) == 0)
+        {
+            app->neigh_rssi[i] = (int16_t)((app->neigh_rssi[i] * 3 + rssi) / 4);
+            return;
+        }
+    }
+    if (app->neigh_count < APP_NEIGH_MAX)
+    {
+        memcpy(app->neigh_mac[app->neigh_count], mac, AODV_EN_MAC_ADDR_LEN);
+        app->neigh_rssi[app->neigh_count] = rssi;
+        app->neigh_count++;
+    }
+}
+
 static void app_process_rx_queue(app_context_t *app)
 {
     app_rx_event_t event;
 
     while (xQueueReceive(app->rx_queue, &event, 0) == pdTRUE)
     {
+        char src_text[18];
+        app_format_mac(event.src_mac, src_text, sizeof(src_text));
+        ESP_LOGI(TAG, "RSSIPROBE src=%s rssi=%d", src_text, (int)event.rssi);
+        app_note_neigh(app, event.src_mac, event.rssi);
+
         (void)aodv_en_stack_on_recv_at(
             &app->stack,
             event.src_mac,
@@ -706,8 +785,44 @@ static void app_protocol_task(void *arg)
 
         if (now_ms >= app->next_print_at_ms)
         {
+            char self_text[18];
+            app_format_mac(app->self_mac, self_text, sizeof(self_text));
+            ESP_LOGI(TAG, "RSSISELF self=%s", self_text);
             app_log_routes(&app->stack);
             app->next_print_at_ms = now_ms + app->print_interval_ms;
+        }
+
+        if (app->has_report && now_ms >= app->next_report_at_ms)
+        {
+            aodv_en_overview_t overview;
+            if (aodv_en_stack_get_overview(&app->stack, &overview) == AODV_EN_OK)
+            {
+                uint8_t payload[APP_STATSREP_LEN];
+                payload[0] = APP_STATSREP_MAGIC;
+                app_put_u32_be(&payload[1], overview.stats.tx_frames);
+                app_put_u32_be(&payload[5], overview.stats.rx_frames);
+                app_put_u32_be(&payload[9], overview.stats.control_tx_frames);
+                app_put_u32_be(&payload[13], overview.stats.delivered_frames);
+                (void)aodv_en_stack_send_data_at(
+                    &app->stack, app->report_to_mac, payload, APP_STATSREP_LEN, true, now_ms);
+            }
+
+            {
+                uint8_t np[2u + APP_NEIGH_MAX * 7u];
+                uint16_t off = 0u;
+                np[off++] = APP_NEIGHREP_MAGIC;
+                np[off++] = app->neigh_count;
+                for (uint8_t i = 0; i < app->neigh_count; i++)
+                {
+                    memcpy(&np[off], app->neigh_mac[i], AODV_EN_MAC_ADDR_LEN);
+                    off += AODV_EN_MAC_ADDR_LEN;
+                    np[off++] = (uint8_t)(int8_t)app->neigh_rssi[i];
+                }
+                (void)aodv_en_stack_send_data_at(
+                    &app->stack, app->report_to_mac, np, off, true, now_ms);
+            }
+
+            app->next_report_at_ms = now_ms + app->report_interval_ms;
         }
 
         vTaskDelay(pdMS_TO_TICKS(APP_LOOP_DELAY_MS));
@@ -742,6 +857,15 @@ static void app_init_wifi(uint8_t channel)
     ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config));
     ESP_ERROR_CHECK(esp_wifi_start());
     ESP_ERROR_CHECK(esp_wifi_set_channel(channel, WIFI_SECOND_CHAN_NONE));
+    if (CONFIG_AODV_EN_APP_TX_POWER_QDBM > 0)
+    {
+        ESP_ERROR_CHECK(esp_wifi_set_max_tx_power((int8_t)CONFIG_AODV_EN_APP_TX_POWER_QDBM));
+    }
+    {
+        int8_t tx_power = 0;
+        (void)esp_wifi_get_max_tx_power(&tx_power);
+        ESP_LOGI(TAG, "wifi channel=%u tx_power_qdbm=%d", channel, (int)tx_power);
+    }
 }
 
 static void app_blink_task(void *arg)
@@ -835,9 +959,17 @@ void app_demo_run(void)
         g_app.has_target = false;
     }
 
+    g_app.report_interval_ms = (uint32_t)CONFIG_AODV_EN_APP_REPORT_INTERVAL_MS;
+    g_app.has_report = app_parse_mac(CONFIG_AODV_EN_APP_REPORT_TO_MAC, g_app.report_to_mac);
+    if (g_app.has_report && memcmp(g_app.report_to_mac, g_app.self_mac, AODV_EN_MAC_ADDR_LEN) == 0)
+    {
+        g_app.has_report = false;
+    }
+
     g_app.next_hello_at_ms = app_now_ms() + 1000u;
     g_app.next_send_at_ms = app_now_ms() + 3000u;
     g_app.next_print_at_ms = app_now_ms() + g_app.print_interval_ms;
+    g_app.next_report_at_ms = app_now_ms() + g_app.report_interval_ms;
 
     app_format_mac(g_app.self_mac, self_mac_text, sizeof(self_mac_text));
     ESP_LOGI(TAG, "node=%s self_mac=%s channel=%u network_id=0x%08" PRIX32 " rreq_flood=%s max_driver_peers=%d",

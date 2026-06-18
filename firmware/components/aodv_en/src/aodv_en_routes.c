@@ -158,6 +158,13 @@ bool aodv_en_route_should_replace(
         return true;
     }
 
+    /* RFC 3561: uma rota confirmada (VALID) nao deve ser rebaixada por uma
+     * entrada nao-confirmada (REVERSE de um RREQ de passagem, ou INVALID). */
+    if (existing->state == AODV_EN_ROUTE_VALID && candidate->state != AODV_EN_ROUTE_VALID)
+    {
+        return false;
+    }
+
     /* Hysteresis: avoid flapping between next hops unless the candidate is clearly better. */
     if (candidate->state == AODV_EN_ROUTE_VALID &&
         existing->state == AODV_EN_ROUTE_VALID &&
@@ -297,7 +304,7 @@ aodv_en_status_t aodv_en_route_invalidate_destination(
 
     route->state = AODV_EN_ROUTE_INVALID;
     route->metric = AODV_EN_ROUTE_METRIC_INFINITY;
-    route->expires_at_ms = now_ms;
+    route->expires_at_ms = now_ms + AODV_EN_ROUTE_DELETE_PERIOD_MS;
 
     return AODV_EN_OK;
 }
@@ -322,7 +329,7 @@ size_t aodv_en_route_invalidate_by_next_hop(
         {
             table->entries[index].state = AODV_EN_ROUTE_INVALID;
             table->entries[index].metric = AODV_EN_ROUTE_METRIC_INFINITY;
-            table->entries[index].expires_at_ms = now_ms;
+            table->entries[index].expires_at_ms = now_ms + AODV_EN_ROUTE_DELETE_PERIOD_MS;
             invalidated++;
         }
     }
@@ -344,14 +351,27 @@ size_t aodv_en_route_expire(
 
     while (index < table->count)
     {
-        if (table->entries[index].expires_at_ms <= now_ms)
+        aodv_en_route_entry_t *entry = &table->entries[index];
+
+        if (entry->expires_at_ms > now_ms)
         {
-            aodv_en_route_remove_at(table, index);
-            removed++;
+            index++;
             continue;
         }
 
-        index++;
+        if (entry->state != AODV_EN_ROUTE_INVALID)
+        {
+            /* RFC 3561 6.11: rota valida cuja lifetime expirou e invalidada
+             * (nao removida), preservando dest_seq_num por DELETE_PERIOD. */
+            entry->state = AODV_EN_ROUTE_INVALID;
+            entry->metric = AODV_EN_ROUTE_METRIC_INFINITY;
+            entry->expires_at_ms = now_ms + AODV_EN_ROUTE_DELETE_PERIOD_MS;
+            index++;
+            continue;
+        }
+
+        aodv_en_route_remove_at(table, index);
+        removed++;
     }
 
     return removed;

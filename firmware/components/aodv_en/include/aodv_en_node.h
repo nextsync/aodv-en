@@ -60,6 +60,14 @@ extern "C"
         uint8_t payload[AODV_EN_DATA_PAYLOAD_MAX];
     } aodv_en_pending_ack_entry_t;
 
+    typedef struct
+    {
+        uint8_t originator_mac[AODV_EN_MAC_ADDR_LEN];
+        uint32_t sequence_number;
+        uint32_t seen_at_ms;
+        bool used;
+    } aodv_en_data_seen_entry_t;
+
     typedef aodv_en_status_t (*aodv_en_emit_frame_fn)(
         void *user_ctx,
         const uint8_t next_hop[AODV_EN_MAC_ADDR_LEN],
@@ -102,6 +110,7 @@ extern "C"
         uint16_t pending_data_count;
         aodv_en_pending_ack_entry_t pending_ack[AODV_EN_PENDING_DATA_QUEUE_SIZE];
         uint16_t pending_ack_count;
+        aodv_en_data_seen_entry_t data_seen[AODV_EN_DATA_SEEN_SIZE];
         aodv_en_node_callbacks_t callbacks;
         aodv_en_stats_t stats;
     } aodv_en_node_t;
