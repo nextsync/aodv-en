@@ -13,6 +13,8 @@
 \addvspace {10\p@ }
 \contentsline {figure}{\numberline {5.1}{\ignorespaces Métricas de hardware (PDR de entrega, latência, transmissões por entrega e energia estimada): AODV-EN vs.~Flooding, cenário C1 multi-hop, 10 nós, média de 30 repetições com barra de IC95.}}{61}{figure.caption.15}%
 \contentsline {figure}{\numberline {5.2}{\ignorespaces Taxa de entrega por repetição (AODV-EN vs.~Flooding), cenário C1 multi-hop, 10 nós.}}{63}{figure.caption.17}%
-\contentsline {figure}{\numberline {5.3}{\ignorespaces Auto-recuperação no cenário C4: pacotes entregues acumulados ao longo de uma repetição. Os patamares (faixas destacadas) coincidem com a queda do relé \emph {on-path}; a retomada da entrega evidencia a re-descoberta de rota pelo relé alternativo.}}{65}{figure.caption.18}%
-\contentsline {figure}{\numberline {5.4}{\ignorespaces Transmissões por pacote entregue em função do número de nós (simulação).}}{66}{figure.caption.19}%
+\contentsline {figure}{\numberline {5.3}{\ignorespaces Impacto da falha periódica de um relé \emph {on-path}: PDR de entrega e latência do AODV-EN no cenário C1 (sem falha) contra o C4 (sob falha), com barra de IC95.}}{65}{figure.caption.19}%
+\contentsline {figure}{\numberline {5.4}{\ignorespaces Taxa de entrega por repetição no cenário C4: a alta variabilidade reflete a recuperação estocástica diante da falha periódica do relé.}}{65}{figure.caption.20}%
+\contentsline {figure}{\numberline {5.5}{\ignorespaces Auto-recuperação no cenário C4: pacotes entregues acumulados ao longo de uma repetição. Os patamares (faixas destacadas) coincidem com a queda do relé \emph {on-path}; a retomada da entrega evidencia a re-descoberta de rota pelo relé alternativo.}}{66}{figure.caption.21}%
+\contentsline {figure}{\numberline {5.6}{\ignorespaces Transmissões por pacote entregue em função do número de nós (simulação).}}{67}{figure.caption.22}%
 \addvspace {10\p@ }
