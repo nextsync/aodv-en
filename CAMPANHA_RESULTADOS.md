@@ -62,3 +62,34 @@ de sobrevivencia (so os poucos pacotes de caminho curto chegam). NRL classico (s
 controle de rota) nao captura o overhead do flood -> usar tx/entregue p/ comparacao justa.
 
 ## C2 Arvore / C3 Mesh / C4 Falha — PENDENTES
+
+## C4 Falha / self-healing (HW, 6 nos, apartamento)
+
+- Topologia: 6 ESP32 no apartamento, TX 4 dBm (QDBM=16). Origem+coletor EB80 ->
+  destino D61C (N6) em 2 saltos via rele on-path 94:D4 (alternativa B9:EC).
+- Falha induzida: o rele 94:D4 silencia o radio 15 s a cada 45 s (33% de
+  indisponibilidade), simulando queda e retorno do no. Vizinhos detectam a quebra
+  (HELLO/RERR) e o AODV re-rota via B9:EC.
+- DIFERENTE do C1 (10 nos, cadeia): cenario menor, com redundancia e falha, focado
+  em recuperacao (nao em escala). TX 4 dBm (vs 2 dBm do C1) pelo espaco menor com
+  paredes do apartamento -- declarado por cenario.
+
+### aodv-en -- 30 reps x 60 s
+
+| Metrica | Media | IC95 | desvio |
+|---|---|---|---|
+| PDR de entrega (%) | 62,8 | 11,5 | 32,1 |
+| PDR ACK ida-e-volta (%) | 47,6 | 11,5 | 32,1 |
+| Latencia one-way (ms) | 60,7 | 14,6 | 40,0 |
+| NRL | 5,16 | 1,7 | 4,77 |
+| Energia (J, est.) | 9,24 | 1,7 | 4,68 |
+
+- Contraste com C1 sem falha (94,1%): a falha periodica do rele on-path derruba a
+  entrega para ~63% e eleva a latencia (re-descoberta de rota). A alta variancia
+  (CV ~51%) reflete a natureza estocastica do instante da falha frente ao trafego.
+- Figura fig_c4_selfheal: entregas acumuladas de uma repeticao -- os patamares
+  coincidem com as quedas do rele e a retomada evidencia a recuperacao (self-healing).
+- Resultado honesto do tradeoff eficiencia x resiliencia: o roteamento reativo paga
+  um custo de deteccao+recuperacao na falha (que a inundacao, sem rotas, nao tem).
+
+### flooding C4 -- PENDENTE (reflash app_flood TX 4dBm, vitima 94:D4)
