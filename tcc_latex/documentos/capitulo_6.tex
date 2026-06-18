@@ -9,7 +9,8 @@ módulos ESP32. O núcleo reativo do protocolo --- descoberta de rotas sob deman
 tabelas de rota com números de sequência, lista de precursores, fila de dados
 pendentes, confirmação fim-a-fim e invalidação de rotas por falha de enlace --- foi
 implementado como componente reutilizável em linguagem C, independente do ESP-IDF,
-e validado tanto em simulação quanto em hardware com três dispositivos ESP32.
+e validado tanto em simulação quanto em hardware com dez nós ESP32 dispostos
+em cadeia multi-hop (três a quatro saltos).
 
 Quanto ao objetivo geral, o trabalho demonstrou a viabilidade de prover roteamento
 multi-hop sobre o ESP-NOW por meio de uma adaptação fiel do AODV, contornando a
