@@ -93,3 +93,27 @@ controle de rota) nao captura o overhead do flood -> usar tx/entregue p/ compara
   um custo de deteccao+recuperacao na falha (que a inundacao, sem rotas, nao tem).
 
 ### flooding C4 -- PENDENTE (reflash app_flood TX 4dBm, vitima 94:D4)
+
+## C3 Mesh redundante (HW, 10 nos, malha profunda)
+
+- Topologia: 10 ESP32 espalhados ao maximo no apartamento, TX 2 dBm (TX-matched com C1).
+  Origem+coletor EB80 -> destino D61C. Malha de 5 saltos (mais profunda que C1=3-4).
+- Mesmo firmware e TX do C1; difere a DISPOSICAO FISICA (malha vs cadeia) -> isola o
+  efeito da topologia.
+
+### aodv-en -- 30 reps x 60 s
+
+| Metrica | Media | IC95 | desvio |
+|---|---|---|---|
+| PDR de entrega (%) | 91,4 | 2,2 | 6,1 |
+| PDR ACK ida-e-volta (%) | 87,0 | 4,7 | 13,2 |
+| Latencia one-way (ms) | 34,9 | 2,7 | 7,6 |
+| NRL | 17,7 | 1,3 | 3,7 |
+| Energia (J, est.) | 38,5 | 0,1 | 0,4 |
+
+- AODV mantem 91,4% de entrega numa malha de 5 saltos (vs 94,1% na cadeia C1 de 3-4
+  saltos), com latencia ate menor (34,9 vs 45,9 ms) gracas a caminhos curtos da malha.
+  A vantagem do roteamento sobre o flooding cresce com a profundidade (flood degrada
+  exponencialmente com saltos).
+
+### flooding C3 -- PENDENTE (reflash 2dBm, mesma malha)
