@@ -177,6 +177,14 @@ interferência:
   \overline{\text{RSSI}}_n = \frac{3 \times \overline{\text{RSSI}}_{n-1} + \text{RSSI}_n}{4}
 \end{equation}
 
+\noindent O fator $3/4$ corresponde a uma constante de tempo da ordem de
+três a quatro amostras de HELLO até que uma variação sustentada de RSSI se
+reflita na média, o que rejeita picos transitórios de \emph{fading} sem
+mascarar a degradação persistente de um enlace. Esse valor é adequado à
+topologia estática avaliada neste trabalho; cenários com mobilidade
+exigiriam um fator menor, para resposta mais rápida, ao custo de maior
+sensibilidade ao ruído.
+
 \noindent Quanto melhor o sinal ($\overline{\text{RSSI}}$ mais próximo de $-55\,\text{dBm}$),
 menor a penalidade e menor o custo da rota. Como comportamento de borda,
 quando o próximo salto ainda não corresponde a um vizinho ativo com
@@ -1050,6 +1058,48 @@ Pesos da métrica ($\alpha$ / $\beta$) & 8 / 1 & saltos / penalidade de RSSI \\
 }
 
 Fonte: Elaborado pelos autores.
+
+\subsection{Análise de complexidade e custo de memória}\label{analise-de-complexidade}
+
+Por executar em um microcontrolador com memória e processamento
+limitados, o AODV-EN foi projetado para que suas operações tenham custo
+proporcional a tabelas pequenas e de tamanho fixo. O
+Quadro~\ref{quadro:complexidade} resume a complexidade das operações
+principais. As estruturas são percorridas linearmente, mas seus limites
+($R \le 32$ rotas, $V \le 16$ vizinhos, $Q \le 64$ entradas de
+\emph{cache} de RREQ, $P \le 8$ \emph{peers}) mantêm cada operação na
+ordem de dezenas de comparações, com tempo da ordem de microssegundos.
+
+\begin{quadro}[H]
+\centering
+\caption{Complexidade das operações do AODV-EN}\label{quadro:complexidade}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.40\linewidth}>{\raggedright\arraybackslash}p{0.30\linewidth}c@{}}
+\toprule
+Operação & Estrutura & Complexidade \\
+\midrule
+Busca de rota por destino & Tabela de rotas & $O(R)$, $R \le 32$ \\
+Inserção/atualização de rota & Tabela de rotas & $O(R)$ \\
+Deduplicação de RREQ & \emph{Cache} de RREQ & $O(Q)$, $Q \le 64$ \\
+Atualização de vizinho/RSSI (EWMA) & Tabela de vizinhos & $O(V)$, $V \le 16$ \\
+Substituição de \emph{peer} (LRU) & \emph{Cache} de \emph{peers} & $O(P)$, $P \le 8$ \\
+Disseminação de RREQ (na rede) & \emph{Broadcast} de enlace & $O(N)$ mensagens \\
+\bottomrule
+\end{tabular}
+
+\vspace{2pt}
+{\footnotesize Fonte: Elaborado pelos autores. $N$ é o número de nós; cada nó retransmite um RREQ no máximo uma vez por descoberta, graças à deduplicação por (origem, RREQ~ID).}
+\end{quadro}
+
+Em termos de memória, o conjunto de tabelas de tamanho fixo ocupa poucos
+\emph{kilobytes} da SRAM do ESP32 (da ordem de centenas de \emph{bytes}
+por tipo de tabela), folgadamente dentro do orçamento de RAM disponível
+para a aplicação, o que viabiliza a coexistência com a pilha de rede e a
+camada de aplicação. O \emph{cache} de \emph{peers} limitado a oito
+registros, frente a até dezesseis vizinhos diretos, implica que um
+\emph{peer} pouco usado pode ser removido (\emph{eviction}) e precisar de
+nova inscrição ao ser requisitado, ao custo de poucos milissegundos; como
+o tráfego de dados se concentra na rota ativa, tais faltas são pouco
+frequentes na operação típica.
 
 A implementação do AODV-EN buscou preservar os princípios fundamentais do
 protocolo AODV, especialmente a descoberta de rotas sob demanda, a
