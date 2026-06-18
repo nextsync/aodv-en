@@ -851,3 +851,39 @@ preservar a consistência dos dados analisados. A partir dos resultados
 consolidados, avalia-se se o AODV-EN apresenta ganhos em eficiência
 de comunicação, mantendo desempenho compatível em termos de
 confiabilidade e latência.
+
+\section{Ameaças à Validade}\label{ameacas-a-validade}
+
+Em conformidade com a prática de pesquisa experimental, registram-se as
+ameaças à validade dos resultados e as medidas adotadas para mitigá-las.
+
+\textbf{Validade interna} (em que medida os efeitos observados decorrem
+realmente do fator estudado). A principal ameaça é a interferência de
+outras redes 2,4~GHz (Wi-Fi, Bluetooth) no ambiente, não controlada, que
+pode alterar a taxa de perda. Mitigou-se executando as campanhas em
+ambiente residencial fora de horários de pico e fixando o canal e o
+identificador de rede para ambos os algoritmos. Uma segunda ameaça é a
+variação das condições de canal entre as campanhas do AODV-EN e do
+\emph{flooding}, coletadas em sequência (com reprogramação dos nós entre
+elas); para reduzi-la, a topologia foi mantida pelas mesmas posições
+físicas e verificada por matriz de RSSI. Os parâmetros de tráfego
+(\emph{payload}, taxa, duração) foram idênticos para os dois algoritmos.
+
+\textbf{Validade de construto} (em que medida as métricas medem o que se
+pretende). A taxa de entrega foi definida como entrega efetiva no destino
+(pacotes distintos), e não como confirmação de ida e volta, justamente
+para não penalizar o \emph{flooding} pela perda no caminho de retorno do
+ACK; o custo de canal foi medido por transmissões por pacote entregue,
+que captura o \emph{overhead} de inundação que a carga de controle
+normalizada clássica não contabiliza. O consumo energético é
+\emph{estimado} por modelo de \emph{datasheet}, não medido, e é rotulado
+como tal em todo o trabalho.
+
+\textbf{Validade externa} (em que medida os resultados generalizam). A
+avaliação em hardware restringe-se ao cenário C1 (cadeia multi-hop de dez
+nós, três a quatro saltos) em um ambiente residencial específico; os
+cenários C2 a C4 e topologias mais densas ou móveis ficam como trabalho
+futuro, sendo a tendência de escala complementada por simulação. Assim, as
+conclusões aplicam-se com segurança ao regime multi-hop avaliado e
+sustentam-se, em maior escala, pelos resultados de simulação, evitando-se
+extrapolações além do que os dados suportam.

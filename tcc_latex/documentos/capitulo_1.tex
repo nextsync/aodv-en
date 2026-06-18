@@ -190,6 +190,40 @@ específicos:
   existentes para redes mesh sobre ESP-NOW e outras tecnologias.
 \end{enumerate}
 
+\section{CENÁRIOS DE APLICAÇÃO}\label{cenarios-de-aplicacao}
+
+A motivação para prover roteamento multi-hop padronizado sobre ESP-NOW
+torna-se concreta em cenários nos quais a infraestrutura de rede é
+ausente, intermitente ou economicamente inviável, mas a comunicação entre
+muitos dispositivos de baixo custo e baixo consumo é necessária ao longo
+de áreas que excedem o alcance de um único enlace. Quatro classes de
+aplicação ilustram a relevância da proposta:
+
+\begin{itemize}
+\item \textbf{Agricultura de precisão e monitoramento rural.} Sensores de
+  umidade do solo, temperatura e nível de reservatórios distribuídos por
+  uma propriedade extensa, sem cobertura de Wi-Fi ou celular, podem
+  encaminhar leituras até um concentrador por múltiplos saltos, a custo de
+  hardware da ordem de poucos dólares por nó.
+\item \textbf{Monitoramento industrial e predial.} Em galpões, plantas
+  fabris e edifícios, paredes e estruturas metálicas fragmentam a
+  conectividade; uma malha auto-organizável que contorna obstáculos por
+  rotas alternativas é mais robusta que enlaces ponto a ponto.
+\item \textbf{Redes comunitárias e resposta a desastres.} Em regiões sem
+  infraestrutura ou após eventos que a destroem, nós alimentados por
+  bateria podem formar rapidamente uma malha temporária para troca de
+  mensagens e telemetria, sem depender de pontos de acesso.
+\item \textbf{Automação residencial de baixo custo.} Dispositivos
+  domésticos (sensores, atuadores) distribuídos por uma casa de vários
+  cômodos, onde a atenuação por paredes já exige multi-hop, conforme
+  observado no próprio cenário experimental deste trabalho.
+\end{itemize}
+
+Em todos esses contextos, a adoção de um protocolo \emph{padronizado}
+(AODV, RFC 3561), em vez de uma solução \emph{ad hoc} proprietária,
+favorece a interoperabilidade, a reprodutibilidade e a manutenção de longo
+prazo --- diferencial central da proposta.
+
 \section{ESTRUTURA DO TRABALHO}\label{estrutura-do-trabalho}
 
 Além desta introdução, este trabalho está organizado em mais cinco

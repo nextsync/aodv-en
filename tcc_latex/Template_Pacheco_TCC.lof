@@ -2,16 +2,16 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {3.1}{\ignorespaces Fluxo metodológico da pesquisa}}{23}{figure.caption.5}%
-\contentsline {figure}{\numberline {3.2}{\ignorespaces Fluxo de execução dos experimentos e análise dos dados}}{33}{figure.caption.6}%
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Fluxo metodológico da pesquisa}}{24}{figure.caption.6}%
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Fluxo de execução dos experimentos e análise dos dados}}{34}{figure.caption.7}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {4.1}{\ignorespaces Arquitetura geral do AODV-EN}}{36}{figure.caption.7}%
-\contentsline {figure}{\numberline {4.2}{\ignorespaces Estrutura modular da implementação do AODV-EN}}{39}{figure.caption.8}%
-\contentsline {figure}{\numberline {4.3}{\ignorespaces Máquina de estados de uma entrada de rota no AODV-EN}}{41}{figure.caption.9}%
-\contentsline {figure}{\numberline {4.4}{\ignorespaces Fluxo de descoberta de rotas no AODV-EN}}{47}{figure.caption.10}%
-\contentsline {figure}{\numberline {4.5}{\ignorespaces Fluxo de tratamento de falhas e reconvergência no AODV-EN}}{50}{figure.caption.11}%
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Arquitetura geral do AODV-EN}}{37}{figure.caption.8}%
+\contentsline {figure}{\numberline {4.2}{\ignorespaces Estrutura modular da implementação do AODV-EN}}{40}{figure.caption.9}%
+\contentsline {figure}{\numberline {4.3}{\ignorespaces Máquina de estados de uma entrada de rota no AODV-EN}}{42}{figure.caption.10}%
+\contentsline {figure}{\numberline {4.4}{\ignorespaces Fluxo de descoberta de rotas no AODV-EN}}{48}{figure.caption.11}%
+\contentsline {figure}{\numberline {4.5}{\ignorespaces Fluxo de tratamento de falhas e reconvergência no AODV-EN}}{51}{figure.caption.12}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {5.1}{\ignorespaces Métricas de hardware (PDR de entrega, latência, transmissões por entrega e energia estimada): AODV-EN vs.~Flooding, cenário C1 multi-hop, 10 nós, média de 30 repetições com barra de IC95.}}{58}{figure.caption.13}%
-\contentsline {figure}{\numberline {5.2}{\ignorespaces Taxa de entrega por repetição (AODV-EN vs.~Flooding), cenário C1 multi-hop, 10 nós.}}{60}{figure.caption.15}%
-\contentsline {figure}{\numberline {5.3}{\ignorespaces Transmissões por pacote entregue em função do número de nós (simulação).}}{62}{figure.caption.16}%
+\contentsline {figure}{\numberline {5.1}{\ignorespaces Métricas de hardware (PDR de entrega, latência, transmissões por entrega e energia estimada): AODV-EN vs.~Flooding, cenário C1 multi-hop, 10 nós, média de 30 repetições com barra de IC95.}}{59}{figure.caption.14}%
+\contentsline {figure}{\numberline {5.2}{\ignorespaces Taxa de entrega por repetição (AODV-EN vs.~Flooding), cenário C1 multi-hop, 10 nós.}}{61}{figure.caption.16}%
+\contentsline {figure}{\numberline {5.3}{\ignorespaces Transmissões por pacote entregue em função do número de nós (simulação).}}{63}{figure.caption.17}%
 \addvspace {10\p@ }
