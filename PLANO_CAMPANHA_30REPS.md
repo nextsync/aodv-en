@@ -133,3 +133,37 @@ reais**, multi-hop nativo por atenuação física (sem allowlist). É o C1 do TC
 - **Interferência 2.4 GHz**: scan + canal limpo + horário quieto + caracterização do ruído.
 - **Reprodutibilidade HW**: "seed" em HW é rótulo de repetição (não há RNG); a variabilidade real
   vem do meio. Documentar como tal; o determinismo de seed fica na simulação.
+
+---
+
+## Redesenho dos cenarios para 10 ESPs (decidido 2026-06-18)
+
+Decisao do usuario: TODOS os cenarios C1-C4 em hardware real com os 10 ESPs;
+espaco fisico = casa/corredor (dezenas de m, cadeia de 9 saltos viavel).
+Consequencia na tese: reescrever cap5 com dados reais de 10 nos; remover a
+limitacao "campanha limitada a 3 nos"; atualizar quadro de cenarios cap3:416-428
+e ~27 ocorrencias mapeadas. Constantes (20 peers, cache LRU 8, TTL flood 5) nao mudam.
+
+Modelo de papel (mesmo do smoke validado): o no na serial = origem+coletor
+(ENABLE_DATA=y, TARGET=destino, REPORT_TO_MAC vazio -> recebe os STATSREP/NEIGHREP);
+demais = reporter (ENABLE_DATA=n, REPORT_TO_MAC=origem). 1 porta serial coleta a
+rede inteira via telemetria in-band (rssi_matrix --collector le NEIGHREP multi-hop).
+
+| Cen | Topologia 10-nos | Saltos | Estressa | Risco RF |
+|---|---|---|---|---|
+| C1 Linear | 10 em linha N1..N10 | 9 | caminho longo, latencia acumulada | alto - validar cadeia c/ rssi_matrix antes |
+| C2 Arvore | 1 raiz + 3 nivel-1 + 6 folhas | 2-3 | agregacao hierarquica | baixo |
+| C3 Mesh | grade 2x5 (ou 3x3+1) | 2-3 | rotas alternativas/redundancia | medio |
+| C4 Falha | C1 ou C3, mata no do meio @60s | varia | self-healing | herda do base |
+
+### C1 - atribuicao de MACs (perfis em firmware/tests/c1/)
+- N1 origem+coletor = 28:05:A5:33:EB:80 (EB80) -> build/c1_origin (TARGET=D61C, REPORT="", pisca, na serial)
+- N10 destino      = 28:05:A5:33:D6:1C (D61C) -> build/c1_reporter (far end)
+- N2..N9 relays (8) = FF44, 0B98, 94D4, B9EC, 9934, 0350, 0FEC, DD4C -> build/c1_reporter (REPORT=EB80, powerbank)
+
+Procedimento C1:
+1. reconectar os 10, flashar EB80=c1_origin e os outros 9=c1_reporter; rotular N1(EB80, pisca) e N10(D61C).
+2. espalhar em linha: EB80 na mesa (serial) -> 8 relays a ~8-10m cada -> D61C no far end.
+3. rssi_matrix --collector (log do EB80) -> validar cadeia profunda + cada par adjacente firme (-70..-82), salto-de-2 <-90.
+4. campaign.py --scenario C1 --algo aodv-en --origin-port <EB80> --reps 30 --rep-seconds <...>.
+5. repetir p/ flooding; reescrever cap5 C1 com numeros reais.
