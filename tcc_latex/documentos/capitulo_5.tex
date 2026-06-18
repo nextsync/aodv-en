@@ -246,19 +246,65 @@ por 15~s a cada 45~s (33\% de indisponibilidade), simulando a queda e o
 retorno cíclicos do nó; os vizinhos detectam a quebra pelas mensagens HELLO,
 emitem RERR e o AODV-EN re-descobre a rota pelo relé alternativo.
 
-Ao longo de 30 repetições, a taxa de entrega caiu para 62,8\%
-($\mathrm{IC95} = \pm 11{,}5$), contra 94,1\% do mesmo protocolo sem falha
-(C1), e a latência subiu para 60,7~ms ($\mathrm{IC95} = \pm 14{,}6$),
-refletindo o tempo de detecção da quebra e de re-descoberta de rota. A
-elevada variabilidade entre repetições (coeficiente de variação de cerca de
-51\%) decorre da natureza estocástica do instante da falha em relação ao
-tráfego: repetições em que a janela de queda coincide com poucos envios
-preservam entrega alta, enquanto outras concentram as perdas no intervalo de
-recuperação. A Figura~\ref{fig:c4-selfheal} ilustra o fenômeno em uma
-repetição: a curva de pacotes entregues acumulados exibe \emph{patamares}
---- intervalos sem entrega que coincidem com a indisponibilidade do relé ---
-seguidos de \emph{retomada}, evidência direta da auto-recuperação
-(\emph{self-healing}) pela rota alternativa.
+A Tabela~\ref{tab:c4} consolida as métricas do cenário C4 ao longo de 30
+repetições (média $\pm$ IC95).
+
+\begin{table}[H]
+\centering
+\caption{Métricas do AODV-EN no cenário C4 (falha induzida, 6 nós, 30 repetições; média $\pm$ IC95)}\label{tab:c4}
+\begin{tabular}{@{}lc@{}}
+\toprule
+Métrica & AODV-EN sob falha \\
+\midrule
+PDR de entrega (\%) & 62,8 $\pm$ 11,5 \\
+PDR confirmação ida-volta (\%) & 47,6 $\pm$ 11,5 \\
+Latência one-way (ms) & 60,7 $\pm$ 14,6 \\
+NRL (controle de rota/entregue) & 5,2 $\pm$ 1,7 \\
+Energia (J, estimada) & 9,2 $\pm$ 1,7 \\
+\bottomrule
+\end{tabular}
+
+\vspace{2pt}
+{\footnotesize Fonte: Elaborado pelos autores. NRL e energia não são diretamente comparáveis às do C1 por diferirem o número de nós (6 vs.~10) e a topologia.}
+\end{table}
+
+\textbf{Impacto da falha.} Em relação ao mesmo protocolo \emph{sem} falha
+(cenário C1, 94,1\%), a taxa de entrega caiu para 62,8\% --- uma redução de
+cerca de 31 pontos percentuais, estatisticamente significativa (teste $t$ de
+Welch: $t = 5{,}3$, $p < 0{,}001$; $d$ de Cohen $= 1{,}37$, efeito grande). A
+latência subiu de 45,9~ms para 60,7~ms ($t = -1{,}94$, $p = 0{,}05$),
+refletindo o tempo de detecção da quebra (\emph{timeout} de HELLO) somado à
+re-descoberta de rota. A Figura~\ref{fig:c4-metrics} contrasta as duas
+condições.
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio,alt={Comparacao do PDR e da latencia do AODV-EN entre o cenario C1 (sem falha) e o C4 (sob falha), com barras de IC95.}]{figuras/fig_c4_metrics.png}}
+\caption{Impacto da falha periódica de um relé \emph{on-path}: PDR de entrega
+e latência do AODV-EN no cenário C1 (sem falha) contra o C4 (sob falha), com
+barra de IC95.}\label{fig:c4-metrics}
+\end{figure}
+
+\textbf{Distribuição e variabilidade.} A entrega no C4 variou de 0\% a 100\%
+entre as repetições (mediana 73,3\%; coeficiente de variação de 51\%): 12 das
+30 repetições preservaram entrega $\geq 80\%$, enquanto 8 ficaram abaixo de
+40\%. Essa dispersão (Figura~\ref{fig:c4-pdr-rep}) decorre da natureza
+estocástica do instante da falha em relação ao tráfego --- repetições em que a
+janela de queda coincide com poucos envios preservam entrega alta, enquanto
+outras concentram as perdas no intervalo de recuperação.
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio,alt={Taxa de entrega por repeticao no cenario C4, evidenciando a variabilidade da recuperacao sob falha.}]{figuras/fig_c4_pdr_rep.png}}
+\caption{Taxa de entrega por repetição no cenário C4: a alta variabilidade
+reflete a recuperação estocástica diante da falha periódica do relé.}\label{fig:c4-pdr-rep}
+\end{figure}
+
+\textbf{Dinâmica da recuperação.} A Figura~\ref{fig:c4-selfheal} ilustra o
+mecanismo em uma repetição: a curva de pacotes entregues acumulados exibe
+\emph{patamares} --- intervalos sem entrega que coincidem com a
+indisponibilidade do relé --- seguidos de \emph{retomada}, evidência direta da
+auto-recuperação (\emph{self-healing}) pela rota alternativa.
 
 \begin{figure}
 \centering
