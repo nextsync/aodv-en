@@ -25,9 +25,12 @@ a desvantagem de ocupação de canal do \emph{flooding} cresce com a escala da r
 cruzamento de eficiência em torno de 9 a 11 nós. Um segundo cenário em hardware (C4, seis
 nós), com falha cíclica de um relé do caminho, demonstrou a auto-recuperação do protocolo:
 o AODV-EN manteve 62,8\% de entrega re-descobrindo a rota por um relé alternativo após cada
-queda. Conclui-se que o roteamento reativo do AODV-EN é vantajoso à medida que a
+queda. Em termos de eficiência energética estimada, embora o consumo agregado bruto do
+AODV-EN seja maior, a energia por pacote efetivamente entregue é cerca de oito vezes
+menor que a do \emph{flooding} (0,69 contra 5,66~J/pacote), pois o roteamento entrega
+muito mais. Conclui-se que o roteamento reativo do AODV-EN é vantajoso à medida que a
 rede cresce em tamanho e diâmetro, viabilizando redes mesh padronizadas, de baixo custo
-e eficientes em energia sobre ESP-NOW.
+e energeticamente eficientes por entrega útil sobre ESP-NOW.
 
 \vspace{1cm}
 

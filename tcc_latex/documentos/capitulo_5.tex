@@ -96,7 +96,8 @@ PDR confirmação ida-volta (\%) & 91,7 $\pm$ 4,2 & 3,7 $\pm$ 0,8 \\
 Latência one-way (ms) & 45,9 $\pm$ 3,5 & 31,6 $\pm$ 1,7 \\
 NRL (controle de rota/entregue) & 18,0 $\pm$ 4,7 & 0,0 \\
 Transmissões por entrega & 54,2 $\pm$ 10,1 & 102,9 $\pm$ 36,2 \\
-Energia (J, estimada) & 39,4 $\pm$ 0,6 & 28,4 $\pm$ 0,03 \\
+Energia agregada (J, estimada) & 39,4 $\pm$ 0,6 & 28,4 $\pm$ 0,03 \\
+\textbf{Energia por pacote entregue (J)} & \textbf{0,69 $\pm$ 0,02} & \textbf{5,66 $\pm$ 2,08} \\
 \bottomrule
 \end{tabular}
 
@@ -210,10 +211,10 @@ aplicação presente em versões anteriores do protótipo.
 
 \textbf{Carga de roteamento e custo de canal.} A NRL clássica (mensagens
 de controle de rota por dado entregue) foi 18,0 para o AODV-EN e nula
-para o \emph{flooding}, que não possui plano de roteamento. Isoladamente,
-esse contraste engana: o \emph{flooding} não paga \emph{overhead} de
-controle, mas seu custo migra para as retransmissões por inundação, que a
-NRL não contabiliza. A métrica justa é o total de transmissões por pacote
+para o \emph{flooding}, que não possui plano de roteamento. Esse contraste,
+isoladamente, não deve ser interpretado como ausência de custo: o
+\emph{flooding} não paga \emph{overhead} de controle de rota, mas seu custo
+desloca-se para as retransmissões por inundação, que a NRL não contabiliza. A métrica justa é o total de transmissões por pacote
 entregue: 54,2 para o AODV-EN contra 102,9 para o \emph{flooding} ---
 isto é, mesmo somando todo o controle de rota, o AODV-EN custa cerca de
 metade das transmissões por pacote efetivamente entregue. Esse valor do
@@ -222,15 +223,21 @@ conseguiram reportar telemetria de volta ao coletor (a própria difusão de
 relatórios é perdida), de modo que parte das retransmissões não foi
 contabilizada.
 
-\textbf{Consumo energético.} O consumo estimado do \emph{flooding}
-(28,4 J) foi inferior ao do AODV-EN (39,4 J) na janela, mas a comparação
-não está em pé de igualdade: o AODV-EN manteve nove nós ativos com HELLO
-periódico e encaminhamento, ao passo que o \emph{flooding} teve apenas
-sete nós contabilizados (relatórios perdidos) e não emite HELLO. O
-consumo é, ademais, estimado a partir do perfil de \emph{datasheet} do
-ESP32, não medido. Ponderado pela entrega --- energia por pacote
-efetivamente entregue ---, o quadro se inverte de forma decisiva a favor
-do AODV-EN, que entrega 7,4 vezes mais pacotes na mesma janela.
+\textbf{Consumo energético.} O consumo agregado estimado da rede foi
+maior no AODV-EN (39,4 J) que no \emph{flooding} (28,4 J) na janela --- mas
+esse número \emph{bruto} pode induzir a uma conclusão equivocada, por duas razões: a comparação não está
+em pé de igualdade (o AODV-EN manteve nove nós ativos com HELLO periódico e
+encaminhamento, enquanto o \emph{flooding} teve apenas sete nós
+contabilizados e não emite HELLO) e, sobretudo, ele ignora que o AODV-EN
+entrega muito mais. A métrica justa é a \emph{energia por pacote efetivamente
+entregue}: 0,69~J/pacote para o AODV-EN contra 5,66~J/pacote para o
+\emph{flooding} --- ou seja, o AODV-EN é cerca de \textbf{8 vezes mais
+eficiente em energia por entrega útil}. O \emph{flooding} gasta energia
+disseminando pacotes que, em sua maioria, não sobrevivem ao multi-hop. Cabe
+ressalvar que todos os valores de energia são \emph{estimados} a partir do
+perfil de \emph{datasheet} do ESP32, não medidos com instrumentação física;
+ainda assim, como a estimativa usa os mesmos coeficientes para os dois
+algoritmos, a razão entre eles é robusta à incerteza absoluta do modelo.
 
 \section{Cenário de Falha e Auto-recuperação (C4)}\label{cenario-de-falha-c4}
 

@@ -3,18 +3,18 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \contentsline {figure}{\numberline {3.1}{\ignorespaces Fluxo metodológico da pesquisa}}{26}{figure.caption.6}%
-\contentsline {figure}{\numberline {3.2}{\ignorespaces Fluxo de execução dos experimentos e análise dos dados}}{36}{figure.caption.7}%
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Fluxo de execução dos experimentos e análise dos dados}}{37}{figure.caption.7}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {4.1}{\ignorespaces Arquitetura geral do AODV-EN}}{39}{figure.caption.8}%
-\contentsline {figure}{\numberline {4.2}{\ignorespaces Estrutura modular da implementação do AODV-EN}}{42}{figure.caption.9}%
-\contentsline {figure}{\numberline {4.3}{\ignorespaces Máquina de estados de uma entrada de rota no AODV-EN}}{44}{figure.caption.10}%
-\contentsline {figure}{\numberline {4.4}{\ignorespaces Fluxo de descoberta de rotas no AODV-EN}}{50}{figure.caption.11}%
-\contentsline {figure}{\numberline {4.5}{\ignorespaces Fluxo de tratamento de falhas e reconvergência no AODV-EN}}{53}{figure.caption.12}%
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Arquitetura geral do AODV-EN}}{40}{figure.caption.8}%
+\contentsline {figure}{\numberline {4.2}{\ignorespaces Estrutura modular da implementação do AODV-EN}}{43}{figure.caption.9}%
+\contentsline {figure}{\numberline {4.3}{\ignorespaces Máquina de estados de uma entrada de rota no AODV-EN}}{45}{figure.caption.10}%
+\contentsline {figure}{\numberline {4.4}{\ignorespaces Fluxo de descoberta de rotas no AODV-EN}}{51}{figure.caption.11}%
+\contentsline {figure}{\numberline {4.5}{\ignorespaces Fluxo de tratamento de falhas e reconvergência no AODV-EN}}{54}{figure.caption.12}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {5.1}{\ignorespaces Métricas de hardware (PDR de entrega, latência, transmissões por entrega e energia estimada): AODV-EN vs.~Flooding, cenário C1 multi-hop, 10 nós, média de 30 repetições com barra de IC95.}}{61}{figure.caption.15}%
-\contentsline {figure}{\numberline {5.2}{\ignorespaces Taxa de entrega por repetição (AODV-EN vs.~Flooding), cenário C1 multi-hop, 10 nós.}}{63}{figure.caption.17}%
-\contentsline {figure}{\numberline {5.3}{\ignorespaces Impacto da falha periódica de um relé \emph {on-path}: PDR de entrega e latência do AODV-EN no cenário C1 (sem falha) contra o C4 (sob falha), com barra de IC95.}}{65}{figure.caption.19}%
-\contentsline {figure}{\numberline {5.4}{\ignorespaces Taxa de entrega por repetição no cenário C4: a alta variabilidade reflete a recuperação estocástica diante da falha periódica do relé.}}{65}{figure.caption.20}%
-\contentsline {figure}{\numberline {5.5}{\ignorespaces Auto-recuperação no cenário C4: pacotes entregues acumulados ao longo de uma repetição. Os patamares (faixas destacadas) coincidem com a queda do relé \emph {on-path}; a retomada da entrega evidencia a re-descoberta de rota pelo relé alternativo.}}{66}{figure.caption.21}%
-\contentsline {figure}{\numberline {5.6}{\ignorespaces Transmissões por pacote entregue em função do número de nós (simulação).}}{67}{figure.caption.22}%
+\contentsline {figure}{\numberline {5.1}{\ignorespaces Métricas de hardware (PDR de entrega, latência, transmissões por entrega e energia estimada): AODV-EN vs.~Flooding, cenário C1 multi-hop, 10 nós, média de 30 repetições com barra de IC95.}}{62}{figure.caption.15}%
+\contentsline {figure}{\numberline {5.2}{\ignorespaces Taxa de entrega por repetição (AODV-EN vs.~Flooding), cenário C1 multi-hop, 10 nós.}}{64}{figure.caption.17}%
+\contentsline {figure}{\numberline {5.3}{\ignorespaces Impacto da falha periódica de um relé \emph {on-path}: PDR de entrega e latência do AODV-EN no cenário C1 (sem falha) contra o C4 (sob falha), com barra de IC95.}}{66}{figure.caption.19}%
+\contentsline {figure}{\numberline {5.4}{\ignorespaces Taxa de entrega por repetição no cenário C4: a alta variabilidade reflete a recuperação estocástica diante da falha periódica do relé.}}{67}{figure.caption.20}%
+\contentsline {figure}{\numberline {5.5}{\ignorespaces Auto-recuperação no cenário C4: pacotes entregues acumulados ao longo de uma repetição. Os patamares (faixas destacadas) coincidem com a queda do relé \emph {on-path}; a retomada da entrega evidencia a re-descoberta de rota pelo relé alternativo.}}{68}{figure.caption.21}%
+\contentsline {figure}{\numberline {5.6}{\ignorespaces Transmissões por pacote entregue em função do número de nós (simulação).}}{70}{figure.caption.22}%
 \addvspace {10\p@ }

@@ -325,11 +325,19 @@ coleta de métricas. Paralelamente, foi implementado o algoritmo
 Flooding para fins de comparação. O ambiente de testes (testbed) foi
 composto por dez módulos ESP32 DevKit V1, com o nó coletor alimentado por
 USB (conectado à porta serial) e os demais por baterias portáteis,
-distribuídos pela residência. A potência de transmissão foi reduzida a
-2~dBm para forçar a formação de múltiplos saltos reais no espaço
-disponível, e a topologia foi verificada por matriz de RSSI da rede
-inteira antes da campanha. Cada nó executou o mesmo firmware, configurado
-com papel e identificador por meio de variáveis de compilação.
+distribuídos pela residência. A potência de transmissão foi reduzida do
+máximo do ESP32 (cerca de 20~dBm) para 2~dBm a fim de forçar a formação de
+múltiplos saltos reais no espaço disponível: pelo modelo de perda
+\emph{log-distance} ($P_{rx} = P_{tx} - 10\,n\log_{10}d - L$, com expoente
+$n \approx 3$ em ambiente interno com obstáculos e perdas adicionais por
+parede), a redução de 18~dB encurta o alcance de enlace firme de dezenas de
+metros para poucos metros, de modo que nós não vizinhos caem abaixo do
+limiar de roteamento ($<-90$~dBm). Em vez de fixar a topologia por modelo,
+porém, ela foi \emph{verificada empiricamente} por matriz de RSSI da rede
+inteira antes de cada campanha, garantindo que cada par adjacente
+permanecesse firme ($-70$ a $-82$~dBm) e que os saltos pretendidos fossem
+de fato necessários. Cada nó executou o mesmo firmware, configurado com
+papel e identificador por meio de variáveis de compilação.
 
 \subsection{Fase 4: Execução dos Experimentos e Coleta de
 Dados}\label{fase-4-execuuxe7uxe3o-dos-experimentos-e-coleta-de-dados}

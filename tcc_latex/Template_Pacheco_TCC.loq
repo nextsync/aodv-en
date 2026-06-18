@@ -14,12 +14,12 @@
 \contentsline {quadro}{\numberline {3.4}{\ignorespaces Parâmetros dos experimentos}}{30}{quadro.3.4}%
 \contentsline {quadro}{\numberline {3.5}{\ignorespaces Métricas de avaliação de desempenho}}{31}{quadro.3.5}%
 \addvspace {10\p@ }
-\contentsline {quadro}{\numberline {4.1}{\ignorespaces Módulos do núcleo do AODV-EN, responsabilidades e arquivos}}{42}{quadro.4.1}%
-\contentsline {quadro}{\numberline {4.2}{\ignorespaces Estruturas de dados utilizadas no AODV-EN}}{43}{quadro.4.2}%
-\contentsline {quadro}{\numberline {4.3}{\ignorespaces Mensagens utilizadas pelo AODV-EN}}{46}{quadro.4.3}%
-\contentsline {quadro}{\numberline {4.4}{\ignorespaces Formato das unidades de dados de protocolo (PDUs) do AODV-EN}}{48}{quadro.4.4}%
-\contentsline {quadro}{\numberline {4.5}{\ignorespaces Principais adaptações do AODV para o contexto do ESP-NOW}}{54}{quadro.4.5}%
-\contentsline {quadro}{\numberline {4.6}{\ignorespaces Parâmetros de configuração do \emph {firmware} do AODV-EN (valores padrão)}}{57}{quadro.4.6}%
-\contentsline {quadro}{\numberline {4.7}{\ignorespaces Complexidade das operações do AODV-EN}}{58}{quadro.caption.13}%
+\contentsline {quadro}{\numberline {4.1}{\ignorespaces Módulos do núcleo do AODV-EN, responsabilidades e arquivos}}{43}{quadro.4.1}%
+\contentsline {quadro}{\numberline {4.2}{\ignorespaces Estruturas de dados utilizadas no AODV-EN}}{44}{quadro.4.2}%
+\contentsline {quadro}{\numberline {4.3}{\ignorespaces Mensagens utilizadas pelo AODV-EN}}{47}{quadro.4.3}%
+\contentsline {quadro}{\numberline {4.4}{\ignorespaces Formato das unidades de dados de protocolo (PDUs) do AODV-EN}}{49}{quadro.4.4}%
+\contentsline {quadro}{\numberline {4.5}{\ignorespaces Principais adaptações do AODV para o contexto do ESP-NOW}}{55}{quadro.4.5}%
+\contentsline {quadro}{\numberline {4.6}{\ignorespaces Parâmetros de configuração do \emph {firmware} do AODV-EN (valores padrão)}}{58}{quadro.4.6}%
+\contentsline {quadro}{\numberline {4.7}{\ignorespaces Complexidade das operações do AODV-EN}}{59}{quadro.caption.13}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
