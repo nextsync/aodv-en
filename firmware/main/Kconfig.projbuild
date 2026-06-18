@@ -68,6 +68,22 @@ config AODV_EN_APP_PRINT_INTERVAL_MS
     range 1000 60000
     default 10000
 
+config AODV_EN_APP_FAIL_PERIOD_MS
+    int "Failure-injection period (ms, 0=disabled)"
+    default 0
+    help
+        Cenario C4 (falha/self-healing): periodo do ciclo de falha do no.
+        0 desabilita. Quando >0, o no fica em silencio de radio (nao
+        transmite HELLO/RREP/RERR/forward) durante FAIL_DOWN_MS a cada
+        periodo, simulando queda e retorno do no.
+
+config AODV_EN_APP_FAIL_DOWN_MS
+    int "Failure-injection down time (ms)"
+    default 0
+    help
+        Tempo de queda dentro de cada FAIL_PERIOD_MS (no qual o no nao
+        transmite). Deve ser menor que FAIL_PERIOD_MS.
+
 choice AODV_EN_APP_RREQ_FLOOD_MODE
     prompt "RREQ flooding mode"
     default AODV_EN_APP_RREQ_FLOOD_BROADCAST
