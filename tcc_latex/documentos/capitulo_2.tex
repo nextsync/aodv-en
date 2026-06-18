@@ -439,7 +439,35 @@ de redes mesh seguras, demonstrando latência média de 75 ms e taxa de
 perda de pacotes de 9,25\% em ambiente residencial. Entretanto, essa
 abordagem não se fundamenta em protocolos de roteamento padronizados,
 limitando sua comparabilidade com outras soluções e dificultando
-extensões futuras.
+extensões futuras. Estratégias de comunicação multi-hop para malhas IoT
+de baixa potência também têm sido investigadas de forma mais ampla
+\cite{arregui2025}, e levantamentos recentes sistematizam os protocolos e
+desafios de redes mesh sem fio \cite{chaizeng2021}.
+
+O Quadro~\ref{quadro:correlatos} consolida as soluções de mesh para ESP32
+e as posiciona frente à proposta deste trabalho, evidenciando a lacuna que
+o AODV-EN preenche: ser a única abordagem sobre ESP-NOW fundamentada em um
+protocolo de roteamento padronizado.
+
+\begin{quadro}[H]
+\centering
+\caption{Soluções de rede mesh para ESP32 e posicionamento do AODV-EN}\label{quadro:correlatos}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.27\linewidth}>{\raggedright\arraybackslash}p{0.27\linewidth}cc>{\raggedright\arraybackslash}p{0.14\linewidth}@{}}
+\toprule
+Solução & Base de roteamento & Padron. & Multi-hop & Consumo \\
+\midrule
+ESP-WIFI-MESH \cite{sestak2022} & Árvore proprietária sobre Wi-Fi & Não & Sim & Alto \\
+PainlessMesh \cite{sestak2022} & Árvore proprietária sobre Wi-Fi & Não & Sim & Alto \\
+BRAM-NOW \cite{cujilema2023} & Mesh \emph{ad hoc} sobre ESP-NOW & Não & Sim & Baixo \\
+ESP-NOW ponto-a-ponto \cite{becker2025} & Sem roteamento & --- & Não & Baixo \\
+Estratégias multi-hop IoT \cite{arregui2025} & Heurísticas multi-hop & Não & Sim & Baixo \\
+\textbf{AODV-EN (este trabalho)} & AODV reativo (RFC 3561) & \textbf{Sim} & Sim & Baixo \\
+\bottomrule
+\end{tabular}
+
+\vspace{2pt}
+{\footnotesize Fonte: Elaborado pelos autores. ``Consumo'' refere-se ao custo do plano de manutenção da malha: soluções sobre Wi-Fi mantêm o rádio ativo continuamente, enquanto as baseadas em ESP-NOW dispensam associação e \emph{beaconing}.}
+\end{quadro}
 
 \section{O Protocolo AODV}\label{o-protocolo-aodv}
 
@@ -558,3 +586,38 @@ TTL\_THRESHOLD & 7 & TTL máximo antes de usar NET\_DIAMETER \\
 }
 
 Fonte: RFC 3561 \cite{perkins2003}.
+
+\section{Segurança em Roteamento Ad-Hoc}\label{seguranca-roteamento-ad-hoc}
+
+O AODV, conforme especificado na RFC 3561 \cite{perkins2003}, não
+incorpora mecanismos de segurança: assume que todos os nós são honestos e
+não autentica as mensagens de controle. Essa premissa, herdada por
+qualquer adaptação direta do protocolo, expõe a malha a um conjunto de
+ataques conhecidos na literatura de redes \emph{ad hoc}:
+
+\begin{itemize}
+\item \textbf{Buraco negro (\emph{black hole}).} Um nó malicioso responde
+  a toda RREQ anunciando-se como a melhor rota (número de sequência alto,
+  poucos saltos) e, ao atrair o tráfego, descarta os dados em vez de
+  encaminhá-los.
+\item \textbf{RERR forjado.} Um adversário injeta mensagens de erro de
+  rota (RERR) falsas, invalidando rotas válidas e forçando descobertas
+  repetidas, o que degrada a disponibilidade e amplia o \emph{overhead} de
+  controle.
+\item \textbf{Inundação de RREQ.} O envio massivo de requisições de rota
+  esgota banda e energia dos nós, caracterizando uma negação de serviço.
+\item \textbf{Sybil e \emph{spoofing} de identidade.} Como o endereçamento
+  é por MAC e não há autenticação, um nó pode assumir múltiplas
+  identidades ou personificar outro, corrompendo as tabelas de rota.
+\end{itemize}
+
+No caso específico do ESP-NOW, a difusão de enlace por \emph{broadcast}
+ocorre, por padrão, sem criptografia, de modo que qualquer dispositivo no
+mesmo canal e identificador de rede pode escutar e injetar quadros. A
+literatura propõe extensões seguras do AODV (por exemplo, com assinatura
+de mensagens e numeração protegida), ao custo de gerência de chaves e
+\emph{overhead} computacional --- particularmente sensível em
+microcontroladores. Neste trabalho, o AODV-EN é avaliado quanto a
+desempenho de roteamento sob a premissa de nós honestos; o endurecimento
+do protocolo contra os ataques acima, e a avaliação do custo associado em
+ESP32, constituem trabalho futuro (Capítulo~\ref{cap:conclusao}).

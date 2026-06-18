@@ -5,19 +5,20 @@
 \contentsline {quadro}{\numberline {2.3}{\ignorespaces Modos de operação e consumo energético do ESP32}}{9}{quadro.2.3}%
 \contentsline {quadro}{\numberline {2.4}{\ignorespaces Características técnicas do protocolo ESP-NOW}}{10}{quadro.2.4}%
 \contentsline {quadro}{\numberline {2.5}{\ignorespaces Comparativo entre categorias de protocolos de roteamento ad-hoc}}{13}{quadro.2.5}%
-\contentsline {quadro}{\numberline {2.6}{\ignorespaces Parâmetros de configuração do AODV (RFC 3561)}}{15}{quadro.2.6}%
+\contentsline {quadro}{\numberline {2.6}{\ignorespaces Soluções de rede mesh para ESP32 e posicionamento do AODV-EN}}{14}{quadro.caption.5}%
+\contentsline {quadro}{\numberline {2.7}{\ignorespaces Parâmetros de configuração do AODV (RFC 3561)}}{16}{quadro.2.7}%
 \addvspace {10\p@ }
-\contentsline {quadro}{\numberline {3.1}{\ignorespaces Etapas do Design Science Research segundo \citeauthor {peffers2007} (\citeyear {peffers2007})}}{19}{quadro.3.1}%
-\contentsline {quadro}{\numberline {3.2}{\ignorespaces Mapeamento das fases do trabalho às etapas da DSR}}{21}{quadro.3.2}%
-\contentsline {quadro}{\numberline {3.3}{\ignorespaces Configuração dos cenários experimentais}}{26}{quadro.3.3}%
-\contentsline {quadro}{\numberline {3.4}{\ignorespaces Parâmetros dos experimentos}}{27}{quadro.3.4}%
-\contentsline {quadro}{\numberline {3.5}{\ignorespaces Métricas de avaliação de desempenho}}{28}{quadro.3.5}%
+\contentsline {quadro}{\numberline {3.1}{\ignorespaces Etapas do Design Science Research segundo \citeauthor {peffers2007} (\citeyear {peffers2007})}}{20}{quadro.3.1}%
+\contentsline {quadro}{\numberline {3.2}{\ignorespaces Mapeamento das fases do trabalho às etapas da DSR}}{22}{quadro.3.2}%
+\contentsline {quadro}{\numberline {3.3}{\ignorespaces Configuração dos cenários experimentais}}{27}{quadro.3.3}%
+\contentsline {quadro}{\numberline {3.4}{\ignorespaces Parâmetros dos experimentos}}{28}{quadro.3.4}%
+\contentsline {quadro}{\numberline {3.5}{\ignorespaces Métricas de avaliação de desempenho}}{29}{quadro.3.5}%
 \addvspace {10\p@ }
-\contentsline {quadro}{\numberline {4.1}{\ignorespaces Módulos do núcleo do AODV-EN, responsabilidades e arquivos}}{39}{quadro.4.1}%
-\contentsline {quadro}{\numberline {4.2}{\ignorespaces Estruturas de dados utilizadas no AODV-EN}}{40}{quadro.4.2}%
-\contentsline {quadro}{\numberline {4.3}{\ignorespaces Mensagens utilizadas pelo AODV-EN}}{43}{quadro.4.3}%
-\contentsline {quadro}{\numberline {4.4}{\ignorespaces Formato das unidades de dados de protocolo (PDUs) do AODV-EN}}{45}{quadro.4.4}%
-\contentsline {quadro}{\numberline {4.5}{\ignorespaces Principais adaptações do AODV para o contexto do ESP-NOW}}{51}{quadro.4.5}%
-\contentsline {quadro}{\numberline {4.6}{\ignorespaces Parâmetros de configuração do \emph {firmware} do AODV-EN (valores padrão)}}{54}{quadro.4.6}%
+\contentsline {quadro}{\numberline {4.1}{\ignorespaces Módulos do núcleo do AODV-EN, responsabilidades e arquivos}}{40}{quadro.4.1}%
+\contentsline {quadro}{\numberline {4.2}{\ignorespaces Estruturas de dados utilizadas no AODV-EN}}{41}{quadro.4.2}%
+\contentsline {quadro}{\numberline {4.3}{\ignorespaces Mensagens utilizadas pelo AODV-EN}}{44}{quadro.4.3}%
+\contentsline {quadro}{\numberline {4.4}{\ignorespaces Formato das unidades de dados de protocolo (PDUs) do AODV-EN}}{46}{quadro.4.4}%
+\contentsline {quadro}{\numberline {4.5}{\ignorespaces Principais adaptações do AODV para o contexto do ESP-NOW}}{52}{quadro.4.5}%
+\contentsline {quadro}{\numberline {4.6}{\ignorespaces Parâmetros de configuração do \emph {firmware} do AODV-EN (valores padrão)}}{55}{quadro.4.6}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
