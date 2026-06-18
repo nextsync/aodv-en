@@ -77,9 +77,9 @@
 \contentsline {chapter}{\numberline {5}RESULTADOS E DISCUSSÃO}{55}{chapter.5}%
 \contentsline {section}{\numberline {5.1}Ambiente das Coletas e Validação Funcional}{55}{section.5.1}%
 \contentsline {section}{\numberline {5.2}Resultados de Hardware}{56}{section.5.2}%
-\contentsline {section}{\numberline {5.3}Discussão por Métrica}{58}{section.5.3}%
+\contentsline {section}{\numberline {5.3}Discussão por Métrica}{57}{section.5.3}%
 \contentsline {section}{\numberline {5.4}Análise de Escalabilidade por Simulação}{59}{section.5.4}%
-\contentsline {section}{\numberline {5.5}Comparação com Trabalhos Correlatos}{60}{section.5.5}%
+\contentsline {section}{\numberline {5.5}Comparação com Trabalhos Correlatos}{59}{section.5.5}%
 \contentsline {section}{\numberline {5.6}Conformidade com a RFC 3561}{61}{section.5.6}%
 \contentsline {section}{\numberline {5.7}Escopo Implementado e Limitações}{61}{section.5.7}%
 \contentsline {chapter}{\numberline {6}CONCLUSÃO}{63}{chapter.6}%
