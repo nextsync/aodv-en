@@ -11,21 +11,29 @@ ficam em `results/` (gitignored); aqui so o agregado (dado da tese).
   em 3-4 saltos (rota VALID via 0F:EC/DD:4C). TX = 2 dBm. Casa/corredor com paredes.
 - Origem manda DATA 1 pkt/s (payload 32 B) para D61C; RTT medido na origem.
 
+PDR principal = ENTREGA (delivered distinto do destino D61C / enviados na origem,
+padrao MANET, justo p/ os dois algos). ACK ida-e-volta = secundario (confiabilidade
+bidirecional; flood penalizado pois ACK volta por flood lossy).
+
 ### aodv-en — 30 reps x 60 s (rep-seconds)
 
 | Metrica | Media | IC95 | desvio |
 |---|---|---|---|
-| PDR (%) | 91.74 | 4.16 | 11.63 |
+| **PDR entrega (%)** | **94.13** | 1.41 | 3.95 |
+| PDR ACK ida-e-volta (%) | 91.74 | 4.16 | 11.63 |
 | Latencia one-way (ms) | 45.87 | 3.50 | 9.78 |
 | NRL (control/entregue) | 18.05 | 4.69 | 13.10 |
 | Energia (J) | 39.35 | 0.64 | 1.79 |
 
-- Variancia alta e real (reps de 43% a 100% de PDR) = oscilacao de rota no
-  multi-hop a 2 dBm; IC95 sobre 30 reps captura.
-- Print da rede escolhido p/ TCC: rep09 (PDR 100%, lat 35.7 ms, D61C deliv=927)
-  — alternativa rep28 (mostra rota de 4 saltos). `results/campaign-prints/`.
+- PDR de entrega tem menos ruido (IC95 1.41) que o ACK (IC95 4.16): a rota AODV
+  entrega de forma estavel; a variancia do ACK vem do caminho de volta.
+- Print da rede escolhido p/ TCC: rep09 (lat 35.7 ms) — alternativa rep28 (rota 4 saltos).
 - Arquivo bruto: `results/campaign-C1-aodv-en.json`.
 
-### flooding — PENDENTE (reflash dos 10 p/ app_flood, mesma topologia)
+### flooding — 30 reps x 60 s (EM ANDAMENTO)
+
+- Esperado: entrega ~10% (broadcast storm + sem ARQ + links fracos a 2 dBm;
+  ttl_drop=0 -> perda e de link, nao de TTL). Contraste com aodv ~94% mostra que
+  o flooding nao sobrevive ao multi-hop sem retransmissao/rota.
 
 ## C2 Arvore / C3 Mesh / C4 Falha — PENDENTES
