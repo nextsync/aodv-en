@@ -1,8 +1,13 @@
 \documentclass[a4paper,12pt,twoside]{book}
 % --- pacotes (os seus) ---
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[utf8]{inputenc}
+  \usepackage[T1]{fontenc}
+  \usepackage{lmodern}
+\else
+  \usepackage{fontspec}
+\fi
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{amsmath}
@@ -48,6 +53,7 @@
 \@ifundefined{c@none}{\newcounter{none}}{}
 \makeatother
 \providecommand{\V}[1]{\v{#1}}
+\ifPDFTeX
 \DeclareUnicodeCharacter{03B1}{\ensuremath{\alpha}}
 \DeclareUnicodeCharacter{03B2}{\ensuremath{\beta}}
 \DeclareUnicodeCharacter{03A3}{\ensuremath{\Sigma}}
@@ -58,6 +64,7 @@
 \DeclareUnicodeCharacter{2192}{\ensuremath{\rightarrow}}
 \DeclareUnicodeCharacter{2194}{\ensuremath{\leftrightarrow}}
 \DeclareUnicodeCharacter{2022}{\textbullet}
+\fi
 \setkeys{Gin}{width=0.85\textwidth,keepaspectratio}
 
 \onehalfspacing

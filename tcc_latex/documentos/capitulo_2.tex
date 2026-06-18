@@ -50,6 +50,14 @@ Requisito
 Descrição e Implicações
 \end{minipage} \\
 \midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+Requisito
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Descrição e Implicações
+\end{minipage} \\
+\midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
@@ -109,6 +117,10 @@ O Quadro~\ref{quadro:esp32-specs} resume as principais especificações técnica
 \toprule\noalign{}
 Característica & Especificação \\
 \midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+Característica & Especificação \\
+\midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
@@ -138,6 +150,16 @@ do fabricante.
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
 \caption{Modos de operação e consumo energético do ESP32}\label{quadro:esp32-energia}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Modo de Operação
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Consumo Típico
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Descrição
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Modo de Operação
@@ -207,6 +229,14 @@ O Quadro~\ref{quadro:espnow-carac} sintetiza as principais características téc
   >{\centering\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
   >{\centering\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}@{}}
 \caption{Características técnicas do protocolo ESP-NOW}\label{quadro:espnow-carac}\\
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+Parâmetro
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Valor
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\centering
 Parâmetro
@@ -359,6 +389,18 @@ Reativo
 Híbrido
 \end{minipage} \\
 \midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Característica
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Proativo
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Reativo
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Híbrido
+\end{minipage} \\
+\midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
@@ -492,6 +534,10 @@ ajustados conforme as características específicas da rede.
 {\def\LTcaptype{quadro}
 \begin{longtable}[]{@{}lll@{}}
 \caption{Parâmetros de configuração do AODV (RFC 3561)}\label{quadro:aodv-params}\\
+\toprule\noalign{}
+Parâmetro & Valor Padrão & Descrição \\
+\midrule\noalign{}
+\endfirsthead
 \toprule\noalign{}
 Parâmetro & Valor Padrão & Descrição \\
 \midrule\noalign{}
