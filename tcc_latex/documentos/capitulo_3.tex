@@ -375,11 +375,12 @@ em uma topologia linear; o cenário C2 verifica o encaminhamento em uma
 estrutura hierárquica; o cenário C3 analisa a seleção de rotas em uma
 malha parcial com caminhos alternativos; e o cenário C4 observa a
 capacidade de detecção de falhas e recuperação da comunicação.
-O cenário C1 foi executado em hardware real com dez nós em cadeia
-multi-hop (três a quatro saltos) e trinta repetições por algoritmo,
-constituindo o escopo experimental deste trabalho; os cenários C2 a C4
-ficam como trabalho futuro sobre a mesma infraestrutura de coleta, e a
-avaliação de maior escala foi complementada por simulação
+Foram executados em hardware real dois cenários: o C1 (dez nós em cadeia
+multi-hop de três a quatro saltos, voltado ao comportamento multi-hop e à
+escala) e o C4 (seis nós com falha induzida em relé do caminho, voltado à
+auto-recuperação), ambos com trinta repetições por algoritmo. Os cenários
+C2 e C3 ficam como trabalho futuro sobre a mesma infraestrutura de coleta, e
+a avaliação de maior escala foi complementada por simulação
 (Capítulo~\ref{cap:resultados}). O Quadro~\ref{quadro:cenarios} apresenta a
 configuração dos quatro cenários experimentais.
 
@@ -426,9 +427,9 @@ C3: Mesh Parcial & Redundante & • 10 nós em malha redundante (grade) •
 Múltiplos caminhos entre extremidades • Cada nó alcança 2--3 vizinhos &
 Avaliar seleção de rotas e capacidade de utilizar caminhos
 alternativos \\
-C4: Falha & Multi-hop com interrupção & • Cenário multi-hop com falha
-induzida • Nó intermediário desligado após 60s • Observação da
-recuperação & Avaliar detecção de falha e capacidade de
+C4: Falha & Multi-hop com interrupção & • 6 nós com falha induzida sob
+4~dBm • Relé do caminho silencia 15~s a cada 45~s • Relé alternativo
+disponível • Observação da recuperação & Avaliar detecção de falha e capacidade de
 auto-recuperação (self-healing) \\
 \end{longtable}
 }
@@ -880,10 +881,11 @@ normalizada clássica não contabiliza. O consumo energético é
 como tal em todo o trabalho.
 
 \textbf{Validade externa} (em que medida os resultados generalizam). A
-avaliação em hardware restringe-se ao cenário C1 (cadeia multi-hop de dez
-nós, três a quatro saltos) em um ambiente residencial específico; os
-cenários C2 a C4 e topologias mais densas ou móveis ficam como trabalho
-futuro, sendo a tendência de escala complementada por simulação. Assim, as
+avaliação em hardware abrange os cenários C1 (cadeia multi-hop de dez nós,
+três a quatro saltos) e C4 (falha induzida, seis nós) em ambientes
+residenciais específicos; os cenários C2 e C3 e topologias mais densas ou
+móveis ficam como trabalho futuro, sendo a tendência de escala complementada
+por simulação. Assim, as
 conclusões aplicam-se com segurança ao regime multi-hop avaliado e
 sustentam-se, em maior escala, pelos resultados de simulação, evitando-se
 extrapolações além do que os dados suportam.

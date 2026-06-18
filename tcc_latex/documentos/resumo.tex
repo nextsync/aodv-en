@@ -22,7 +22,10 @@ algoritmo), o AODV-EN entregou 94,1\% dos pacotes contra apenas 12,7\% do
 colapsa por não dispor de rota nem retransmissão ---, com cerca de metade das
 transmissões por pacote entregue (54 contra 103). A análise por simulação confirmou que
 a desvantagem de ocupação de canal do \emph{flooding} cresce com a escala da rede, com
-cruzamento de eficiência em torno de 9 a 11 nós. Conclui-se que o roteamento reativo do AODV-EN é vantajoso à medida que a
+cruzamento de eficiência em torno de 9 a 11 nós. Um segundo cenário em hardware (C4, seis
+nós), com falha cíclica de um relé do caminho, demonstrou a auto-recuperação do protocolo:
+o AODV-EN manteve 62,8\% de entrega re-descobrindo a rota por um relé alternativo após cada
+queda. Conclui-se que o roteamento reativo do AODV-EN é vantajoso à medida que a
 rede cresce em tamanho e diâmetro, viabilizando redes mesh padronizadas, de baixo custo
 e eficientes em energia sobre ESP-NOW.
 

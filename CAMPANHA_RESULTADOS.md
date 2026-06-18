@@ -61,7 +61,7 @@ maioria dos pacotes nao sobrevive aos 3-4 saltos. A menor latencia do flood e vi
 de sobrevivencia (so os poucos pacotes de caminho curto chegam). NRL classico (so
 controle de rota) nao captura o overhead do flood -> usar tx/entregue p/ comparacao justa.
 
-## C2 Arvore / C3 Mesh / C4 Falha — PENDENTES
+## C2 Arvore / C3 Mesh — PENDENTES (C4 ver secao abaixo)
 
 ## C4 Falha / self-healing (HW, 6 nos, apartamento)
 
