@@ -323,11 +323,13 @@ código foi organizado em módulos: gerenciamento de peers, descoberta de
 rotas, manutenção de rotas, encaminhamento de pacotes e interface de
 coleta de métricas. Paralelamente, foi implementado o algoritmo
 Flooding para fins de comparação. O ambiente de testes (testbed) foi
-composto por três módulos ESP32 DevKit V1 disponíveis no período de
-coleta, alimentados por fontes USB 5V --- a disponibilidade de hardware
-limitou a campanha a três nós, com os demais cenários avaliados por
-simulação. Cada nó executou o mesmo firmware, configurado com
-identificador único por meio de variáveis de compilação.
+composto por dez módulos ESP32 DevKit V1, com o nó coletor alimentado por
+USB (conectado à porta serial) e os demais por baterias portáteis,
+distribuídos pela residência. A potência de transmissão foi reduzida a
+2~dBm para forçar a formação de múltiplos saltos reais no espaço
+disponível, e a topologia foi verificada por matriz de RSSI da rede
+inteira antes da campanha. Cada nó executou o mesmo firmware, configurado
+com papel e identificador por meio de variáveis de compilação.
 
 \subsection{Fase 4: Execução dos Experimentos e Coleta de
 Dados}\label{fase-4-execuuxe7uxe3o-dos-experimentos-e-coleta-de-dados}
@@ -335,10 +337,10 @@ Dados}\label{fase-4-execuuxe7uxe3o-dos-experimentos-e-coleta-de-dados}
 A quarta fase correspondeu à etapa de Demonstração da DSR, onde o
 artefato foi exercitado em cenários representativos para demonstrar sua
 eficácia na resolução do problema. Os experimentos seguiram o
-planejamento detalhado na Seção~\ref{planejamento-experimental}, com execução parcial em hardware
---- seis repetições no cenário C1-3n (três nós em concentrador) --- e
-complementação por simulação para os cenários de maior escala e
-diâmetro. As métricas foram coletadas automaticamente pelo firmware e
+planejamento detalhado na Seção~\ref{planejamento-experimental}, com execução em hardware
+do cenário C1 --- trinta repetições por algoritmo na cadeia multi-hop de
+dez nós --- e complementação por simulação para os cenários de maior
+escala e diâmetro. As métricas foram coletadas automaticamente pelo firmware e
 armazenadas em arquivos de log para posterior análise.
 
 \subsection{Fase 5: Análise e Discussão dos
@@ -373,10 +375,10 @@ em uma topologia linear; o cenário C2 verifica o encaminhamento em uma
 estrutura hierárquica; o cenário C3 analisa a seleção de rotas em uma
 malha parcial com caminhos alternativos; e o cenário C4 observa a
 capacidade de detecção de falhas e recuperação da comunicação.
-Por limitação de disponibilidade de hardware no período de coleta, apenas
-uma versão reduzida do cenário C1 --- denominada C1-3n, com três nós em
-concentrador e seis repetições por algoritmo --- foi executada em
-hardware real; os demais cenários foram avaliados por simulação
+O cenário C1 foi executado em hardware real com dez nós em cadeia
+multi-hop (três a quatro saltos) e trinta repetições por algoritmo; os
+cenários C2 a C4 constituem extensão direta sobre a mesma infraestrutura
+de coleta, com avaliação complementar de escala por simulação
 (Capítulo~\ref{cap:resultados}). O Quadro~\ref{quadro:cenarios} apresenta a
 configuração dos quatro cenários experimentais.
 
