@@ -36,6 +36,14 @@ AODV-EN paga um \emph{overhead} de controle aproximadamente constante para garan
 entrega multi-hop --- inviável por inundação pura ---, tornando-se progressivamente mais
 vantajoso à medida que a malha se expande.
 
+O cenário de falha (C4) complementou essa análise ao exercitar a auto-recuperação do
+protocolo: sob a queda cíclica de um relé do caminho (15~s a cada 45~s), o AODV-EN
+manteve 62,8\% de entrega, re-descobrindo a rota pelo relé alternativo após cada queda,
+conforme evidenciado pela curva de entregas acumuladas. O resultado explicita o
+\emph{trade-off} entre eficiência e resiliência: o roteamento reativo paga um custo de
+detecção e re-descoberta na falha, ao passo que a inundação, sem rotas a manter, é
+estruturalmente tolerante à perda de um nó, porém ineficiente em banda.
+
 Um resultado metodológico relevante decorreu da revisão da estratégia de disseminação:
 a avaliação preliminar de um transporte por unicast sequencial revelou um viés
 introduzido pelo mecanismo de retransmissão automática do unicast ESP-NOW, ausente no
@@ -44,10 +52,10 @@ RREQ do AODV-EN quanto para o algoritmo de referência, restabeleceu a simetria
 metodológica da comparação e alinhou o \emph{baseline} à definição canônica de
 \emph{flooding} da literatura.
 
-Como limitações, destacam-se a cobertura de cenários --- a campanha em hardware cobre o
-cenário C1 (cadeia multi-hop de dez nós, trinta repetições), ficando os cenários C2 a
-C4 (árvore, malha redundante e falha induzida) como trabalho futuro sobre a mesma
-infraestrutura ---, o caráter estimado do consumo energético e a coleta sequencial das
+Como limitações, destacam-se a cobertura de cenários --- a campanha em hardware cobre os
+cenários C1 (cadeia multi-hop de dez nós) e C4 (falha induzida, seis nós), ambos com
+trinta repetições, ficando os cenários C2 e C3 (árvore e malha redundante) como trabalho
+futuro sobre a mesma infraestrutura ---, o caráter estimado do consumo energético e a coleta sequencial das
 campanhas do AODV-EN e do \emph{flooding}, com nova distribuição física dos nós entre
 elas. As adaptações de gerenciamento de
 \emph{peers} por política LRU e de métrica híbrida (saltos combinados com RSSI)

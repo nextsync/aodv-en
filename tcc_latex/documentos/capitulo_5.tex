@@ -232,6 +232,56 @@ ESP32, não medido. Ponderado pela entrega --- energia por pacote
 efetivamente entregue ---, o quadro se inverte de forma decisiva a favor
 do AODV-EN, que entrega 7,4 vezes mais pacotes na mesma janela.
 
+\section{Cenário de Falha e Auto-recuperação (C4)}\label{cenario-de-falha-c4}
+
+Para avaliar especificamente a capacidade de recuperação do protocolo diante
+da perda de um nó, conduziu-se o cenário C4 em hardware, em uma topologia
+distinta da do cenário C1. Foram empregados seis módulos ESP32 distribuídos
+em um apartamento, com potência de transmissão de 4~dBm --- maior que a do C1
+(2~dBm) em razão do espaço menor e da maior densidade de paredes, mantida a
+verificação por RSSI. A origem (também coletor) transmite ao destino por meio
+de um relé \emph{on-path}, que dispõe de um relé alternativo. A falha é
+induzida por \emph{firmware}: o relé do caminho principal silencia o rádio
+por 15~s a cada 45~s (33\% de indisponibilidade), simulando a queda e o
+retorno cíclicos do nó; os vizinhos detectam a quebra pelas mensagens HELLO,
+emitem RERR e o AODV-EN re-descobre a rota pelo relé alternativo.
+
+Ao longo de 30 repetições, a taxa de entrega caiu para 62,8\%
+($\mathrm{IC95} = \pm 11{,}5$), contra 94,1\% do mesmo protocolo sem falha
+(C1), e a latência subiu para 60,7~ms ($\mathrm{IC95} = \pm 14{,}6$),
+refletindo o tempo de detecção da quebra e de re-descoberta de rota. A
+elevada variabilidade entre repetições (coeficiente de variação de cerca de
+51\%) decorre da natureza estocástica do instante da falha em relação ao
+tráfego: repetições em que a janela de queda coincide com poucos envios
+preservam entrega alta, enquanto outras concentram as perdas no intervalo de
+recuperação. A Figura~\ref{fig:c4-selfheal} ilustra o fenômeno em uma
+repetição: a curva de pacotes entregues acumulados exibe \emph{patamares}
+--- intervalos sem entrega que coincidem com a indisponibilidade do relé ---
+seguidos de \emph{retomada}, evidência direta da auto-recuperação
+(\emph{self-healing}) pela rota alternativa.
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio,alt={Entregas acumuladas ao longo do tempo em uma repeticao do cenario C4: patamares coincidem com a falha do rele e a retomada evidencia a recuperacao.}]{figuras/fig_c4_selfheal.png}}
+\caption{Auto-recuperação no cenário C4: pacotes entregues acumulados ao longo
+de uma repetição. Os patamares (faixas destacadas) coincidem com a queda do
+relé \emph{on-path}; a retomada da entrega evidencia a re-descoberta de rota
+pelo relé alternativo.}\label{fig:c4-selfheal}
+\end{figure}
+
+Esse resultado expõe, de forma honesta, o \emph{trade-off} entre eficiência e
+resiliência. O roteamento reativo do AODV-EN é eficiente em condições
+estáveis (Seção~\ref{resultados-de-hardware}), mas paga um custo de detecção e
+re-descoberta quando um nó do caminho falha. A inundação, por não manter
+rotas, é estruturalmente tolerante à queda de um nó isolado --- a difusão
+simplesmente contorna o nó ausente ---, porém ao preço da ocupação de canal
+já discutida e da baixa entrega em múltiplos saltos. Assim, a escolha entre as
+abordagens depende do regime de operação: redes estáveis e maiores favorecem o
+roteamento; cenários de altíssima volatilidade de nós, sem exigência de
+eficiência de banda, podem tolerar a inundação. A avaliação quantitativa do
+\emph{flooding} sob o mesmo padrão de falha, sobre a infraestrutura já
+preparada, constitui extensão direta deste trabalho.
+
 \section{Análise de Escalabilidade por
 Simulação}\label{anuxe1lise-de-escalabilidade-por-simulauxe7uxe3o}
 
@@ -352,11 +402,12 @@ como objeto de trabalhos futuros, em topologias mais densas e com variação
 deliberada de RSSI por enlace.
 
 As principais limitações do estudo são: (i) a cobertura de cenários ---
-a campanha em hardware reportada cobre o cenário C1 (cadeia multi-hop de
-dez nós, três a quatro saltos, trinta repetições por algoritmo); os
-cenários C2 a C4 (árvore, malha redundante e falha induzida) previstos na
-metodologia, embora viabilizados pela mesma infraestrutura de coleta,
-ficam como trabalho futuro; (ii) o caráter estimado do
+a campanha em hardware cobre os cenários C1 (cadeia multi-hop de dez nós,
+três a quatro saltos) e C4 (falha induzida, seis nós), ambos com trinta
+repetições por algoritmo, e a avaliação quantitativa do \emph{flooding} sob
+falha (C4) e os cenários C2 e C3 (árvore e malha redundante), embora
+viabilizados pela mesma infraestrutura de coleta, ficam como trabalho
+futuro; (ii) o caráter estimado do
 consumo energético, calculado a partir do perfil de \emph{datasheet} do
 ESP32 e não medido com instrumentação física --- a medição direta de
 corrente (por exemplo, com um sensor INA219 em série com a alimentação) é
@@ -366,5 +417,6 @@ reprogramação e nova distribuição física dos nós entre elas, o que
 introduz pequena variação de topologia e de condições de canal; soma-se a
 isso que, na campanha de \emph{flooding}, parte da telemetria de rede não
 retornou ao coletor (sete dos dez nós), subestimando as métricas de custo
-agregado desse algoritmo. A medição física de energia e a execução dos
-cenários C2 a C4 constituem desdobramentos diretos para trabalhos futuros.
+agregado desse algoritmo. A medição física de energia, a execução dos
+cenários C2 e C3 e a avaliação do \emph{flooding} sob falha constituem
+desdobramentos diretos para trabalhos futuros.
