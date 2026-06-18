@@ -184,6 +184,22 @@ static flood_en_status_t app_send_one(
     esp_err_t err;
     char mac_text[18];
 
+#if CONFIG_AODV_EN_APP_FAIL_PERIOD_MS > 0
+    {
+        static bool s_fail_down = false;
+        uint32_t fail_phase = app_now_ms() % CONFIG_AODV_EN_APP_FAIL_PERIOD_MS;
+        bool fail_down = fail_phase < CONFIG_AODV_EN_APP_FAIL_DOWN_MS;
+        if (fail_down != s_fail_down)
+        {
+            s_fail_down = fail_down;
+            ESP_LOGW(TAG, "FAILSIM node %s t=%u", fail_down ? "DOWN" : "UP", (unsigned int)app_now_ms());
+        }
+        if (fail_down)
+        {
+            return FLOOD_EN_OK;
+        }
+    }
+#endif
     err = app_ensure_peer(mac, app->wifi_channel);
     if (err != ESP_OK && err != ESP_ERR_ESPNOW_EXIST)
     {

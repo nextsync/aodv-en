@@ -433,6 +433,22 @@ static aodv_en_status_t app_emit_frame(
     bool broadcast)
 {
     app_context_t *app = (app_context_t *)user_ctx;
+#if CONFIG_AODV_EN_APP_FAIL_PERIOD_MS > 0
+    {
+        static bool s_fail_down = false;
+        uint32_t fail_phase = app_now_ms() % CONFIG_AODV_EN_APP_FAIL_PERIOD_MS;
+        bool fail_down = fail_phase < CONFIG_AODV_EN_APP_FAIL_DOWN_MS;
+        if (fail_down != s_fail_down)
+        {
+            s_fail_down = fail_down;
+            ESP_LOGW(TAG, "FAILSIM node %s t=%u", fail_down ? "DOWN" : "UP", (unsigned int)app_now_ms());
+        }
+        if (fail_down)
+        {
+            return AODV_EN_OK;
+        }
+    }
+#endif
     const uint8_t *dest_mac = broadcast ? BROADCAST_MAC : next_hop;
     esp_err_t err;
     char mac_text[18];
