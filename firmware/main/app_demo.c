@@ -884,9 +884,37 @@ static void app_init_wifi(uint8_t channel)
     }
 }
 
+static bool app_is_connected(app_context_t *app)
+{
+    if (app->has_report)
+    {
+        size_t count = aodv_en_stack_get_route_count(&app->stack);
+        for (size_t index = 0; index < count; index++)
+        {
+            aodv_en_route_snapshot_t route;
+            if (aodv_en_stack_get_route_at(&app->stack, index, &route) != AODV_EN_OK)
+            {
+                continue;
+            }
+            if (route.state == AODV_EN_ROUTE_VALID &&
+                memcmp(route.destination_mac, app->report_to_mac, AODV_EN_MAC_ADDR_LEN) == 0)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    aodv_en_overview_t overview;
+    if (aodv_en_stack_get_overview(&app->stack, &overview) != AODV_EN_OK)
+    {
+        return false;
+    }
+    return overview.neighbors_count > 0;
+}
+
 static void app_blink_task(void *arg)
 {
-    (void)arg;
+    app_context_t *app = (app_context_t *)arg;
     gpio_config_t cfg = {
         .pin_bit_mask = 1ULL << APP_BLINK_LED_GPIO,
         .mode = GPIO_MODE_OUTPUT,
@@ -898,8 +926,16 @@ static void app_blink_task(void *arg)
     bool level = false;
     for (;;)
     {
-        level = !level;
-        gpio_set_level(APP_BLINK_LED_GPIO, level);
+        if (app_is_connected(app))
+        {
+            level = !level;
+            gpio_set_level(APP_BLINK_LED_GPIO, level);
+        }
+        else
+        {
+            level = false;
+            gpio_set_level(APP_BLINK_LED_GPIO, 0);
+        }
         vTaskDelay(pdMS_TO_TICKS(APP_BLINK_PERIOD_MS));
     }
 }
@@ -1013,11 +1049,6 @@ void app_demo_run(void)
 
     xTaskCreate(app_protocol_task, "aodv_en_task", 8192, &g_app, 5, NULL);
 
-    // Pisca LED onboard apenas quando este no e a origem (envia DATA periodico).
-    // Util para identificar fisicamente o NODE_A entre varios ESPs na bancada.
-    if (g_app.has_target)
-    {
-        ESP_LOGI(TAG, "blink LED on GPIO%d (origem da malha)", APP_BLINK_LED_GPIO);
-        xTaskCreate(app_blink_task, "blink", 1024, NULL, 1, NULL);
-    }
+    ESP_LOGI(TAG, "blink LED on GPIO%d (azul = conectado a malha/coletor)", APP_BLINK_LED_GPIO);
+    xTaskCreate(app_blink_task, "blink", 2048, &g_app, 1, NULL);
 }
