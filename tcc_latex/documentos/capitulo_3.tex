@@ -574,7 +574,16 @@ projetar autonomia com bateria. & $E = \sum (N_\text{tx} \cdot E_\text{tx} + N_\
 Fonte: Elaborado pelos autores.
 
 Para cada métrica, são calculados: média aritmética, desvio padrão e
-intervalo de confiança de 95\%. Os resultados são apresentados em
+intervalo de confiança de 95\%. A significância das diferenças entre
+AODV-EN e Flooding é avaliada pelo teste $t$ de Welch (robusto a
+variâncias desiguais) e, de forma complementar, pelo teste não
+paramétrico de Mann--Whitney (que não pressupõe normalidade), ambos
+bilaterais com $\alpha = 0{,}05$; a magnitude do efeito é reportada pelo
+$d$ de Cohen. A escolha de $n = 30$ repetições por algoritmo segue a
+prática usual em estudos experimentais de roteamento e oferece poder
+estatístico folgado: para um efeito grande ($d = 0{,}8$), $\alpha = 0{,}05$
+e poder de 80\%, bastariam cerca de 17 amostras por grupo, de modo que
+$n = 30$ confere margem de segurança. Os resultados são apresentados em
 tabelas e gráficos comparativos entre AODV-EN e Flooding.
 
 \section{Algoritmo de Referência para Comparação:
