@@ -78,6 +78,7 @@
 \contentsline {subsection}{\numberline {4.7.3}Gerenciamento Dinâmico de Peers}{56}{subsection.4.7.3}%
 \contentsline {subsection}{\numberline {4.7.4}Métrica Híbrida com Hop Count e RSSI}{56}{subsection.4.7.4}%
 \contentsline {section}{\numberline {4.8}Considerações sobre a Implementação}{57}{section.4.8}%
+\contentsline {subsection}{\numberline {4.8.1}Análise de complexidade e custo de memória}{58}{subsection.4.8.1}%
 \contentsline {chapter}{\numberline {5}RESULTADOS E DISCUSSÃO}{59}{chapter.5}%
 \contentsline {section}{\numberline {5.1}Ambiente das Coletas e Validação Funcional}{59}{section.5.1}%
 \contentsline {section}{\numberline {5.2}Resultados de Hardware}{60}{section.5.2}%
