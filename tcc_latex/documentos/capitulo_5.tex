@@ -117,6 +117,59 @@ entrega e energia estimada): AODV-EN vs.~Flooding, cenário C1 multi-hop,
 10 nós, média de 30 repetições com barra de IC95.}\label{fig:hw-metrics}
 \end{figure}
 
+\subsection{Significância estatística}\label{significuxe2ncia-estatuxedstica}
+
+Para verificar se as diferenças observadas são estatisticamente
+significativas, e não fruto da variabilidade amostral, aplicou-se a cada
+métrica o teste $t$ de Welch (apropriado a variâncias desiguais) e, de
+forma complementar, o teste não paramétrico de Mann--Whitney (que não
+pressupõe normalidade), ambos bilaterais com nível de significância
+$\alpha = 0{,}05$ e $n = 30$ repetições por algoritmo. A magnitude do
+efeito foi quantificada pelo $d$ de Cohen. A Tabela~\ref{tab:stats}
+resume os resultados.
+
+\begin{table}[H]
+\centering
+\caption{Significância estatística das diferenças AODV-EN vs.~Flooding (cenário C1, $n=30$ por grupo)}\label{tab:stats}
+\begin{tabular}{@{}lcccl@{}}
+\toprule
+Métrica & $t$ (Welch) & $p$ & $d$ de Cohen & Efeito \\
+\midrule
+PDR de entrega & 43,7 & $<0{,}001$ & 11,3 & altíssimo \\
+Latência one-way & 7,2 & $<0{,}001$ & 1,85 & grande \\
+NRL (controle/entregue) & 7,5 & $<0{,}001$ & 1,95 & grande \\
+Transmissões por entrega & $-2{,}5$ & $0{,}011$ & $-0{,}71$ & médio \\
+Energia (estimada) & 33,5 & $<0{,}001$ & 8,65 & altíssimo \\
+\bottomrule
+\end{tabular}
+
+\vspace{2pt}
+{\footnotesize Fonte: Elaborado pelos autores. Teste de Mann--Whitney concordante ($p<0{,}05$) em todas as métricas.}
+\end{table}
+
+Todas as diferenças são estatisticamente significativas ($p < 0{,}05$),
+com os testes paramétrico e não paramétrico em concordância. Os tamanhos
+de efeito da entrega ($d = 11{,}3$) e do consumo estimado ($d = 8{,}65$)
+são muito superiores ao limiar convencional de efeito grande ($d > 0{,}8$),
+indicando que a vantagem do AODV-EN na entrega multi-hop é estrutural, e
+não marginal. A única diferença de efeito apenas médio é a de transmissões
+por entrega ($d = -0{,}71$, $p = 0{,}011$), atenuada pela alta dispersão do
+\emph{flooding} nessa métrica --- ainda assim significativa e desfavorável
+ao \emph{flooding}.
+
+\subsection{Distribuição entre repetições}\label{distribuiuxe7uxe3o-entre-repetiuxe7uxf5es}
+
+A dispersão entre as repetições revela a \emph{estabilidade} de cada
+algoritmo, informação que a média sozinha oculta. O AODV-EN entregou entre
+85,2\% e 100\% dos pacotes (mediana 94,2\%; coeficiente de variação
+$\mathrm{CV} = 4{,}2\%$), com apenas 4 das 30 repetições abaixo de 90\%. O
+\emph{flooding}, em contraste, variou de 0\% a 36,2\% (mediana 10,7\%;
+$\mathrm{CV} = 74{,}2\%$), com 20 das 30 repetições abaixo de 15\% e uma
+repetição sem nenhuma entrega. A diferença de variabilidade --- CV de 4\%
+contra 74\% --- mostra que o AODV-EN não apenas entrega mais, mas entrega de
+forma previsível, ao passo que o \emph{flooding} colapsa de modo errático sob
+as colisões da inundação a cada repetição.
+
 \section{Discussão por Métrica}\label{discussuxe3o-por-muxe9trica}
 
 \textbf{Confiabilidade (PDR).} No regime multi-hop (três a quatro
