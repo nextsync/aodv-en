@@ -283,6 +283,33 @@ reflexões e obstáculos afetam significativamente o desempenho, e que
 pequenas variações na posição do receptor podem causar grandes
 alterações na qualidade do enlace.
 
+\subsection{Confirmação de enlace e retransmissões}\label{confirmacao-de-enlace}
+
+Um aspecto determinante para o comportamento dos algoritmos avaliados é a
+assimetria de confiabilidade entre os modos \emph{unicast} e
+\emph{broadcast} do ESP-NOW. O protocolo opera sobre a camada de enlace
+802.11 por meio de quadros de ação (\emph{action frames}) de fabricante,
+sujeitos ao acesso ao meio por CSMA/CA. No modo \emph{unicast} (destino
+endereçado), o quadro é confirmado por um ACK de hardware e
+retransmitido automaticamente em caso de falha, até um limite de
+tentativas; cada retransmissão acrescenta latência da ordem do tempo de
+\emph{slot} e do \emph{backoff}, o que explica a faixa observada na
+literatura --- de $\sim$2,8 ms na primeira tentativa a dezenas de
+milissegundos sob múltiplas retransmissões \cite{becker2025}. No modo
+\emph{broadcast} (endereço FF:FF:FF:FF:FF:FF), ao contrário, \emph{não há
+ACK nem retransmissão}: cada quadro é transmitido uma única vez, e a sua
+perda por colisão ou enlace fraco é definitiva.
+
+Essa diferença tem consequência direta sobre roteamento. Uma abordagem por
+inundação (\emph{flooding}), que dissemina dados por \emph{broadcast}, não
+dispõe de recuperação de enlace e degrada rapidamente em múltiplos saltos,
+pois a probabilidade de sobrevivência do pacote decai com o produto das
+probabilidades por salto. Já um protocolo de roteamento que encaminha
+dados por \emph{unicast} ao longo de uma rota estabelecida aproveita a
+confirmação e a retransmissão automáticas do enlace, recuperando perdas
+salto a salto. Essa assimetria é central para interpretar os resultados
+experimentais (Capítulo~\ref{cap:resultados}).
+
 \subsection{Limitações para comunicação
 multi-hop}\label{limitauxe7uxf5es-para-comunicauxe7uxe3o-multi-hop}
 
@@ -520,6 +547,21 @@ entrada de rota direta para o destino, estabelecendo o próximo salto
 (\emph{next hop}) como o vizinho de quem recebeu o RREP. Quando o RREP
 alcança a origem, a rota bidirecional está estabelecida e a transmissão
 de dados pode iniciar.
+
+A título de exemplo, considere uma cadeia de três nós $A$, $B$ e $C$, na
+qual $A$ deseja enviar dados a $C$ e só alcança diretamente $B$. (1) $A$
+incrementa seu número de sequência e difunde um RREQ para $C$. (2) $B$
+recebe o RREQ, registra uma rota reversa para $A$ (próximo salto $A$,
+1~salto), incrementa o contador de saltos e, não sendo o destino nem
+possuindo rota para $C$, retransmite o RREQ. (3) $C$ recebe o RREQ,
+registra a rota reversa para $A$ via $B$ (2~saltos) e, sendo o destino,
+responde com um RREP em \emph{unicast} para $B$. (4) $B$ recebe o RREP,
+cria a rota direta para $C$ (próximo salto $C$, 1~salto) e o encaminha a
+$A$. (5) $A$ recebe o RREP e registra a rota para $C$ via $B$ (2~saltos):
+a rota está estabelecida e os dados passam a ser encaminhados por
+\emph{unicast} $A \rightarrow B \rightarrow C$. Os números de sequência
+garantem que, havendo múltiplas respostas, $A$ adote sempre a rota com
+informação mais recente, evitando laços.
 
 \subsection{Números de sequência e prevenção de
 loops}\label{nuxfameros-de-sequuxeancia-e-prevenuxe7uxe3o-de-loops}

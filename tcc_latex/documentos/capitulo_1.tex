@@ -117,10 +117,15 @@ suporte a multi-hop, mantendo desempenho competitivo frente a uma
 abordagem de referência baseada em inundação (\emph{flooding})? Como
 hipótese central, admite-se que um roteamento reativo sob demanda,
 adaptado a essas restrições, é capaz de entregar pacotes em múltiplos
-saltos sobre ESP-NOW com taxa de entrega comparável à da inundação
-controlada, porém a um custo de controle e de ocupação de canal
-significativamente menor à medida que a rede cresce em tamanho e
-diâmetro.
+saltos sobre ESP-NOW com alta taxa de entrega --- \emph{Packet Delivery
+Ratio} de entrega elevado e estável entre repetições --- e custo de
+canal, medido em transmissões por pacote entregue, inferior ao da
+inundação controlada. Espera-se, ademais, que essa vantagem do roteamento
+se acentue no regime multi-hop, no qual a inundação tende a degradar por
+colisão e por ausência de retransmissão fim-a-fim, à medida que a rede
+cresce em tamanho e diâmetro. Essas afirmações são avaliadas
+quantitativamente no Capítulo~\ref{cap:resultados} por meio de testes de
+significância estatística.
 
 Para responder a essa questão, o presente trabalho propõe o
 desenvolvimento e a avaliação de um algoritmo de roteamento denominado
