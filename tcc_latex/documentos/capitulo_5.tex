@@ -80,27 +80,29 @@ normalizada (NRL, mensagens de controle por dado entregue), reporta-se o
 total de transmissões por pacote entregue, que captura de forma justa o
 custo de ambos os algoritmos --- inclusive o das retransmissões por
 inundação do \emph{flooding}, que a NRL clássica não contabiliza. O
-conjunto bruto por repetição está disponível no repositório do projeto; a
-Tabela~\ref{tab:comparacao} consolida média, desvio padrão e intervalo de
-confiança de 95\% (IC95) das métricas.
+conjunto bruto por repetição (incluindo os desvios padrão) está disponível
+no repositório do projeto; a Tabela~\ref{tab:comparacao} consolida a média
+e o intervalo de confiança de 95\% (IC95) de cada métrica.
 
-{\def\LTcaptype{table}
-\begin{longtable}[]{@{}lcc@{}}
-\caption{Comparação AODV-EN vs.~Flooding em hardware --- cenário C1, 10 nós, multi-hop, 30 repetições (média $\pm$ desvio; IC95 entre parênteses)}\label{tab:comparacao}\\
-\toprule\noalign{}
+\begin{table}[H]
+\centering
+\caption{Comparação AODV-EN vs.~Flooding em hardware --- cenário C1, 10 nós, multi-hop, 30 repetições (média $\pm$ intervalo de confiança de 95\%)}\label{tab:comparacao}
+\begin{tabular}{@{}lcc@{}}
+\toprule
 Métrica & AODV-EN & Flooding (broadcast) \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-PDR de entrega (\%) & 94,1 ± 4,0 (IC95 1,4) & 12,7 ± 9,4 (IC95 3,4) \\
-PDR confirmação ida-volta (\%) & 91,7 ± 11,6 (IC95 4,2) & 3,7 ± 2,4 (IC95 0,8) \\
-Latência one-way (ms) & 45,9 ± 9,8 (IC95 3,5) & 31,6 ± 4,6 (IC95 1,7) \\
-NRL (controle de rota/entregue) & 18,0 ± 13,1 & 0,0 \\
-Transmissões por entrega & 54,2 (IC95 10,1) & 102,9 (IC95 36,2) \\
-Energia (J, estimada) & 39,4 ± 1,8 & 28,4 ± 0,1 \\
-\end{longtable}
-}
+\midrule
+PDR de entrega (\%) & 94,1 $\pm$ 1,4 & 12,7 $\pm$ 3,4 \\
+PDR confirmação ida-volta (\%) & 91,7 $\pm$ 4,2 & 3,7 $\pm$ 0,8 \\
+Latência one-way (ms) & 45,9 $\pm$ 3,5 & 31,6 $\pm$ 1,7 \\
+NRL (controle de rota/entregue) & 18,0 $\pm$ 4,7 & 0,0 \\
+Transmissões por entrega & 54,2 $\pm$ 10,1 & 102,9 $\pm$ 36,2 \\
+Energia (J, estimada) & 39,4 $\pm$ 0,6 & 28,4 $\pm$ 0,03 \\
+\bottomrule
+\end{tabular}
+
+\vspace{2pt}
+{\footnotesize Fonte: Elaborado pelos autores.}
+\end{table}
 
 Fonte: Elaborado pelos autores.
 

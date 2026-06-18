@@ -599,7 +599,7 @@ identificadores já presentes no buffer são descartados; c)
 \textbf{Controle de TTL}: o TTL é decrementado a cada salto. Pacotes com
 TTL=0 não são retransmitidos, limitando o alcance do flooding e
 prevenindo loops infinitos; d) \textbf{Retransmissão}: ao receber um
-pacote não-duplicado com TTL\textgreater0 e destino diferente do próprio
+pacote não-duplicado com TTL $>$ 0 e destino diferente do próprio
 nó, o pacote é retransmitido em um único \emph{broadcast} de enlace
 ESP-NOW (FF:FF:FF:FF:FF:FF), conforme a definição clássica de
 \emph{flooding} --- uma retransmissão por nó, suprimida por duplicatas e
