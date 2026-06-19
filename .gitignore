@@ -63,7 +63,7 @@
 /sim/results/campaign_*/
 /results/campaign-prints/
 
-# LaTeX build intermediates (regenerar compilando Template_Pacheco_TCC.tex)
+# LaTeX build intermediates (regenerar compilando TCC_AODV_EN.tex)
 tcc_latex/*.aux
 tcc_latex/*.bbl
 tcc_latex/*.blg

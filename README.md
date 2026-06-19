@@ -5,7 +5,7 @@ Projeto de Trabalho de Conclusao de Curso do Bacharelado em Engenharia de Softwa
 Este repositorio concentra a pesquisa, especificacao e implementacao do `AODV-EN`, uma adaptacao do AODV ([RFC 3561](https://datatracker.ietf.org/doc/html/rfc3561)) para redes mesh multi-hop sobre ESP-NOW v2 e ESP32.
 
 > **TCC concluido.** A monografia completa (94 paginas) esta em
-> [tcc_latex/Template_Pacheco_TCC.pdf](tcc_latex/Template_Pacheco_TCC.pdf).
+> [tcc_latex/TCC_AODV_EN.pdf](tcc_latex/TCC_AODV_EN.pdf).
 > Autores: Huakson Lima e Diogo dos Reis Almeida (IFG Campus Inhumas).
 
 ## Resultados (avaliacao experimental)
@@ -156,7 +156,7 @@ Baseline comparativo ao AODV-EN: flooding controlado (broadcast com TTL + supres
 `AODV-EN v1` esta funcionalmente fechado; o baseline de flooding foi implementado, validado
 (sim + hardware) e comparado ao AODV-EN; e a campanha experimental em hardware (cenarios C1,
 C3 e C4, 30 repeticoes cada) foi concluida e consolidada na monografia
-([tcc_latex/Template_Pacheco_TCC.pdf](tcc_latex/Template_Pacheco_TCC.pdf)). Como trabalho
+([tcc_latex/TCC_AODV_EN.pdf](tcc_latex/TCC_AODV_EN.pdf)). Como trabalho
 futuro declarado: medicao fisica de energia (INA219), o cenario C2 (arvore), o flooding sob
 falha (C4) e a avaliacao isolada da metrica hibrida e da politica LRU de peers. Roadmap e
 historico em [docs/plano-desenvolvimento-completo.md](docs/plano-desenvolvimento-completo.md).
