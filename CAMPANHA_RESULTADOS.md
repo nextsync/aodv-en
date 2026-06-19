@@ -116,4 +116,28 @@ controle de rota) nao captura o overhead do flood -> usar tx/entregue p/ compara
   A vantagem do roteamento sobre o flooding cresce com a profundidade (flood degrada
   exponencialmente com saltos).
 
-### flooding C3 -- PENDENTE (reflash 2dBm, mesma malha)
+### flooding C3 -- 30 reps x 60 s
+
+| Metrica | Media | IC95 |
+|---|---|---|
+| PDR de entrega (%) | 77,8 | 3,7 |
+| Latencia one-way (ms) | 20,5 | 0,6 |
+| RX por entrega (ocupacao) | 86,4 | 5,4 |
+| Energia/entrega (J/pkt) | 0,83 | 0,05 |
+
+### C3 -- comparacao aodv x flooding (malha densa, 5 saltos)
+
+| Metrica | aodv | flood | teste |
+|---|---|---|---|
+| PDR entrega (%) | 91,4 +/-2,2 | 77,8 +/-3,7 | t=6,19 p<0,001 d=1,6 |
+| Latencia ow (ms) | 34,9 +/-2,7 | 20,5 +/-0,6 | flood menor (vies+caminho curto) |
+| tx/entrega | 42,6 +/-2,7 | 33,3 +/-1,7 | flood menor (sem HELLO) |
+| RX/entrega (canal) | 55,7 +/-2,5 | 86,4 +/-5,4 | flood 1,55x maior (storm) |
+| Energia/entrega (J/pkt) | 0,70 +/-0,02 | 0,83 +/-0,05 | aodv 1,2x melhor |
+
+**Conclusao C3 (dependencia de topologia):** na malha densa, o flooding RECUPERA via
+redundancia de caminhos (78% vs 13% do C1 em cadeia fina) -- topologia importa para o
+flood. O AODV ainda entrega mais (91% vs 78%, p<0,001), com menor ocupacao de canal
+(RX 56 vs 86 por entrega) e melhor energia/entrega, porem o gap encolhe (de 81 pts no
+C1 para 13 pts no C3). A vantagem do roteamento e DEPENDENTE DA TOPOLOGIA: maxima em
+redes esparsas/finas, modesta em malhas densas.
