@@ -239,6 +239,74 @@ perfil de \emph{datasheet} do ESP32, não medidos com instrumentação física;
 ainda assim, como a estimativa usa os mesmos coeficientes para os dois
 algoritmos, a razão entre eles é robusta à incerteza absoluta do modelo.
 
+\section{Cenário de Malha Densa (C3)}\label{cenario-de-malha-densa-c3}
+
+O cenário C1 avaliou uma topologia em cadeia (caminho essencialmente
+único). Para verificar se as conclusões se sustentam em uma topologia
+\emph{não linear}, com caminhos redundantes, conduziu-se o cenário C3: dez
+módulos ESP32 espalhados ao máximo em um apartamento, formando uma malha de
+maior profundidade (cinco saltos). De forma deliberada, manteve-se o mesmo
+\emph{firmware} e a mesma potência de transmissão do C1 (2~dBm), de modo que
+a comparação isola o efeito da \emph{topologia}: cadeia (C1) contra malha
+(C3), nas mesmas demais condições. A Tabela~\ref{tab:c3} consolida os
+resultados de 30 repetições por algoritmo.
+
+\begin{table}[H]
+\centering
+\caption{Comparação AODV-EN vs.~Flooding no cenário C3 (malha densa, 10 nós, 5 saltos, 30 repetições; média $\pm$ IC95)}\label{tab:c3}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+Métrica & AODV-EN & Flooding \\
+\midrule
+PDR de entrega (\%) & 91,4 $\pm$ 2,2 & 77,8 $\pm$ 3,7 \\
+Latência one-way (ms) & 34,9 $\pm$ 2,7 & 20,5 $\pm$ 0,6 \\
+Transmissões por entrega & 42,6 $\pm$ 2,7 & 33,3 $\pm$ 1,7 \\
+Recepções por entrega (canal) & 55,7 $\pm$ 2,5 & 86,4 $\pm$ 5,4 \\
+Energia por pacote entregue (J) & 0,70 $\pm$ 0,02 & 0,83 $\pm$ 0,05 \\
+\bottomrule
+\end{tabular}
+
+\vspace{2pt}
+{\footnotesize Fonte: Elaborado pelos autores. Todas as diferenças são significativas (teste $t$ de Welch, $p<0{,}001$).}
+\end{table}
+
+O resultado mais relevante é o contraste com o C1. Na malha densa, o
+\emph{flooding} \emph{não colapsa} como na cadeia fina: a redundância de
+caminhos eleva sua entrega a 77,8\%, contra apenas 12,7\% no C1. O AODV-EN
+ainda entrega significativamente mais (91,4\% contra 77,8\%; $t = 6{,}19$,
+$p < 0{,}001$, $d = 1{,}6$), mas a sua vantagem de confiabilidade
+\emph{encolhe} --- de cerca de 81 pontos percentuais no C1 para 13 pontos no
+C3. A Figura~\ref{fig:topology-dependence} sintetiza esse achado central: a
+vantagem do roteamento sobre a inundação é \emph{dependente da topologia},
+máxima em redes esparsas ou em cadeia e modesta em malhas densas, nas quais a
+própria redundância do \emph{flooding} o torna competitivo em entrega.
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio,alt={PDR do AODV-EN e do flooding nos cenarios C1 (cadeia) e C3 (malha): na malha o flooding recupera e o gap encolhe.}]{figuras/fig_topology_dependence.png}}
+\caption{Dependência de topologia: o \emph{flooding} colapsa na cadeia fina
+(C1) mas recupera na malha densa (C3) graças à redundância de caminhos,
+estreitando a vantagem de entrega do AODV-EN.}\label{fig:topology-dependence}
+\end{figure}
+
+A vantagem do AODV-EN, contudo, persiste em duas dimensões que a entrega
+isolada não revela (Figura~\ref{fig:c3-compare}). Primeiro, a \emph{ocupação
+de canal}: cada pacote entregue pelo \emph{flooding} custa 86,4 recepções
+agregadas na rede, contra 55,7 do AODV-EN --- consequência da tempestade de
+\emph{broadcast}, em que cada disseminação é ouvida por todos os vizinhos.
+Segundo, a \emph{energia por pacote entregue}, menor no AODV-EN (0,70 contra
+0,83~J). A menor latência do \emph{flooding} (20,5 contra 34,9~ms) reflete,
+novamente, viés de sobrevivência e o uso do caminho de difusão mais curto.
+Em síntese, mesmo onde o \emph{flooding} entrega bem, o AODV-EN o supera em
+entrega e em custo de canal por pacote útil.
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio,alt={AODV-EN vs flooding no cenario C3: PDR, latencia e recepcoes por entrega.}]{figuras/fig_c3_compare.png}}
+\caption{Cenário C3 (malha densa): AODV-EN vs.~Flooding em entrega, latência e
+recepções por pacote entregue (ocupação de canal), com barra de IC95.}\label{fig:c3-compare}
+\end{figure}
+
 \section{Cenário de Falha e Auto-recuperação (C4)}\label{cenario-de-falha-c4}
 
 Para avaliar especificamente a capacidade de recuperação do protocolo diante
@@ -455,11 +523,11 @@ como objeto de trabalhos futuros, em topologias mais densas e com variação
 deliberada de RSSI por enlace.
 
 As principais limitações do estudo são: (i) a cobertura de cenários ---
-a campanha em hardware cobre os cenários C1 (cadeia multi-hop de dez nós,
-três a quatro saltos) e C4 (falha induzida, seis nós), ambos com trinta
-repetições por algoritmo, e a avaliação quantitativa do \emph{flooding} sob
-falha (C4) e os cenários C2 e C3 (árvore e malha redundante), embora
-viabilizados pela mesma infraestrutura de coleta, ficam como trabalho
+a campanha em hardware cobre os cenários C1 (cadeia de dez nós), C3 (malha
+densa de dez nós, cinco saltos) e C4 (falha induzida, seis nós), todos com
+trinta repetições por algoritmo, e a avaliação quantitativa do \emph{flooding}
+sob falha (C4) e o cenário C2 (árvore hierárquica), embora viabilizados pela
+mesma infraestrutura de coleta, ficam como trabalho
 futuro; (ii) o caráter estimado do
 consumo energético, calculado a partir do perfil de \emph{datasheet} do
 ESP32 e não medido com instrumentação física --- a medição direta de
@@ -470,6 +538,6 @@ reprogramação e nova distribuição física dos nós entre elas, o que
 introduz pequena variação de topologia e de condições de canal; soma-se a
 isso que, na campanha de \emph{flooding}, parte da telemetria de rede não
 retornou ao coletor (sete dos dez nós), subestimando as métricas de custo
-agregado desse algoritmo. A medição física de energia, a execução dos
-cenários C2 e C3 e a avaliação do \emph{flooding} sob falha constituem
+agregado desse algoritmo. A medição física de energia, a execução do
+cenário C2 (árvore) e a avaliação do \emph{flooding} sob falha constituem
 desdobramentos diretos para trabalhos futuros.
