@@ -37,7 +37,9 @@ c4 = json.loads((ROOT / "results" / "campaign-C4-aodv-en.json").read_text())["pe
 
 
 def pdr(r):
-    return r.get("pdr_pct")
+    if r.get("pdr_source") == "delivery_dest":
+        return r.get("pdr_delivery_pct")
+    return None
 
 
 def lat(r):
@@ -45,7 +47,7 @@ def lat(r):
 
 
 fig, ax = plt.subplots(figsize=(8.5, 4.3))
-y = [pdr(r) for r in c4]
+y = [pdr(r) for r in c4 if pdr(r) is not None]
 ax.plot(range(1, len(y) + 1), y, marker="o", color=C4C, lw=1.8)
 ax.axhline(sum(v for v in y) / len(y), ls="--", color="#555", lw=1, label=f"media {sum(y)/len(y):.1f}%")
 ax.set_xlabel("Repeticao")

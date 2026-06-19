@@ -2,8 +2,11 @@
 """plot_c1_figures.py - figuras do cenario C1 (HW, 10 nos) a partir dos JSONs
 reais da campanha (results/campaign-C1-{aodv-en,flooding}.json).
 
+PDR = entrega PURA (pdr_delivery_pct nas reps com telemetria do destino).
+tx/entrega = razao das medias (total tx / total entregue).
+
 Saidas (commitadas como figuras do TCC):
-  tcc_latex/figuras/fig_hw_metrics.png  (PDR entrega, latencia, tx/entrega, energia; IC95)
+  tcc_latex/figuras/fig_hw_metrics.png  (PDR entrega, latencia, tx/entrega, energia)
   tcc_latex/figuras/fig_pdr_rep.png     (PDR de entrega por repeticao, aodv vs flood)
 """
 
@@ -37,13 +40,15 @@ def load(algo):
     return d["per_rep"]
 
 
-def pdr_deliv(r):
-    return r.get("pdr_pct")
+def pdr_pure(reps):
+    return [r["pdr_delivery_pct"] for r in reps
+            if r.get("pdr_source") == "delivery_dest" and r.get("pdr_delivery_pct") is not None]
 
 
-def txd(r):
-    sd = r.get("sum_delivered", 0)
-    return r["sum_tx"] / sd if sd > 0 else None
+def rom(reps, num):
+    tot = sum(r.get(num, 0) for r in reps)
+    deliv = sum((r.get("target_delivered") or r.get("sum_delivered", 0)) for r in reps)
+    return (tot / deliv if deliv else 0.0), 0.0
 
 
 def main():
@@ -51,16 +56,16 @@ def main():
     f = load("flooding")
 
     specs = [
-        ("PDR de entrega (%)", [pdr_deliv(r) for r in a], [pdr_deliv(r) for r in f]),
-        ("Latencia one-way (ms)", [r["latency_oneway_ms"]["mean"] for r in a],
-         [r["latency_oneway_ms"]["mean"] for r in f]),
-        ("Transmissoes por entrega", [txd(r) for r in a], [txd(r) for r in f]),
-        ("Energia (J, estimada)", [r["energy_j"] for r in a], [r["energy_j"] for r in f]),
+        ("PDR de entrega (%)", ic95(pdr_pure(a)), ic95(pdr_pure(f))),
+        ("Latencia one-way (ms)",
+         ic95([r["latency_oneway_ms"]["mean"] for r in a]),
+         ic95([r["latency_oneway_ms"]["mean"] for r in f])),
+        ("Transmissoes por entrega", rom(a, "sum_tx"), rom(f, "sum_tx")),
+        ("Energia (J, estimada)", ic95([r["energy_j"] for r in a]),
+         ic95([r["energy_j"] for r in f])),
     ]
     fig, axs = plt.subplots(2, 2, figsize=(9.5, 7.5))
-    for ax, (title, av, fv) in zip(axs.flat, specs):
-        am, ae = ic95(av)
-        fm, fe = ic95(fv)
+    for ax, (title, (am, ae), (fm, fe)) in zip(axs.flat, specs):
         ax.bar(["AODV-EN", "Flooding"], [am, fm], yerr=[ae, fe], capsize=5,
                color=[AODV, FLOOD])
         ax.set_title(title)
@@ -72,12 +77,12 @@ def main():
     fig.savefig(OUT / "fig_hw_metrics.png", dpi=140)
     plt.close(fig)
 
+    av = pdr_pure(a)
+    fv = pdr_pure(f)
     fig, ax = plt.subplots(figsize=(8, 4.5))
-    ax.plot(range(1, len(a) + 1), [pdr_deliv(r) for r in a], marker="o",
-            color=AODV, lw=1.8, label="AODV-EN")
-    ax.plot(range(1, len(f) + 1), [pdr_deliv(r) for r in f], marker="s",
-            color=FLOOD, lw=1.8, label="Flooding")
-    ax.set_xlabel("Repeticao")
+    ax.plot(range(1, len(av) + 1), av, marker="o", color=AODV, lw=1.8, label="AODV-EN")
+    ax.plot(range(1, len(fv) + 1), fv, marker="s", color=FLOOD, lw=1.8, label="Flooding")
+    ax.set_xlabel("Repeticao (com telemetria de entrega)")
     ax.set_ylabel("PDR de entrega (%)")
     ax.set_ylim(0, 105)
     ax.set_title("Taxa de entrega por repeticao - C1 multi-hop (10 nos)")

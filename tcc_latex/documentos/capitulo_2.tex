@@ -216,7 +216,9 @@ temporais de aproximadamente 481 µs. O suporte a retransmissões
 automáticas permite até 31 tentativas por pacote em caso de falha na
 entrega, aumentando a confiabilidade da comunicação \cite{becker2025}.
 Cada mensagem ESP-NOW pode transportar até 250 bytes de \emph{payload}
-útil, com um \emph{overhead} de cabeçalho de aproximadamente 43 bytes. O
+útil na versão original (v1), com um \emph{overhead} de cabeçalho de
+aproximadamente 43 bytes; a versão~2 (v2), disponível a partir do ESP-IDF~v5.x e
+adotada neste trabalho, eleva esse limite para cerca de 1490 bytes por quadro. O
 protocolo suporta criptografia opcional utilizando o algoritmo AES-128
 no modo CCMP, permitindo comunicação segura quando necessário. A
 identificação dos dispositivos é realizada através de seus endereços MAC
@@ -250,7 +252,7 @@ Valor
 Padrão base & IEEE 802.11 b/g/n (\emph{action frames} vendor-specific) \\
 Frequência de operação & 2.4 GHz (canais 1-14) \\
 Taxa de transmissão & 1 Mbit/s \\
-Payload máximo & 250 bytes \\
+Payload máximo & 250 bytes (v1); $\approx$1490 bytes (v2) \\
 Overhead de cabeçalho & $\sim$43 bytes \\
 Mecanismo de acesso ao meio & CSMA p-persistent (slot $\sim$481
 µs) \\

@@ -24,19 +24,19 @@ algoritmo frente a um algoritmo de referência baseado em \emph{flooding}
 A avaliação experimental, conduzida no cenário C1 com dez nós em cadeia multi-hop (três
 a quatro saltos) e trinta repetições por algoritmo, evidenciou a superioridade decisiva
 do roteamento reativo no regime multi-hop: o AODV-EN entregou 94,1\% dos pacotes contra
-apenas 12,7\% do \emph{flooding}, que colapsa por não dispor de rota nem de
+apenas 13,9\% do \emph{flooding}, que colapsa por não dispor de rota nem de
 retransmissão fim-a-fim sob enlaces reais a 2~dBm. O AODV-EN apresentou, ainda, cerca de
-metade das transmissões por pacote entregue (54 contra 103) --- métrica justa de custo
+20\% menos transmissões por pacote entregue (54,2 contra 68,8) --- métrica justa de custo
 de canal, pois a carga de controle normalizada clássica não contabiliza as
 retransmissões por inundação do \emph{flooding}. Pela mesma lógica, embora o consumo
 energético agregado bruto do AODV-EN seja maior, a energia estimada por pacote
 efetivamente entregue é cerca de cinco vezes menor (0,69 contra 3,75~J/pacote), pois o
 \emph{flooding} dissipa energia disseminando pacotes que não sobrevivem ao multi-hop. A análise de escalabilidade por
 simulação confirmou que essa desvantagem do \emph{flooding} cresce com o tamanho e o
-diâmetro da rede, com cruzamento de eficiência em torno de 9 a 11 nós e impossibilidade
+diâmetro da rede, com cruzamento de eficiência em torno de onze nós e impossibilidade
 de alcance além do limite de TTL. O cenário de malha densa (C3), por sua vez, qualificou
 esse resultado: em uma topologia com caminhos redundantes (dez nós, cinco saltos), o
-\emph{flooding} não colapsa --- a redundância eleva sua entrega a 77,8\%, contra 12,7\% na
+\emph{flooding} não colapsa --- a redundância eleva sua entrega a 77,8\%, contra 13,9\% na
 cadeia fina ---, de modo que a vantagem de entrega do AODV-EN, embora ainda significativa
 (91,4\% contra 77,8\%), encolhe. O AODV-EN mantém, contudo, menor ocupação de canal e
 menor energia por pacote entregue. Evidencia-se, assim, que a vantagem do roteamento sobre
@@ -48,7 +48,7 @@ particularmente vantajoso à medida que a malha cresce e que os caminhos se torn
 
 O cenário de falha (C4) complementou essa análise ao exercitar a auto-recuperação do
 protocolo: sob a queda cíclica de um relé do caminho (15~s a cada 45~s), o AODV-EN
-manteve 62,8\% de entrega, re-descobrindo a rota pelo relé alternativo após cada queda,
+manteve 70,6\% de entrega, re-descobrindo a rota pelo relé alternativo após cada queda,
 conforme evidenciado pela curva de entregas acumuladas. O resultado explicita o
 \emph{trade-off} entre eficiência e resiliência: o roteamento reativo paga um custo de
 detecção e re-descoberta na falha, ao passo que a inundação, sem rotas a manter, é
@@ -67,11 +67,12 @@ cenários C1 (cadeia de dez nós), C3 (malha densa de dez nós) e C4 (falha indu
 nós), todos com trinta repetições, ficando o cenário C2 (árvore hierárquica) como trabalho
 futuro sobre a mesma infraestrutura ---, o caráter estimado do consumo energético e a coleta sequencial das
 campanhas do AODV-EN e do \emph{flooding}, com nova distribuição física dos nós entre
-elas. As adaptações de gerenciamento de
-\emph{peers} por política LRU e de métrica híbrida (saltos combinados com RSSI)
-foram projetadas e implementadas no firmware (Capítulo~\ref{cap:implementacao}); contudo, a campanha
-experimental utilizou exclusivamente o núcleo reativo com métrica de contagem de
-saltos, de modo que a avaliação comparativa dessas extensões constitui trabalho futuro.
+elas. A seleção de rota empregou a métrica híbrida (contagem de saltos combinada
+com penalização por RSSI), ativa no firmware da campanha; a política de gerenciamento
+de \emph{peers} por substituição LRU também está implementada
+(Capítulo~\ref{cap:implementacao}). A quantificação isolada do ganho dessas extensões
+frente à contagem de saltos pura, contudo, não foi objeto de experimento dedicado e
+constitui trabalho futuro.
 A segurança do protocolo, por fim, não foi exercitada: o AODV-EN opera, como o AODV
 original, sob a premissa de nós honestos e sem autenticação das mensagens de controle
 (Seção~\ref{seguranca-roteamento-ad-hoc}), de modo que o endurecimento contra os ataques

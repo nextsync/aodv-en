@@ -91,18 +91,22 @@ e o intervalo de confiança de 95\% (IC95) de cada métrica.
 \toprule
 Métrica & AODV-EN & Flooding (broadcast) \\
 \midrule
-PDR de entrega (\%) & 94,1 $\pm$ 1,4 & 12,7 $\pm$ 3,4 \\
+PDR de entrega (\%) & 94,1 $\pm$ 1,4 & 13,9 $\pm$ 3,4 \\
 PDR confirmação ida-volta (\%) & 91,7 $\pm$ 4,2 & 3,7 $\pm$ 0,8 \\
 Latência one-way (ms) & 45,9 $\pm$ 3,5 & 31,6 $\pm$ 1,7 \\
 NRL (controle de rota/entregue) & 18,0 $\pm$ 4,7 & 0,0 \\
-Transmissões por entrega & 54,2 $\pm$ 10,1 & 102,9 $\pm$ 36,2 \\
+Transmissões por entrega & 54,2 & 68,8 \\
 Energia agregada (J, estimada) & 39,4 $\pm$ 0,6 & 28,4 $\pm$ 0,03 \\
 \textbf{Energia por pacote entregue (J)} & \textbf{0,69} & \textbf{3,75} \\
 \bottomrule
 \end{tabular}
 
 \vspace{2pt}
-{\footnotesize Fonte: Elaborado pelos autores.}
+{\footnotesize Fonte: Elaborado pelos autores. O PDR de entrega é a média entre as
+repetições com telemetria de entrega do destino (AODV-EN $n=30$; \emph{flooding} $n=27$,
+três repetições sem reporte do destino foram excluídas desta métrica). \emph{Transmissões}
+e \emph{energia por pacote entregue} são razões agregadas (total da rede $\div$ total
+entregue), por isso reportadas como ponto único, sem IC.}
 \end{table}
 
 A Figura~\ref{fig:hw-metrics} apresenta graficamente as quatro
@@ -136,7 +140,7 @@ resume os resultados.
 \toprule
 Métrica & $t$ (Welch) & $p$ & $d$ de Cohen & Efeito \\
 \midrule
-PDR de entrega & 43,7 & $<0{,}001$ & 11,3 & altíssimo \\
+PDR de entrega & 42,3 & $<0{,}001$ & 11,7 & altíssimo \\
 Latência one-way & 7,2 & $<0{,}001$ & 1,85 & grande \\
 NRL (controle/entregue) & 7,5 & $<0{,}001$ & 1,95 & grande \\
 Transmissões por entrega & $-2{,}5$ & $0{,}011$ & $-0{,}71$ & médio \\
@@ -145,12 +149,15 @@ Energia (estimada) & 33,5 & $<0{,}001$ & 8,65 & altíssimo \\
 \end{tabular}
 
 \vspace{2pt}
-{\footnotesize Fonte: Elaborado pelos autores. Teste de Mann--Whitney concordante ($p<0{,}05$) em todas as métricas.}
+{\footnotesize Fonte: Elaborado pelos autores. Teste de Mann--Whitney concordante ($p<0{,}05$)
+em todas as métricas. A linha \emph{Transmissões por entrega} testa a razão por repetição
+(transmissões/entregues), cuja média entre repetições difere da razão agregada usada como
+valor de referência na Tabela~\ref{tab:comparacao}.}
 \end{table}
 
 Todas as diferenças são estatisticamente significativas ($p < 0{,}05$),
 com os testes paramétrico e não paramétrico em concordância. Os tamanhos
-de efeito da entrega ($d = 11{,}3$) e do consumo estimado ($d = 8{,}65$)
+de efeito da entrega ($d = 11{,}7$) e do consumo estimado ($d = 8{,}65$)
 são muito superiores ao limiar convencional de efeito grande ($d > 0{,}8$),
 indicando que a vantagem do AODV-EN na entrega multi-hop é estrutural, e
 não marginal. A única diferença de efeito apenas médio é a de transmissões
@@ -164,17 +171,17 @@ A dispersão entre as repetições revela a \emph{estabilidade} de cada
 algoritmo, informação que a média sozinha oculta. O AODV-EN entregou entre
 85,2\% e 100\% dos pacotes (mediana 94,2\%; coeficiente de variação
 $\mathrm{CV} = 4{,}2\%$), com apenas 4 das 30 repetições abaixo de 90\%. O
-\emph{flooding}, em contraste, variou de 0\% a 36,2\% (mediana 10,7\%;
-$\mathrm{CV} = 74{,}2\%$), com 20 das 30 repetições abaixo de 15\% e uma
-repetição sem nenhuma entrega. A diferença de variabilidade --- CV de 4\%
-contra 74\% --- mostra que o AODV-EN não apenas entrega mais, mas o faz de
+\emph{flooding}, em contraste, variou de 1,7\% a 36,2\% (mediana 11,5\%;
+$\mathrm{CV} = 65{,}0\%$), com 17 das 27 repetições abaixo de 15\%. A
+diferença de variabilidade --- CV de 4\%
+contra 65\% --- mostra que o AODV-EN não apenas entrega mais, mas o faz de
 forma previsível, ao passo que o \emph{flooding} colapsa de modo errático sob
 as colisões da inundação a cada repetição.
 
 \section{Discussão por Métrica}\label{discussuxe3o-por-muxe9trica}
 
 \textbf{Confiabilidade (PDR).} No regime multi-hop (três a quatro
-saltos), o AODV-EN entregou 94,1\% dos pacotes contra apenas 12,7\% do
+saltos), o AODV-EN entregou 94,1\% dos pacotes contra apenas 13,9\% do
 \emph{flooding} --- diferença de grande magnitude e estatisticamente
 inequívoca (intervalos de confiança disjuntos). O \emph{flooding} não
 sobrevive ao multi-hop: sem rota nem retransmissão, cada pacote precisa
@@ -201,7 +208,8 @@ multi-hop, 10 nós.}\label{fig:pdr-rep}
 
 \textbf{Latência fim-a-fim.} A latência one-way do \emph{flooding}
 (31,6 ms) foi menor que a do AODV-EN (45,9 ms), mas o número não
-representa vantagem: trata-se de viés de sobrevivência. No \emph{flooding}
+representa vantagem: trata-se de \emph{viés de sobrevivência}
+(\emph{survivorship bias}). No \emph{flooding}
 apenas a pequena fração de pacotes que percorre caminhos curtos e pouco
 congestionados sobrevive, e são justamente esses os que entram na média;
 o AODV-EN entrega também os pacotes de caminho mais longo, que elevam a
@@ -215,9 +223,11 @@ para o \emph{flooding}, que não possui plano de roteamento. Esse contraste,
 isoladamente, não deve ser interpretado como ausência de custo: o
 \emph{flooding} não paga \emph{overhead} de controle de rota, mas seu custo
 desloca-se para as retransmissões por inundação, que a NRL não contabiliza. A métrica justa é o total de transmissões por pacote
-entregue: 54,2 para o AODV-EN contra 102,9 para o \emph{flooding} ---
-isto é, mesmo somando todo o controle de rota, o AODV-EN custa cerca de
-metade das transmissões por pacote efetivamente entregue. Esse valor do
+entregue, dado pela razão entre as transmissões agregadas na rede e os
+pacotes entregues: 54,2 para o AODV-EN contra 68,8 para o \emph{flooding} ---
+isto é, mesmo somando todo o controle de rota, o AODV-EN custa cerca de 20\%
+menos transmissões por pacote efetivamente entregue (o \emph{flooding}
+transmite cerca de 1,3 vez mais por entrega útil). Esse valor do
 \emph{flooding} é, ainda, subestimado: apenas sete dos dez nós
 conseguiram reportar telemetria de volta ao coletor (a própria difusão de
 relatórios é perdida), de modo que parte das retransmissões não foi
@@ -264,25 +274,26 @@ PDR de entrega (\%) & 91,4 $\pm$ 2,2 & 77,8 $\pm$ 3,7 \\
 PDR confirmação ida-volta (\%) & 87,0 $\pm$ 4,7 & 45,0 $\pm$ 3,4 \\
 Latência one-way (ms) & 34,9 $\pm$ 2,7 & 20,5 $\pm$ 0,6 \\
 NRL (controle de rota/entregue) & 17,7 $\pm$ 1,3 & 0,0 \\
-Transmissões por entrega & 42,6 $\pm$ 2,7 & 33,3 $\pm$ 1,7 \\
-Recepções por entrega (canal) & 55,7 $\pm$ 2,5 & 86,4 $\pm$ 5,4 \\
-Energia por pacote entregue (J) & 0,70 $\pm$ 0,02 & 0,81 \\
+Transmissões por entrega & 42,3 & 32,7 \\
+Recepções por entrega (canal) & 55,5 & 84,6 \\
+Energia por pacote entregue (J) & 0,70 & 0,81 \\
 \bottomrule
 \end{tabular}
 
 \vspace{2pt}
-{\footnotesize Fonte: Elaborado pelos autores. \emph{Recepções por entrega} = recepções
-agregadas na rede por pacote efetivamente entregue, indicador de ocupação de canal;
-\emph{energia por pacote entregue} = razão entre energia total da rede e total de pacotes
-entregues. Todas as diferenças são significativas (teste $t$ de Welch, $p<0{,}001$).}
+{\footnotesize Fonte: Elaborado pelos autores. \emph{Transmissões}, \emph{recepções} e
+\emph{energia por pacote entregue} são razões agregadas (total da rede $\div$ total
+entregue), por isso reportadas como ponto único; \emph{recepções por entrega} indica a
+ocupação de canal. As diferenças de PDR, PDR de confirmação, latência e NRL são
+significativas (teste $t$ de Welch, $p<0{,}001$).}
 \end{table}
 
 O resultado mais relevante é o contraste com o C1. Na malha densa, o
 \emph{flooding} \emph{não colapsa} como na cadeia fina: a redundância de
-caminhos eleva sua entrega a 77,8\%, contra apenas 12,7\% no C1. O AODV-EN
+caminhos eleva sua entrega a 77,8\%, contra apenas 13,9\% no C1. O AODV-EN
 ainda entrega significativamente mais (91,4\% contra 77,8\%; $t = 6{,}19$,
 $p < 0{,}001$, $d = 1{,}6$), mas a sua vantagem de confiabilidade
-\emph{encolhe} --- de cerca de 81 pontos percentuais no C1 para 13 pontos no
+\emph{encolhe} --- de cerca de 80 pontos percentuais no C1 para 13 pontos no
 C3. A Figura~\ref{fig:topology-dependence} sintetiza esse achado central: a
 vantagem do roteamento sobre a inundação é \emph{dependente da topologia},
 máxima em redes esparsas ou em cadeia e modesta em malhas densas, nas quais a
@@ -298,12 +309,12 @@ estreitando a vantagem de entrega do AODV-EN.}\label{fig:topology-dependence}
 
 A vantagem do AODV-EN, contudo, persiste em duas dimensões que a entrega
 isolada não revela (Figura~\ref{fig:c3-compare}). Primeiro, a \emph{ocupação
-de canal}: cada pacote entregue pelo \emph{flooding} custa 86,4 recepções
-agregadas na rede, contra 55,7 do AODV-EN --- consequência da tempestade de
+de canal}: cada pacote entregue pelo \emph{flooding} custa 84,6 recepções
+agregadas na rede, contra 55,5 do AODV-EN --- consequência da tempestade de
 \emph{broadcast}, em que cada disseminação é ouvida por todos os vizinhos.
 Segundo, a \emph{energia por pacote entregue}, menor no AODV-EN (0,70 contra
 0,81~J). A menor latência do \emph{flooding} (20,5 contra 34,9~ms) reflete,
-novamente, viés de sobrevivência e o uso do caminho de difusão mais curto.
+novamente, \emph{viés de sobrevivência} e o uso do caminho de difusão mais curto.
 Em síntese, mesmo onde o \emph{flooding} entrega bem, o AODV-EN o supera em
 entrega e em custo de canal por pacote útil.
 
@@ -316,8 +327,8 @@ recepções por pacote entregue (ocupação de canal), com barra de IC95.}\label
 
 Quanto à estabilidade entre repetições, o AODV-EN na malha foi consistente
 (entrega de 76,7\% a 100\%; mediana 93,3\%; coeficiente de variação de 6,6\%),
-com 26 das 30 repetições acima de 85\%. O \emph{flooding} apresentou maior
-dispersão (48,3\% a 95,0\%; mediana 78,7\%; CV de 13,0\%), refletindo a
+com 26 das 30 repetições iguais ou acima de 85\%. O \emph{flooding} apresentou maior
+dispersão (48,3\% a 95,0\%; mediana 78,5\%; CV de 13,0\%), refletindo a
 sensibilidade da inundação às colisões em cada repetição. A
 Figura~\ref{fig:c3-pdr-rep} mostra a entrega por repetição para os dois
 algoritmos.
@@ -340,9 +351,10 @@ verificação por RSSI. A origem (também coletor) transmite ao destino por meio
 de um relé \emph{on-path}, que dispõe de um relé alternativo.
 
 A falha é
-induzida por \emph{firmware}: o relé do caminho principal silencia o rádio
-por 15~s a cada 45~s (33\% de indisponibilidade), simulando a queda e o
-retorno cíclicos do nó; os vizinhos detectam a quebra pelas mensagens HELLO,
+induzida por \emph{firmware}: o relé do caminho principal suprime todas as suas
+transmissões (HELLO, RREP, RERR e encaminhamento de dados) por 15~s a cada 45~s
+(33\% de indisponibilidade), simulando a queda e o
+retorno cíclicos do nó; os vizinhos detectam a quebra pela ausência das mensagens HELLO,
 emitem RERR e o AODV-EN re-descobre a rota pelo relé alternativo.
 
 A Tabela~\ref{tab:c4} consolida as métricas do cenário C4 ao longo de 30
@@ -355,23 +367,30 @@ repetições (média $\pm$ IC95).
 \toprule
 Métrica & AODV-EN sob falha \\
 \midrule
-PDR de entrega (\%) & 62,8 $\pm$ 11,5 \\
+PDR de entrega (\%) & 70,6 $\pm$ 10,3 \\
 PDR confirmação ida-volta (\%) & 47,6 $\pm$ 11,5 \\
 Latência one-way (ms) & 60,7 $\pm$ 14,6 \\
 NRL (controle de rota/entregue) & 5,2 $\pm$ 1,7 \\
-Energia (J, estimada) & 9,2 $\pm$ 1,7 \\
+Transmissões por entrega & 8,8 \\
+Energia por pacote entregue (J) & 0,25 \\
+Energia agregada (J, estimada) & 9,2 $\pm$ 1,7 \\
 \bottomrule
 \end{tabular}
 
 \vspace{2pt}
-{\footnotesize Fonte: Elaborado pelos autores. NRL e energia não são diretamente comparáveis às do C1 por diferirem o número de nós (6 vs.~10) e a topologia.}
+{\footnotesize Fonte: Elaborado pelos autores. PDR de entrega sobre as 26 repetições com
+telemetria de entrega do destino (quatro sem reporte foram excluídas dessa métrica).
+\emph{Transmissões} e \emph{energia por pacote entregue} são razões agregadas. NRL e
+energia não são diretamente comparáveis às do C1 por diferirem o número de nós (6 vs.~10)
+e a topologia.}
 \end{table}
 
 \textbf{Impacto da falha.} Em relação ao mesmo protocolo \emph{sem} falha
-(cenário C1, 94,1\%), a taxa de entrega caiu para 62,8\% --- uma redução de
-cerca de 31 pontos percentuais, estatisticamente significativa (teste $t$ de
-Welch: $t = 5{,}3$, $p < 0{,}001$; $d$ de Cohen $= 1{,}37$, efeito grande). A
-latência subiu de 45,9~ms para 60,7~ms ($t = -1{,}94$, $p = 0{,}05$),
+(cenário C1, 94,1\%), a taxa de entrega caiu para 70,6\% --- uma redução de
+cerca de 24 pontos percentuais, estatisticamente significativa (teste $t$ de
+Welch: $t = 4{,}5$, $p < 0{,}001$; $d$ de Cohen $= 1{,}28$, efeito grande). A
+latência subiu de 45,9~ms para 60,7~ms ($t = -1{,}94$, $p \approx 0{,}06$,
+diferença apenas marginalmente não significativa),
 refletindo o tempo de detecção da quebra (\emph{timeout} de HELLO) somado à
 re-descoberta de rota. A Figura~\ref{fig:c4-metrics} contrasta as duas
 condições.
@@ -384,9 +403,9 @@ e latência do AODV-EN no cenário C1 (sem falha) contra o C4 (sob falha), com
 barra de IC95.}\label{fig:c4-metrics}
 \end{figure}
 
-\textbf{Distribuição e variabilidade.} A entrega no C4 variou de 0\% a 100\%
-entre as repetições (mediana 73,3\%; coeficiente de variação de 51\%): 12 das
-30 repetições preservaram entrega $\geq 80\%$, enquanto 8 ficaram abaixo de
+\textbf{Distribuição e variabilidade.} A entrega no C4 variou de 9,8\% a 100\%
+entre as repetições (mediana 77,0\%; coeficiente de variação de 38\%): 12 das
+26 repetições preservaram entrega $\geq 80\%$, enquanto 4 ficaram abaixo de
 40\%. Essa dispersão (Figura~\ref{fig:c4-pdr-rep}) decorre da natureza
 estocástica do instante da falha em relação ao tráfego --- repetições em que a
 janela de queda coincide com poucos envios preservam entrega alta, enquanto
@@ -433,14 +452,15 @@ Simulação}\label{anuxe1lise-de-escalabilidade-por-simulauxe7uxe3o}
 Para estender a avaliação a topologias além da cadeia de dez nós
 medida em hardware, conduziu-se uma varredura por simulação em grades de
 4 a 25 nós, medindo o número de transmissões por pacote entregue. A
-Figura~\ref{fig:sim-crossover} apresenta o resultado: ambos os algoritmos
-entregam a totalidade dos pacotes dentro do alcance do TTL, mas a razão
-transmissões-por-entrega cruza-se em torno de 9 a 11 nós, acima do qual o
-roteamento do AODV-EN passa a custar menos transmissões por entrega que o
-\emph{flooding}. Além disso, com o TTL limitado a cinco saltos, o
-\emph{flooding} deixa de alcançar destinos em grades de diâmetro superior
-a cinco --- limitação estrutural do alcance fixo ---, enquanto o AODV-EN,
-por manter rotas, continua entregando. A simulação assume enlaces ideais
+Figura~\ref{fig:sim-crossover} apresenta o resultado: sob enlaces ideais e um
+TTL suficiente para o diâmetro da grade, ambos os algoritmos entregam a
+totalidade dos pacotes, mas a razão transmissões-por-entrega cruza-se em torno
+de onze nós, acima do qual o roteamento do AODV-EN passa a custar menos
+transmissões por entrega que o \emph{flooding}. Além disso, por depender de um
+TTL fixo, o \emph{flooding} tem o alcance estruturalmente limitado ao número de
+saltos configurado --- destinos além desse teto tornam-se inalcançáveis ---,
+enquanto o AODV-EN, por manter rotas, não está sujeito a esse limite. A
+simulação assume enlaces ideais
 dentro do alcance; o experimento em hardware (Seção~\ref{resultados-de-hardware}),
 sob enlaces reais a 2~dBm e perda por colisão, mostra que a vantagem do
 roteamento se manifesta ainda mais cedo, já na cadeia de dez nós.
@@ -456,8 +476,8 @@ número de nós (simulação).}
 Esse resultado confirma a hipótese central do trabalho: o roteamento
 reativo paga um \emph{overhead} de controle aproximadamente constante
 para evitar o custo de disseminação que cresce com a rede. Já na cadeia
-multi-hop de dez nós em hardware, o AODV-EN entrega 7,4 vezes mais
-pacotes com cerca de metade das transmissões por entrega; a sua vantagem
+multi-hop de dez nós em hardware, o AODV-EN entrega 6,8 vezes mais
+pacotes com cerca de 20\% menos transmissões por entrega; a sua vantagem
 estrutural amplia-se à medida que a rede cresce em tamanho e diâmetro.
 
 \section{Comparação com Trabalhos Correlatos}\label{comparacao-literatura}
@@ -534,34 +554,35 @@ Limitações}\label{escopo-implementado-e-limitauxe7uxf5es}
 A avaliação reportada refere-se ao núcleo reativo do AODV-EN ---
 descoberta de rotas sob demanda, tabelas de rota com números de
 sequência, precursores, fila de dados pendentes, confirmação fim-a-fim e
-invalidação por falha de enlace --- utilizando disseminação de RREQ por
-\emph{broadcast} e métrica de contagem de saltos. As adaptações de
-gerenciamento de \emph{peers} por política LRU e de métrica híbrida
-(saltos + RSSI), embora projetadas e implementadas no \emph{firmware}
-(Capítulo~\ref{cap:implementacao}), não foram objeto de um experimento
-dedicado de isolamento: o cenário C1 multi-hop já aproxima o coletor do
+invalidação por falha de enlace ---, com disseminação de RREQ por
+\emph{broadcast} e seleção de rota pela métrica híbrida (contagem de saltos
+combinada com penalização por RSSI; pesos padrão de salto~8 e RSSI~1),
+efetivamente ativa no \emph{firmware} flashado na campanha. A política de
+gerenciamento de \emph{peers} por substituição LRU também está implementada
+(Capítulo~\ref{cap:implementacao}). Nenhuma das duas, contudo, foi objeto de
+um experimento de isolamento: o cenário C1 multi-hop já aproxima o coletor do
 limite do \emph{cache} de \emph{peers} e exercita a seleção de rota sobre
-múltiplos saltos, mas a aferição específica do efeito da substituição por
-LRU e do ganho da métrica híbrida sobre a contagem de saltos pura permanece
+múltiplos saltos, mas a quantificação separada do ganho da métrica híbrida
+sobre a contagem de saltos pura e do efeito da substituição por LRU permanece
 como objeto de trabalhos futuros, em topologias mais densas e com variação
 deliberada de RSSI por enlace.
 
-As principais limitações do estudo são: (i) a cobertura de cenários ---
-a campanha em hardware cobre os cenários C1 (cadeia de dez nós), C3 (malha
+As principais limitações do estudo são quatro. Primeiro, a cobertura de
+cenários: a campanha em hardware abrange C1 (cadeia de dez nós), C3 (malha
 densa de dez nós, cinco saltos) e C4 (falha induzida, seis nós), todos com
-trinta repetições por algoritmo, e a avaliação quantitativa do \emph{flooding}
-sob falha (C4) e o cenário C2 (árvore hierárquica), embora viabilizados pela
-mesma infraestrutura de coleta, ficam como trabalho
-futuro; (ii) o caráter estimado do
-consumo energético, calculado a partir do perfil de \emph{datasheet} do
-ESP32 e não medido com instrumentação física --- a medição direta de
-corrente (por exemplo, com um sensor INA219 em série com a alimentação) é
-registrada como trabalho futuro; e (iii) o fato de as campanhas do
-AODV-EN e do \emph{flooding} terem sido coletadas em sequência, com
-reprogramação e nova distribuição física dos nós entre elas, o que
-introduz pequena variação de topologia e de condições de canal; soma-se a
-isso que, na campanha de \emph{flooding}, parte da telemetria de rede não
-retornou ao coletor (sete dos dez nós), subestimando as métricas de custo
-agregado desse algoritmo. A medição física de energia, a execução do
-cenário C2 (árvore) e a avaliação do \emph{flooding} sob falha constituem
-desdobramentos diretos para trabalhos futuros.
+trinta repetições por algoritmo, ficando a avaliação quantitativa do
+\emph{flooding} sob falha (C4) e o cenário C2 (árvore hierárquica) como
+trabalho futuro sobre a mesma infraestrutura. Segundo, o caráter estimado do
+consumo energético, calculado a partir do perfil de \emph{datasheet} do ESP32
+e não medido com instrumentação física --- a medição direta de corrente (por
+exemplo, com um sensor INA219 em série com a alimentação) fica registrada como
+trabalho futuro. Terceiro, as campanhas do AODV-EN e do \emph{flooding} foram
+coletadas em sequência, com reprogramação e nova distribuição física dos nós
+entre elas, o que introduz pequena variação de topologia e de condições de
+canal. Por fim, parte da telemetria de rede não retornou ao coletor: na
+campanha de \emph{flooding}, apenas sete dos dez nós reportaram, subestimando
+as métricas de custo agregado desse algoritmo, e algumas repetições (três do
+\emph{flooding} em C1, quatro em C4) não tiveram telemetria de entrega do
+destino, sendo excluídas do cálculo do PDR de entrega. A medição física de
+energia, a execução do cenário C2 (árvore) e a avaliação do \emph{flooding}
+sob falha constituem desdobramentos diretos para trabalhos futuros.

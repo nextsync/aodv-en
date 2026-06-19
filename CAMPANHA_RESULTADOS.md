@@ -5,6 +5,11 @@ Dados reais coletados via telemetria in-band (STATSREP/NEIGHREP), metricas por
 Energia = estimativa de datasheet (rotulada, nao medida). Per-rep logs e prints
 ficam em `results/` (gitignored); aqui so o agregado (dado da tese).
 
+CONVENCOES (pos-auditoria w6hwqsv0c): PDR de entrega = entrega PURA (pdr_delivery_pct nas
+reps com telemetria do destino; flood-C1 n=27, C4 n=26 -- reps sem reporte excluidas, NAO
+substituidas por ACK). Metricas "por entrega" (tx, rx, energia) = RAZAO DAS MEDIAS
+(total/total), nao media das razoes por rep (que inflava reps de baixa entrega).
+
 ## C1 Linear (cadeia multi-hop) — 10 nos
 
 - Topologia: 10 nos (EB80 origem+coletor + 9 reporters). Destino D61C alcancado
@@ -34,7 +39,7 @@ bidirecional; flood penalizado pois ACK volta por flood lossy).
 
 | Metrica | Media | IC95 | desvio |
 |---|---|---|---|
-| PDR entrega (%) | 12.68 | 3.37 | 9.41 |
+| PDR entrega (%) | 13.9 (puro n=27) | 3.4 | 9.0 |
 | PDR ACK ida-e-volta (%) | 3.75 | 0.84 | 2.35 |
 | Latencia one-way (ms) | 31.65 | 1.68 | 4.63 |
 | NRL (controle/entregue) | 0.0 | 0.0 | 0.0 |
@@ -48,9 +53,9 @@ bidirecional; flood penalizado pois ACK volta por flood lossy).
 
 | Metrica | aodv-en | flooding | Leitura |
 |---|---|---|---|
-| **PDR entrega (%)** | **94.13 ±1.41** | **12.68 ±3.37** | AODV entrega ~7.4x mais |
+| **PDR entrega (%)** | **94.13 ±1.41** | **13.9 ±3.4 (puro, n=27)** | AODV entrega ~6.8x mais |
 | PDR ACK ida-e-volta (%) | 91.74 ±4.16 | 3.75 ±0.84 | AODV da confirmacao bidirecional confiavel |
-| **Overhead (tx/entregue)** | **54.2 ±10.1** | **102.9 ±36.2** | flood ~2x mais caro por pacote (subestimado: 7 nos) |
+| **Overhead (tx/entregue)** | **54.2** | **68.8** | razao das medias; flood ~1.3x mais caro por pacote (subestimado: 7 nos) |
 | Latencia one-way (ms) | 45.87 ±3.50 | 31.65 ±1.68 | flood menor = VIES DE SOBREVIVENCIA (so chegam caminhos curtos) |
 | NRL (controle/entregue) | 18.05 ±4.69 | 0.0 | flood sem controle de rota; seu custo esta nos rebroadcasts (ver tx/entregue) |
 | Energia estimada (J) | 39.35 ±0.64 | 28.41 ±0.03 | estimada; nos desiguais (9 vs 7), interpretar com cautela |
@@ -79,15 +84,18 @@ controle de rota) nao captura o overhead do flood -> usar tx/entregue p/ compara
 
 | Metrica | Media | IC95 | desvio |
 |---|---|---|---|
-| PDR de entrega (%) | 62,8 | 11,5 | 32,1 |
+| PDR de entrega (%) | 70,6 (puro n=26) | 10,3 | 26,1 |
 | PDR ACK ida-e-volta (%) | 47,6 | 11,5 | 32,1 |
 | Latencia one-way (ms) | 60,7 | 14,6 | 40,0 |
 | NRL | 5,16 | 1,7 | 4,77 |
-| Energia (J, est.) | 9,24 | 1,7 | 4,68 |
+| tx/entrega (razao das medias) | 8,8 | -- | -- |
+| Energia/entrega (J/pkt, razao das medias) | 0,25 | -- | -- |
+| Energia agregada (J, est.) | 9,24 | 1,7 | 4,68 |
 
 - Contraste com C1 sem falha (94,1%): a falha periodica do rele on-path derruba a
-  entrega para ~63% e eleva a latencia (re-descoberta de rota). A alta variancia
-  (CV ~51%) reflete a natureza estocastica do instante da falha frente ao trafego.
+  entrega para ~71% (reducao ~24 pts; Welch t=4,5 d=1,28) e eleva a latencia
+  (re-descoberta de rota). A variancia (CV ~38%, mediana 77,0%, 12/26 >=80%, 4/26 <40%)
+  reflete a natureza estocastica do instante da falha frente ao trafego.
 - Figura fig_c4_selfheal: entregas acumuladas de uma repeticao -- os patamares
   coincidem com as quedas do rele e a retomada evidencia a recuperacao (self-healing).
 - Resultado honesto do tradeoff eficiencia x resiliencia: o roteamento reativo paga
@@ -123,7 +131,7 @@ controle de rota) nao captura o overhead do flood -> usar tx/entregue p/ compara
 |---|---|---|
 | PDR de entrega (%) | 77,8 | 3,7 |
 | Latencia one-way (ms) | 20,5 | 0,6 |
-| RX por entrega (ocupacao) | 86,4 | 5,4 |
+| RX por entrega (ocupacao, razao das medias) | 84,6 | -- |
 | Energia/entrega (J/pkt) | 0,81 | -- |
 
 ### C3 -- comparacao aodv x flooding (malha densa, 5 saltos)
@@ -132,8 +140,8 @@ controle de rota) nao captura o overhead do flood -> usar tx/entregue p/ compara
 |---|---|---|---|
 | PDR entrega (%) | 91,4 +/-2,2 | 77,8 +/-3,7 | t=6,19 p<0,001 d=1,6 |
 | Latencia ow (ms) | 34,9 +/-2,7 | 20,5 +/-0,6 | flood menor (vies+caminho curto) |
-| tx/entrega | 42,6 +/-2,7 | 33,3 +/-1,7 | flood menor (sem HELLO) |
-| RX/entrega (canal) | 55,7 +/-2,5 | 86,4 +/-5,4 | flood 1,55x maior (storm) |
+| tx/entrega (razao das medias) | 42,3 | 32,7 | flood menor (sem HELLO) |
+| RX/entrega (canal, razao das medias) | 55,5 | 84,6 | flood 1,52x maior (storm) |
 | Energia/entrega (J/pkt) | 0,70 | 0,81 | razao das medias; aodv ~1,2x melhor |
 
 **Conclusao C3 (dependencia de topologia):** na malha densa, o flooding RECUPERA via
