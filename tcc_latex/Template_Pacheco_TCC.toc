@@ -17,15 +17,15 @@
 \contentsline {subsection}{\numberline {2.3.4}Limitações para comunicação multi-hop}{12}{subsection.2.3.4}%
 \contentsline {section}{\numberline {2.4}Redes Mesh e Protocolos de Roteamento Ad-Hoc}{13}{section.2.4}%
 \contentsline {subsection}{\numberline {2.4.1}Conceitos fundamentais de redes mesh}{13}{subsection.2.4.1}%
-\contentsline {subsection}{\numberline {2.4.2}Classificação dos protocolos de roteamento}{13}{subsection.2.4.2}%
-\contentsline {subsection}{\numberline {2.4.3}Soluções existentes de mesh para ESP32}{14}{subsection.2.4.3}%
+\contentsline {subsection}{\numberline {2.4.2}Classificação dos protocolos de roteamento}{14}{subsection.2.4.2}%
+\contentsline {subsection}{\numberline {2.4.3}Soluções existentes de mesh para ESP32}{15}{subsection.2.4.3}%
 \contentsline {section}{\numberline {2.5}O Protocolo AODV}{16}{section.2.5}%
 \contentsline {subsection}{\numberline {2.5.1}Mensagens de controle}{16}{subsection.2.5.1}%
-\contentsline {subsection}{\numberline {2.5.2}Processo de descoberta de rotas}{16}{subsection.2.5.2}%
+\contentsline {subsection}{\numberline {2.5.2}Processo de descoberta de rotas}{17}{subsection.2.5.2}%
 \contentsline {subsection}{\numberline {2.5.3}Números de sequência e prevenção de loops}{17}{subsection.2.5.3}%
-\contentsline {subsection}{\numberline {2.5.4}Manutenção de rotas e tratamento de falhas}{17}{subsection.2.5.4}%
+\contentsline {subsection}{\numberline {2.5.4}Manutenção de rotas e tratamento de falhas}{18}{subsection.2.5.4}%
 \contentsline {subsection}{\numberline {2.5.5}Parâmetros de configuração}{18}{subsection.2.5.5}%
-\contentsline {section}{\numberline {2.6}Segurança em Roteamento Ad-Hoc}{18}{section.2.6}%
+\contentsline {section}{\numberline {2.6}Segurança em Roteamento Ad-Hoc}{19}{section.2.6}%
 \contentsline {chapter}{\numberline {3}METODOLOGIA}{20}{chapter.3}%
 \contentsline {section}{\numberline {3.1}Caracterização da Pesquisa}{20}{section.3.1}%
 \contentsline {section}{\numberline {3.2}Design Science Research}{21}{section.3.2}%
@@ -90,6 +90,6 @@
 \contentsline {section}{\numberline {5.6}Análise de Escalabilidade por Simulação}{70}{section.5.6}%
 \contentsline {section}{\numberline {5.7}Comparação com Trabalhos Correlatos}{71}{section.5.7}%
 \contentsline {section}{\numberline {5.8}Conformidade com a RFC 3561}{72}{section.5.8}%
-\contentsline {section}{\numberline {5.9}Escopo Implementado e Limitações}{73}{section.5.9}%
+\contentsline {section}{\numberline {5.9}Escopo Implementado e Limitações}{72}{section.5.9}%
 \contentsline {chapter}{\numberline {6}CONCLUSÃO}{74}{chapter.6}%
 \contentsline {chapter}{REFERÊNCIAS}{77}{chapter.6}%

@@ -31,26 +31,29 @@ def ic(v):
 
 
 def pdr(r):
-    return r.get("pdr_pct")
+    if r.get("pdr_source") == "delivery_dest":
+        return r.get("pdr_delivery_pct")
+    return None
 
 
 def lat(r):
     return r["latency_oneway_ms"]["mean"]
 
 
-def rxd(r):
-    return r["sum_rx"] / r["sum_delivered"] if r.get("sum_delivered", 0) > 0 else None
+def rom(reps, num):
+    tot = sum(r.get(num, 0) for r in reps)
+    deliv = sum((r.get("target_delivered") or r.get("sum_delivered", 0)) for r in reps)
+    return (tot / deliv if deliv else 0.0), 0.0
 
 
 a = per_rep("C3", "aodv-en")
 f = per_rep("C3", "flooding")
 
-specs = [("PDR de entrega (%)", pdr), ("Latencia one-way (ms)", lat),
-         ("RX por pacote entregue", rxd)]
+specs = [("PDR de entrega (%)", ic([pdr(r) for r in a]), ic([pdr(r) for r in f])),
+         ("Latencia one-way (ms)", ic([lat(r) for r in a]), ic([lat(r) for r in f])),
+         ("RX por pacote entregue", rom(a, "sum_rx"), rom(f, "sum_rx"))]
 fig, axs = plt.subplots(1, 3, figsize=(11, 4))
-for ax, (title, fn) in zip(axs, specs):
-    ma, ea = ic([fn(r) for r in a])
-    mf, ef = ic([fn(r) for r in f])
+for ax, (title, (ma, ea), (mf, ef)) in zip(axs, specs):
     ax.bar(["AODV-EN", "Flooding"], [ma, mf], yerr=[ea, ef], capsize=5, color=[AODV, FLOOD])
     ax.set_title(title)
     ax.grid(True, axis="y", alpha=0.3)

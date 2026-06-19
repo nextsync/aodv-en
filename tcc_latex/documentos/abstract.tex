@@ -16,14 +16,17 @@ a reusable component and compared against a flooding-based reference algorithm, 
 Packet Delivery Ratio (PDR), end-to-end latency, Normalized Routing Load (NRL), and
 estimated energy consumption. In the hardware scenario C1 (ten ESP32 nodes in a
 multi-hop chain of three to four hops, thirty repetitions per algorithm), AODV-EN
-delivered 94.1\% of packets versus only 12.7\% for flooding --- a striking gap in the
+delivered 94.1\% of packets versus only 13.9\% for flooding --- a striking gap in the
 multi-hop regime, where flooding collapses for lack of a route and retransmission ---
-while costing about half as many transmissions per delivered packet (54 versus 103).
-Simulation analysis confirmed that the channel-occupancy disadvantage of flooding grows
-with network scale, with an efficiency crossover around 9 to 11 nodes. A second hardware
-scenario (C4, six nodes), with cyclic failure of an on-path relay, demonstrated the
-protocol's self-healing: AODV-EN sustained 62.8\% delivery by rediscovering the route
-through an alternative relay after each outage. Regarding estimated energy efficiency,
+while costing about 20\% fewer transmissions per delivered packet (54.2 versus 68.8). A
+second hardware scenario (C3, a dense ten-node mesh, five hops) showed that this advantage
+is topology-dependent: in the mesh, path redundancy raises flooding's delivery to 77.8\%,
+narrowing --- without eliminating --- AODV-EN's advantage (91.4\%). Simulation analysis
+confirmed that the channel-occupancy disadvantage of flooding grows with network scale,
+with an efficiency crossover around eleven nodes. A third hardware scenario (C4, six
+nodes), with cyclic failure of an on-path relay, demonstrated the protocol's self-healing:
+AODV-EN sustained 70.6\% delivery by rediscovering the route through an alternative relay
+after each outage. Regarding estimated energy efficiency,
 although AODV-EN's raw aggregate consumption is higher, its energy per successfully
 delivered packet is about five times lower than flooding's (0.69 versus 3.75~J/packet),
 since routing delivers far more. It is concluded that AODV-EN's reactive routing becomes

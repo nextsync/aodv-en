@@ -17,14 +17,17 @@ reutilizável e comparado a um algoritmo de referência baseado em \emph{floodin
 medindo-se \emph{Packet Delivery Ratio} (PDR), latência fim-a-fim, \emph{Normalized
 Routing Load} (NRL) e consumo energético estimado. No cenário C1 avaliado em hardware
 (dez ESP32 em cadeia multi-hop de três a quatro saltos, trinta repetições por
-algoritmo), o AODV-EN entregou 94,1\% dos pacotes contra apenas 12,7\% do
+algoritmo), o AODV-EN entregou 94,1\% dos pacotes contra apenas 13,9\% do
 \emph{flooding} --- diferença expressiva no regime multi-hop, em que o \emph{flooding}
-colapsa por não dispor de rota nem retransmissão ---, com cerca de metade das
-transmissões por pacote entregue (54 contra 103). A análise por simulação confirmou que
+colapsa por não dispor de rota nem retransmissão ---, com cerca de 20\% menos
+transmissões por pacote entregue (54,2 contra 68,8). Um segundo cenário em hardware (C3,
+malha densa de dez nós, cinco saltos) mostrou que essa vantagem depende da topologia: na
+malha, a redundância de caminhos eleva a entrega do \emph{flooding} a 77,8\%, estreitando
+--- sem eliminar --- a vantagem do AODV-EN (91,4\%). A análise por simulação confirmou que
 a desvantagem de ocupação de canal do \emph{flooding} cresce com a escala da rede, com
-cruzamento de eficiência em torno de 9 a 11 nós. Um segundo cenário em hardware (C4, seis
+cruzamento de eficiência em torno de onze nós. Um terceiro cenário em hardware (C4, seis
 nós), com falha cíclica de um relé do caminho, demonstrou a auto-recuperação do protocolo:
-o AODV-EN manteve 62,8\% de entrega re-descobrindo a rota por um relé alternativo após cada
+o AODV-EN manteve 70,6\% de entrega re-descobrindo a rota por um relé alternativo após cada
 queda. Em termos de eficiência energética estimada, embora o consumo agregado bruto do
 AODV-EN seja maior, a energia por pacote efetivamente entregue é cerca de cinco vezes
 menor que a do \emph{flooding} (0,69 contra 3,75~J/pacote), pois o roteamento entrega

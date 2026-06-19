@@ -433,7 +433,8 @@ C2: Árvore & Hierárquica & • 10 nós em estrutura de árvore • 1 raiz, 3
 nós de nível 1, 6 folhas • Comunicação: folhas↔raiz • Máximo 2--3 saltos &
 Avaliar encaminhamento hierárquico e agregação de tráfego \\
 C3: Mesh Parcial & Redundante & • 10 nós em malha redundante (grade) •
-Múltiplos caminhos entre extremidades • Cada nó alcança 2--3 vizinhos &
+Múltiplos caminhos entre extremidades • Cada nó alcança 2--3 vizinhos •
+$\approx$5 saltos de profundidade &
 Avaliar seleção de rotas e capacidade de utilizar caminhos
 alternativos \\
 C4: Falha & Multi-hop com interrupção & • 6 nós com falha induzida sob
@@ -492,8 +493,7 @@ Flooding
 Número de nós & 10 & 10 \\
 Tamanho do payload & 32 bytes & 32 bytes \\
 Taxa de envio (steady state) & 1 pacote/segundo & 1 pacote/segundo \\
-Duração de cada execução & 300 segundos (5 min) & 300 segundos (5
-min) \\
+Duração de cada execução & 60 segundos & 60 segundos \\
 Repetições por cenário & 30 & 30 \\
 HELLO\_INTERVAL & 2.000 ms (RFC: 1.000 ms)\textsuperscript{a} & N/A \\
 ACTIVE\_ROUTE\_TIMEOUT & 10.000 ms (RFC: 3.000 ms)\textsuperscript{a} & N/A \\
