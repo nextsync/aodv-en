@@ -11,13 +11,13 @@
 \contentsline {figure}{\numberline {4.4}{\ignorespaces Fluxo de descoberta de rotas no AODV-EN}}{51}{figure.caption.11}%
 \contentsline {figure}{\numberline {4.5}{\ignorespaces Fluxo de tratamento de falhas e reconvergência no AODV-EN}}{54}{figure.caption.12}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {5.1}{\ignorespaces Métricas de hardware (PDR de entrega, latência, transmissões por entrega e energia estimada): AODV-EN vs.~Flooding, cenário C1 multi-hop, 10 nós, média de 30 repetições com barra de IC95.}}{62}{figure.caption.15}%
-\contentsline {figure}{\numberline {5.2}{\ignorespaces Taxa de entrega por repetição (AODV-EN vs.~Flooding), cenário C1 multi-hop, 10 nós.}}{64}{figure.caption.17}%
-\contentsline {figure}{\numberline {5.3}{\ignorespaces Dependência de topologia: o \emph {flooding} colapsa na cadeia fina (C1) mas recupera na malha densa (C3) graças à redundância de caminhos, estreitando a vantagem de entrega do AODV-EN.}}{66}{figure.caption.19}%
+\contentsline {figure}{\numberline {5.1}{\ignorespaces Métricas de hardware (PDR de entrega, latência, transmissões por entrega e energia estimada): AODV-EN vs.~Flooding, cenário C1 multi-hop, 10 nós, média de 30 repetições com barra de IC95.}}{63}{figure.caption.15}%
+\contentsline {figure}{\numberline {5.2}{\ignorespaces Taxa de entrega por repetição (AODV-EN vs.~Flooding), cenário C1 multi-hop, 10 nós.}}{65}{figure.caption.17}%
+\contentsline {figure}{\numberline {5.3}{\ignorespaces Dependência de topologia: o \emph {flooding} colapsa na cadeia fina (C1) mas recupera na malha densa (C3) graças à redundância de caminhos, estreitando a vantagem de entrega do AODV-EN.}}{67}{figure.caption.19}%
 \contentsline {figure}{\numberline {5.4}{\ignorespaces Cenário C3 (malha densa): AODV-EN vs.~Flooding em entrega, latência e recepções por pacote entregue (ocupação de canal), com barra de IC95.}}{67}{figure.caption.20}%
-\contentsline {figure}{\numberline {5.5}{\ignorespaces Taxa de entrega por repetição no cenário C3 (malha densa): o AODV-EN é mais estável (CV 6,6\%) que o \emph {flooding} (CV 13,0\%).}}{67}{figure.caption.21}%
-\contentsline {figure}{\numberline {5.6}{\ignorespaces Impacto da falha periódica de um relé \emph {on-path}: PDR de entrega e latência do AODV-EN no cenário C1 (sem falha) contra o C4 (sob falha), com barra de IC95.}}{69}{figure.caption.23}%
-\contentsline {figure}{\numberline {5.7}{\ignorespaces Taxa de entrega por repetição no cenário C4: a alta variabilidade reflete a recuperação estocástica diante da falha periódica do relé.}}{69}{figure.caption.24}%
-\contentsline {figure}{\numberline {5.8}{\ignorespaces Auto-recuperação no cenário C4: pacotes entregues acumulados ao longo de uma repetição. Os patamares (faixas destacadas) coincidem com a queda do relé \emph {on-path}; a retomada da entrega evidencia a re-descoberta de rota pelo relé alternativo.}}{70}{figure.caption.25}%
-\contentsline {figure}{\numberline {5.9}{\ignorespaces Transmissões por pacote entregue em função do número de nós (simulação).}}{71}{figure.caption.26}%
+\contentsline {figure}{\numberline {5.5}{\ignorespaces Taxa de entrega por repetição no cenário C3 (malha densa): o AODV-EN é mais estável (CV 6,7\%) que o \emph {flooding} (CV 13,2\%).}}{68}{figure.caption.21}%
+\contentsline {figure}{\numberline {5.6}{\ignorespaces Impacto da falha periódica de um relé \emph {on-path}: PDR de entrega e latência do AODV-EN no cenário C1 (sem falha) contra o C4 (sob falha), com barra de IC95.}}{70}{figure.caption.25}%
+\contentsline {figure}{\numberline {5.7}{\ignorespaces Taxa de entrega por repetição no cenário C4: a alta variabilidade reflete a recuperação estocástica diante da falha periódica do relé.}}{70}{figure.caption.26}%
+\contentsline {figure}{\numberline {5.8}{\ignorespaces Auto-recuperação no cenário C4: pacotes entregues acumulados ao longo de uma repetição. Os patamares (faixas destacadas) coincidem com a queda do relé \emph {on-path}; a retomada da entrega evidencia a re-descoberta de rota pelo relé alternativo.}}{71}{figure.caption.27}%
+\contentsline {figure}{\numberline {5.9}{\ignorespaces Transmissões por pacote entregue em função do número de nós (simulação).}}{72}{figure.caption.28}%
 \addvspace {10\p@ }
