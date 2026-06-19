@@ -62,3 +62,18 @@
 /.playwright-mcp/
 /sim/results/campaign_*/
 /results/campaign-prints/
+
+# LaTeX build intermediates (regenerar compilando Template_Pacheco_TCC.tex)
+tcc_latex/*.aux
+tcc_latex/*.bbl
+tcc_latex/*.blg
+tcc_latex/*.fdb_latexmk
+tcc_latex/*.fls
+tcc_latex/*.lof
+tcc_latex/*.loq
+tcc_latex/*.lot
+tcc_latex/*.out
+tcc_latex/*.toc
+tcc_latex/*.synctex.gz
+tcc_latex/documentos/*.aux
+tcc_latex/_*.png
