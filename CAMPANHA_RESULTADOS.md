@@ -54,6 +54,7 @@ bidirecional; flood penalizado pois ACK volta por flood lossy).
 | Latencia one-way (ms) | 45.87 ±3.50 | 31.65 ±1.68 | flood menor = VIES DE SOBREVIVENCIA (so chegam caminhos curtos) |
 | NRL (controle/entregue) | 18.05 ±4.69 | 0.0 | flood sem controle de rota; seu custo esta nos rebroadcasts (ver tx/entregue) |
 | Energia estimada (J) | 39.35 ±0.64 | 28.41 ±0.03 | estimada; nos desiguais (9 vs 7), interpretar com cautela |
+| Energia/entrega (J/pkt) | 0,69 | 3,75 | razao das medias (energia total / entregues total); aodv ~5,4x melhor |
 
 **Conclusao C1:** AODV-EN domina a entrega multi-hop (94% vs 13%) com overhead ~2x
 menor por pacote entregue. O flooding colapsa sem retransmissao/rota a 2 dBm: a
@@ -123,7 +124,7 @@ controle de rota) nao captura o overhead do flood -> usar tx/entregue p/ compara
 | PDR de entrega (%) | 77,8 | 3,7 |
 | Latencia one-way (ms) | 20,5 | 0,6 |
 | RX por entrega (ocupacao) | 86,4 | 5,4 |
-| Energia/entrega (J/pkt) | 0,83 | 0,05 |
+| Energia/entrega (J/pkt) | 0,81 | -- |
 
 ### C3 -- comparacao aodv x flooding (malha densa, 5 saltos)
 
@@ -133,7 +134,7 @@ controle de rota) nao captura o overhead do flood -> usar tx/entregue p/ compara
 | Latencia ow (ms) | 34,9 +/-2,7 | 20,5 +/-0,6 | flood menor (vies+caminho curto) |
 | tx/entrega | 42,6 +/-2,7 | 33,3 +/-1,7 | flood menor (sem HELLO) |
 | RX/entrega (canal) | 55,7 +/-2,5 | 86,4 +/-5,4 | flood 1,55x maior (storm) |
-| Energia/entrega (J/pkt) | 0,70 +/-0,02 | 0,83 +/-0,05 | aodv 1,2x melhor |
+| Energia/entrega (J/pkt) | 0,70 | 0,81 | razao das medias; aodv ~1,2x melhor |
 
 **Conclusao C3 (dependencia de topologia):** na malha densa, o flooding RECUPERA via
 redundancia de caminhos (78% vs 13% do C1 em cadeia fina) -- topologia importa para o

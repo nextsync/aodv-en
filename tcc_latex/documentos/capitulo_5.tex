@@ -97,7 +97,7 @@ Latência one-way (ms) & 45,9 $\pm$ 3,5 & 31,6 $\pm$ 1,7 \\
 NRL (controle de rota/entregue) & 18,0 $\pm$ 4,7 & 0,0 \\
 Transmissões por entrega & 54,2 $\pm$ 10,1 & 102,9 $\pm$ 36,2 \\
 Energia agregada (J, estimada) & 39,4 $\pm$ 0,6 & 28,4 $\pm$ 0,03 \\
-\textbf{Energia por pacote entregue (J)} & \textbf{0,69 $\pm$ 0,02} & \textbf{5,66 $\pm$ 2,08} \\
+\textbf{Energia por pacote entregue (J)} & \textbf{0,69} & \textbf{3,75} \\
 \bottomrule
 \end{tabular}
 
@@ -167,7 +167,7 @@ $\mathrm{CV} = 4{,}2\%$), com apenas 4 das 30 repetições abaixo de 90\%. O
 \emph{flooding}, em contraste, variou de 0\% a 36,2\% (mediana 10,7\%;
 $\mathrm{CV} = 74{,}2\%$), com 20 das 30 repetições abaixo de 15\% e uma
 repetição sem nenhuma entrega. A diferença de variabilidade --- CV de 4\%
-contra 74\% --- mostra que o AODV-EN não apenas entrega mais, mas entrega de
+contra 74\% --- mostra que o AODV-EN não apenas entrega mais, mas o faz de
 forma previsível, ao passo que o \emph{flooding} colapsa de modo errático sob
 as colisões da inundação a cada repetição.
 
@@ -224,16 +224,18 @@ relatórios é perdida), de modo que parte das retransmissões não foi
 contabilizada.
 
 \textbf{Consumo energético.} O consumo agregado estimado da rede foi
-maior no AODV-EN (39,4 J) que no \emph{flooding} (28,4 J) na janela --- mas
-esse número \emph{bruto} pode induzir a uma conclusão equivocada, por duas razões: a comparação não está
-em pé de igualdade (o AODV-EN manteve nove nós ativos com HELLO periódico e
-encaminhamento, enquanto o \emph{flooding} teve apenas sete nós
-contabilizados e não emite HELLO) e, sobretudo, ele ignora que o AODV-EN
-entrega muito mais. A métrica justa é a \emph{energia por pacote efetivamente
-entregue}: 0,69~J/pacote para o AODV-EN contra 5,66~J/pacote para o
-\emph{flooding} --- ou seja, o AODV-EN é cerca de \textbf{8 vezes mais
-eficiente em energia por entrega útil}. O \emph{flooding} gasta energia
-disseminando pacotes que, em sua maioria, não sobrevivem ao multi-hop. Cabe
+maior no AODV-EN (39,4 J) que no \emph{flooding} (28,4 J) na janela. Esse
+número \emph{bruto}, porém, induz a uma conclusão equivocada por duas razões.
+Primeiro, a comparação não está em pé de igualdade: o AODV-EN manteve nove nós
+ativos com HELLO periódico e encaminhamento, enquanto o \emph{flooding} teve
+apenas sete nós contabilizados e não emite HELLO. Segundo, e sobretudo, o
+número bruto ignora que o AODV-EN entrega muito mais pacotes. A métrica justa é
+a \emph{energia por pacote efetivamente entregue}, obtida pela razão entre a
+energia total da rede e o total de pacotes entregues: 0,69~J/pacote para o
+AODV-EN contra 3,75~J/pacote para o \emph{flooding} --- ou seja, o AODV-EN é
+cerca de \textbf{cinco vezes mais eficiente em energia por entrega útil}. O
+\emph{flooding} gasta energia disseminando pacotes que, em sua maioria, não
+sobrevivem ao multi-hop. Cabe
 ressalvar que todos os valores de energia são \emph{estimados} a partir do
 perfil de \emph{datasheet} do ESP32, não medidos com instrumentação física;
 ainda assim, como a estimativa usa os mesmos coeficientes para os dois
@@ -264,12 +266,15 @@ Latência one-way (ms) & 34,9 $\pm$ 2,7 & 20,5 $\pm$ 0,6 \\
 NRL (controle de rota/entregue) & 17,7 $\pm$ 1,3 & 0,0 \\
 Transmissões por entrega & 42,6 $\pm$ 2,7 & 33,3 $\pm$ 1,7 \\
 Recepções por entrega (canal) & 55,7 $\pm$ 2,5 & 86,4 $\pm$ 5,4 \\
-Energia por pacote entregue (J) & 0,70 $\pm$ 0,02 & 0,83 $\pm$ 0,05 \\
+Energia por pacote entregue (J) & 0,70 $\pm$ 0,02 & 0,81 \\
 \bottomrule
 \end{tabular}
 
 \vspace{2pt}
-{\footnotesize Fonte: Elaborado pelos autores. Todas as diferenças são significativas (teste $t$ de Welch, $p<0{,}001$).}
+{\footnotesize Fonte: Elaborado pelos autores. \emph{Recepções por entrega} = recepções
+agregadas na rede por pacote efetivamente entregue, indicador de ocupação de canal;
+\emph{energia por pacote entregue} = razão entre energia total da rede e total de pacotes
+entregues. Todas as diferenças são significativas (teste $t$ de Welch, $p<0{,}001$).}
 \end{table}
 
 O resultado mais relevante é o contraste com o C1. Na malha densa, o
@@ -297,7 +302,7 @@ de canal}: cada pacote entregue pelo \emph{flooding} custa 86,4 recepções
 agregadas na rede, contra 55,7 do AODV-EN --- consequência da tempestade de
 \emph{broadcast}, em que cada disseminação é ouvida por todos os vizinhos.
 Segundo, a \emph{energia por pacote entregue}, menor no AODV-EN (0,70 contra
-0,83~J). A menor latência do \emph{flooding} (20,5 contra 34,9~ms) reflete,
+0,81~J). A menor latência do \emph{flooding} (20,5 contra 34,9~ms) reflete,
 novamente, viés de sobrevivência e o uso do caminho de difusão mais curto.
 Em síntese, mesmo onde o \emph{flooding} entrega bem, o AODV-EN o supera em
 entrega e em custo de canal por pacote útil.
@@ -332,7 +337,9 @@ distinta da do cenário C1. Foram empregados seis módulos ESP32 distribuídos
 em um apartamento, com potência de transmissão de 4~dBm --- maior que a do C1
 (2~dBm) em razão do espaço menor e da maior densidade de paredes, mantida a
 verificação por RSSI. A origem (também coletor) transmite ao destino por meio
-de um relé \emph{on-path}, que dispõe de um relé alternativo. A falha é
+de um relé \emph{on-path}, que dispõe de um relé alternativo.
+
+A falha é
 induzida por \emph{firmware}: o relé do caminho principal silencia o rádio
 por 15~s a cada 45~s (33\% de indisponibilidade), simulando a queda e o
 retorno cíclicos do nó; os vizinhos detectam a quebra pelas mensagens HELLO,
