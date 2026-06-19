@@ -34,10 +34,17 @@ efetivamente entregue é cerca de oito vezes menor (0,69 contra 5,66~J/pacote), 
 \emph{flooding} dissipa energia disseminando pacotes que não sobrevivem ao multi-hop. A análise de escalabilidade por
 simulação confirmou que essa desvantagem do \emph{flooding} cresce com o tamanho e o
 diâmetro da rede, com cruzamento de eficiência em torno de 9 a 11 nós e impossibilidade
-de alcance além do limite de TTL. Conclui-se, portanto, que o roteamento reativo do
+de alcance além do limite de TTL. O cenário de malha densa (C3), por sua vez, qualificou
+esse resultado: em uma topologia com caminhos redundantes (dez nós, cinco saltos), o
+\emph{flooding} não colapsa --- a redundância eleva sua entrega a 77,8\%, contra 12,7\% na
+cadeia fina ---, de modo que a vantagem de entrega do AODV-EN, embora ainda significativa
+(91,4\% contra 77,8\%), encolhe. O AODV-EN mantém, contudo, menor ocupação de canal e
+menor energia por pacote entregue. Evidencia-se, assim, que a vantagem do roteamento sobre
+a inundação é \emph{dependente da topologia}: máxima em redes esparsas ou em cadeia, modesta
+em malhas densas. Conclui-se, portanto, que o roteamento reativo do
 AODV-EN paga um \emph{overhead} de controle aproximadamente constante para garantir a
-entrega multi-hop --- inviável por inundação pura ---, tornando-se progressivamente mais
-vantajoso à medida que a malha se expande.
+entrega multi-hop --- inviável por inundação pura em topologias esparsas ---, tornando-se
+particularmente vantajoso à medida que a malha cresce e que os caminhos se tornam escassos.
 
 O cenário de falha (C4) complementou essa análise ao exercitar a auto-recuperação do
 protocolo: sob a queda cíclica de um relé do caminho (15~s a cada 45~s), o AODV-EN
@@ -56,8 +63,8 @@ metodológica da comparação e alinhou o \emph{baseline} à definição canôni
 \emph{flooding} da literatura.
 
 Como limitações, destacam-se a cobertura de cenários --- a campanha em hardware cobre os
-cenários C1 (cadeia multi-hop de dez nós) e C4 (falha induzida, seis nós), ambos com
-trinta repetições, ficando os cenários C2 e C3 (árvore e malha redundante) como trabalho
+cenários C1 (cadeia de dez nós), C3 (malha densa de dez nós) e C4 (falha induzida, seis
+nós), todos com trinta repetições, ficando o cenário C2 (árvore hierárquica) como trabalho
 futuro sobre a mesma infraestrutura ---, o caráter estimado do consumo energético e a coleta sequencial das
 campanhas do AODV-EN e do \emph{flooding}, com nova distribuição física dos nós entre
 elas. As adaptações de gerenciamento de

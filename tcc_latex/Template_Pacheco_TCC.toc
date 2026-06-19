@@ -85,10 +85,11 @@
 \contentsline {subsection}{\numberline {5.2.1}Significância estatística}{63}{subsection.5.2.1}%
 \contentsline {subsection}{\numberline {5.2.2}Distribuição entre repetições}{63}{subsection.5.2.2}%
 \contentsline {section}{\numberline {5.3}Discussão por Métrica}{64}{section.5.3}%
-\contentsline {section}{\numberline {5.4}Cenário de Falha e Auto-recuperação (C4)}{65}{section.5.4}%
-\contentsline {section}{\numberline {5.5}Análise de Escalabilidade por Simulação}{67}{section.5.5}%
-\contentsline {section}{\numberline {5.6}Comparação com Trabalhos Correlatos}{68}{section.5.6}%
-\contentsline {section}{\numberline {5.7}Conformidade com a RFC 3561}{69}{section.5.7}%
-\contentsline {section}{\numberline {5.8}Escopo Implementado e Limitações}{70}{section.5.8}%
-\contentsline {chapter}{\numberline {6}CONCLUSÃO}{72}{chapter.6}%
-\contentsline {chapter}{REFERÊNCIAS}{74}{chapter.6}%
+\contentsline {section}{\numberline {5.4}Cenário de Malha Densa (C3)}{65}{section.5.4}%
+\contentsline {section}{\numberline {5.5}Cenário de Falha e Auto-recuperação (C4)}{67}{section.5.5}%
+\contentsline {section}{\numberline {5.6}Análise de Escalabilidade por Simulação}{69}{section.5.6}%
+\contentsline {section}{\numberline {5.7}Comparação com Trabalhos Correlatos}{70}{section.5.7}%
+\contentsline {section}{\numberline {5.8}Conformidade com a RFC 3561}{71}{section.5.8}%
+\contentsline {section}{\numberline {5.9}Escopo Implementado e Limitações}{72}{section.5.9}%
+\contentsline {chapter}{\numberline {6}CONCLUSÃO}{74}{chapter.6}%
+\contentsline {chapter}{REFERÊNCIAS}{77}{chapter.6}%
