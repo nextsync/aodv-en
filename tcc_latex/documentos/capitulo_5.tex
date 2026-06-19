@@ -84,6 +84,15 @@ conjunto bruto por repetição (incluindo os desvios padrão) está disponível
 no repositório do projeto; a Tabela~\ref{tab:comparacao} consolida a média
 e o intervalo de confiança de 95\% (IC95) de cada métrica.
 
+Adotam-se, em todo este capítulo, três convenções de medida. A \emph{taxa de
+entrega} é calculada apenas sobre as repetições com telemetria de entrega do
+nó de destino (as poucas repetições sem esse reporte são excluídas dessa
+métrica, e não substituídas por outra). As métricas de custo \emph{por pacote
+entregue} (transmissões, recepções e energia) são razões agregadas --- total
+da rede dividido pelo total de pacotes entregues ---, motivo pelo qual
+aparecem como ponto único. Os intervalos de confiança e coeficientes de
+variação usam desvio padrão amostral ($n-1$).
+
 \begin{table}[H]
 \centering
 \caption{Comparação AODV-EN vs.~Flooding em hardware --- cenário C1, 10 nós, multi-hop, 30 repetições (média $\pm$ intervalo de confiança de 95\%)}\label{tab:comparacao}
@@ -93,10 +102,10 @@ Métrica & AODV-EN & Flooding (broadcast) \\
 \midrule
 PDR de entrega (\%) & 94,1 $\pm$ 1,4 & 13,9 $\pm$ 3,4 \\
 PDR confirmação ida-volta (\%) & 91,7 $\pm$ 4,2 & 3,7 $\pm$ 0,8 \\
-Latência one-way (ms) & 45,9 $\pm$ 3,5 & 31,6 $\pm$ 1,7 \\
+Latência unidirecional (ms) & 45,9 $\pm$ 3,5 & 31,6 $\pm$ 1,7 \\
 NRL (controle de rota/entregue) & 18,0 $\pm$ 4,7 & 0,0 \\
 Transmissões por entrega & 54,2 & 68,8 \\
-Energia agregada (J, estimada) & 39,4 $\pm$ 0,6 & 28,4 $\pm$ 0,03 \\
+Energia agregada (J, estimada) & 39,4 $\pm$ 0,64 & 28,4 $\pm$ 0,03 \\
 \textbf{Energia por pacote entregue (J)} & \textbf{0,69} & \textbf{3,75} \\
 \bottomrule
 \end{tabular}
@@ -135,13 +144,13 @@ resume os resultados.
 
 \begin{table}[H]
 \centering
-\caption{Significância estatística das diferenças AODV-EN vs.~Flooding (cenário C1, $n=30$ por grupo)}\label{tab:stats}
+\caption{Significância estatística das diferenças AODV-EN vs.~Flooding (cenário C1; AODV-EN $n=30$; \emph{flooding} $n=30$, exceto PDR e transmissões por entrega, com $n=27$ repetições de entrega válida, e latência, com $n=29$)}\label{tab:stats}
 \begin{tabular}{@{}lcccl@{}}
 \toprule
 Métrica & $t$ (Welch) & $p$ & $d$ de Cohen & Efeito \\
 \midrule
-PDR de entrega & 42,3 & $<0{,}001$ & 11,7 & altíssimo \\
-Latência one-way & 7,2 & $<0{,}001$ & 1,85 & grande \\
+PDR de entrega & 42,3 & $<0{,}001$ & 11,6 & altíssimo \\
+Latência unidirecional & 7,2 & $<0{,}001$ & 1,85 & grande \\
 NRL (controle/entregue) & 7,5 & $<0{,}001$ & 1,95 & grande \\
 Transmissões por entrega & $-2{,}5$ & $0{,}011$ & $-0{,}71$ & médio \\
 Energia (estimada) & 33,5 & $<0{,}001$ & 8,65 & altíssimo \\
@@ -151,13 +160,14 @@ Energia (estimada) & 33,5 & $<0{,}001$ & 8,65 & altíssimo \\
 \vspace{2pt}
 {\footnotesize Fonte: Elaborado pelos autores. Teste de Mann--Whitney concordante ($p<0{,}05$)
 em todas as métricas. A linha \emph{Transmissões por entrega} testa a razão por repetição
-(transmissões/entregues), cuja média entre repetições difere da razão agregada usada como
-valor de referência na Tabela~\ref{tab:comparacao}.}
+(transmissões/entregues), cuja média entre repetições (102,9) difere da razão agregada
+adotada como referência na Tabela~\ref{tab:comparacao} (68,8 = total transmitido $\div$ total
+entregue).}
 \end{table}
 
 Todas as diferenças são estatisticamente significativas ($p < 0{,}05$),
 com os testes paramétrico e não paramétrico em concordância. Os tamanhos
-de efeito da entrega ($d = 11{,}7$) e do consumo estimado ($d = 8{,}65$)
+de efeito da entrega ($d = 11{,}6$) e do consumo estimado ($d = 8{,}65$)
 são muito superiores ao limiar convencional de efeito grande ($d > 0{,}8$),
 indicando que a vantagem do AODV-EN na entrega multi-hop é estrutural, e
 não marginal. A única diferença de efeito apenas médio é a de transmissões
@@ -172,7 +182,7 @@ algoritmo, informação que a média sozinha oculta. O AODV-EN entregou entre
 85,2\% e 100\% dos pacotes (mediana 94,2\%; coeficiente de variação
 $\mathrm{CV} = 4{,}2\%$), com apenas 4 das 30 repetições abaixo de 90\%. O
 \emph{flooding}, em contraste, variou de 1,7\% a 36,2\% (mediana 11,5\%;
-$\mathrm{CV} = 65{,}0\%$), com 17 das 27 repetições abaixo de 15\%. A
+$\mathrm{CV} = 65{,}5\%$), com 17 das 27 repetições abaixo de 15\%. A
 diferença de variabilidade --- CV de 4\%
 contra 65\% --- mostra que o AODV-EN não apenas entrega mais, mas o faz de
 forma previsível, ao passo que o \emph{flooding} colapsa de modo errático sob
@@ -206,7 +216,7 @@ dispersa do \emph{flooding}.
 multi-hop, 10 nós.}\label{fig:pdr-rep}
 \end{figure}
 
-\textbf{Latência fim-a-fim.} A latência one-way do \emph{flooding}
+\textbf{Latência unidirecional.} A latência unidirecional (\emph{one-way}) do \emph{flooding}
 (31,6 ms) foi menor que a do AODV-EN (45,9 ms), mas o número não
 representa vantagem: trata-se de \emph{viés de sobrevivência}
 (\emph{survivorship bias}). No \emph{flooding}
@@ -272,7 +282,7 @@ Métrica & AODV-EN & Flooding \\
 \midrule
 PDR de entrega (\%) & 91,4 $\pm$ 2,2 & 77,8 $\pm$ 3,7 \\
 PDR confirmação ida-volta (\%) & 87,0 $\pm$ 4,7 & 45,0 $\pm$ 3,4 \\
-Latência one-way (ms) & 34,9 $\pm$ 2,7 & 20,5 $\pm$ 0,6 \\
+Latência unidirecional (ms) & 34,9 $\pm$ 2,7 & 20,5 $\pm$ 0,6 \\
 NRL (controle de rota/entregue) & 17,7 $\pm$ 1,3 & 0,0 \\
 Transmissões por entrega & 42,3 & 32,7 \\
 Recepções por entrega (canal) & 55,5 & 84,6 \\
@@ -326,9 +336,9 @@ recepções por pacote entregue (ocupação de canal), com barra de IC95.}\label
 \end{figure}
 
 Quanto à estabilidade entre repetições, o AODV-EN na malha foi consistente
-(entrega de 76,7\% a 100\%; mediana 93,3\%; coeficiente de variação de 6,6\%),
+(entrega de 76,7\% a 100\%; mediana 93,3\%; coeficiente de variação de 6,7\%),
 com 26 das 30 repetições iguais ou acima de 85\%. O \emph{flooding} apresentou maior
-dispersão (48,3\% a 95,0\%; mediana 78,5\%; CV de 13,0\%), refletindo a
+dispersão (48,3\% a 95,0\%; mediana 78,5\%; CV de 13,2\%), refletindo a
 sensibilidade da inundação às colisões em cada repetição. A
 Figura~\ref{fig:c3-pdr-rep} mostra a entrega por repetição para os dois
 algoritmos.
@@ -337,8 +347,34 @@ algoritmos.
 \centering
 \pandocbounded{\includegraphics[keepaspectratio,alt={Taxa de entrega por repeticao no cenario C3 para AODV-EN e flooding.}]{figuras/fig_c3_pdr_rep.png}}
 \caption{Taxa de entrega por repetição no cenário C3 (malha densa): o AODV-EN é
-mais estável (CV 6,6\%) que o \emph{flooding} (CV 13,0\%).}\label{fig:c3-pdr-rep}
+mais estável (CV 6,7\%) que o \emph{flooding} (CV 13,2\%).}\label{fig:c3-pdr-rep}
 \end{figure}
+
+À semelhança do cenário C1, as diferenças do C3 foram submetidas ao teste $t$
+de Welch e ao $d$ de Cohen (Tabela~\ref{tab:c3-stats}). Mesmo na malha densa,
+em que o \emph{flooding} não colapsa, as vantagens do AODV-EN em entrega,
+confirmação e latência permanecem estatisticamente significativas, com
+tamanhos de efeito de grandes a altíssimos.
+
+\begin{table}[H]
+\centering
+\caption{Significância estatística das diferenças AODV-EN vs.~Flooding (cenário C3, $n=30$ por grupo)}\label{tab:c3-stats}
+\begin{tabular}{@{}lcccl@{}}
+\toprule
+Métrica & $t$ (Welch) & $p$ & $d$ de Cohen & Efeito \\
+\midrule
+PDR de entrega & 6,2 & $<0{,}001$ & 1,60 & grande \\
+PDR confirmação ida-volta & 14,1 & $<0{,}001$ & 3,64 & altíssimo \\
+Latência unidirecional & 10,1 & $<0{,}001$ & 2,61 & altíssimo \\
+\bottomrule
+\end{tabular}
+
+\vspace{2pt}
+{\footnotesize Fonte: Elaborado pelos autores. Teste de Mann--Whitney concordante
+($p<0{,}05$). A latência menor do \emph{flooding} reflete viés de sobrevivência
+(Seção~\ref{discussuxe3o-por-muxe9trica}); a NRL não é testável (nula no \emph{flooding}) e
+as métricas de custo por entrega são razões agregadas.}
+\end{table}
 
 \section{Cenário de Falha e Auto-recuperação (C4)}\label{cenario-de-falha-c4}
 
@@ -369,7 +405,7 @@ Métrica & AODV-EN sob falha \\
 \midrule
 PDR de entrega (\%) & 70,6 $\pm$ 10,3 \\
 PDR confirmação ida-volta (\%) & 47,6 $\pm$ 11,5 \\
-Latência one-way (ms) & 60,7 $\pm$ 14,6 \\
+Latência unidirecional (ms) & 60,7 $\pm$ 14,6 \\
 NRL (controle de rota/entregue) & 5,2 $\pm$ 1,7 \\
 Transmissões por entrega & 8,8 \\
 Energia por pacote entregue (J) & 0,25 \\
@@ -392,8 +428,30 @@ Welch: $t = 4{,}5$, $p < 0{,}001$; $d$ de Cohen $= 1{,}28$, efeito grande). A
 latência subiu de 45,9~ms para 60,7~ms ($t = -1{,}94$, $p \approx 0{,}06$,
 diferença apenas marginalmente não significativa),
 refletindo o tempo de detecção da quebra (\emph{timeout} de HELLO) somado à
-re-descoberta de rota. A Figura~\ref{fig:c4-metrics} contrasta as duas
-condições.
+re-descoberta de rota. A confirmação fim-a-fim foi a métrica mais penalizada,
+caindo de 91,7\% para 47,6\% ($t = 7{,}1$, $p < 0{,}001$, $d = 1{,}83$), pois o
+ACK percorre duas vezes o caminho sujeito à queda. A
+Tabela~\ref{tab:c4-stats} consolida os testes e a Figura~\ref{fig:c4-metrics}
+contrasta as duas condições.
+
+\begin{table}[H]
+\centering
+\caption{Significância estatística do impacto da falha: C1 (sem falha) vs.~C4 (sob falha)}\label{tab:c4-stats}
+\begin{tabular}{@{}lcccl@{}}
+\toprule
+Métrica & $t$ (Welch) & $p$ & $d$ de Cohen & Efeito \\
+\midrule
+PDR de entrega & 4,5 & $<0{,}001$ & 1,28 & grande \\
+PDR confirmação ida-volta & 7,1 & $<0{,}001$ & 1,83 & grande \\
+Latência unidirecional & $-1{,}9$ & $\approx 0{,}06$ & $-0{,}51$ & médio \\
+\bottomrule
+\end{tabular}
+
+\vspace{2pt}
+{\footnotesize Fonte: Elaborado pelos autores. A diferença de latência é apenas
+marginalmente não significativa (os dois testes cercam $\alpha = 0{,}05$). PDR de
+entrega com $n = 26$ repetições de entrega válida no C4.}
+\end{table}
 
 \begin{figure}
 \centering
@@ -454,9 +512,11 @@ medida em hardware, conduziu-se uma varredura por simulação em grades de
 4 a 25 nós, medindo o número de transmissões por pacote entregue. A
 Figura~\ref{fig:sim-crossover} apresenta o resultado: sob enlaces ideais e um
 TTL suficiente para o diâmetro da grade, ambos os algoritmos entregam a
-totalidade dos pacotes, mas a razão transmissões-por-entrega cruza-se em torno
-de onze nós, acima do qual o roteamento do AODV-EN passa a custar menos
-transmissões por entrega que o \emph{flooding}. Além disso, por depender de um
+totalidade dos pacotes, mas a razão transmissões-por-entrega não é monotônica
+nas grades pequenas (o AODV-EN é mais econômico já em 4 nós, o \emph{flooding}
+volta a sê-lo por volta de 9 nós); a partir de cerca de onze nós, contudo, o
+roteamento do AODV-EN passa a custar consistentemente menos transmissões por
+entrega, com a diferença ampliando-se à medida que a rede cresce. Além disso, por depender de um
 TTL fixo, o \emph{flooding} tem o alcance estruturalmente limitado ao número de
 saltos configurado --- destinos além desse teto tornam-se inalcançáveis ---,
 enquanto o AODV-EN, por manter rotas, não está sujeito a esse limite. A

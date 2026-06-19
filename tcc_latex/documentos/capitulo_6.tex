@@ -30,21 +30,19 @@ retransmissão fim-a-fim sob enlaces reais a 2~dBm. O AODV-EN apresentou, ainda,
 de canal, pois a carga de controle normalizada clássica não contabiliza as
 retransmissões por inundação do \emph{flooding}. Pela mesma lógica, embora o consumo
 energético agregado bruto do AODV-EN seja maior, a energia estimada por pacote
-efetivamente entregue é cerca de cinco vezes menor (0,69 contra 3,75~J/pacote), pois o
-\emph{flooding} dissipa energia disseminando pacotes que não sobrevivem ao multi-hop. A análise de escalabilidade por
-simulação confirmou que essa desvantagem do \emph{flooding} cresce com o tamanho e o
-diâmetro da rede, com cruzamento de eficiência em torno de onze nós e impossibilidade
-de alcance além do limite de TTL. O cenário de malha densa (C3), por sua vez, qualificou
-esse resultado: em uma topologia com caminhos redundantes (dez nós, cinco saltos), o
-\emph{flooding} não colapsa --- a redundância eleva sua entrega a 77,8\%, contra 13,9\% na
-cadeia fina ---, de modo que a vantagem de entrega do AODV-EN, embora ainda significativa
-(91,4\% contra 77,8\%), encolhe. O AODV-EN mantém, contudo, menor ocupação de canal e
-menor energia por pacote entregue. Evidencia-se, assim, que a vantagem do roteamento sobre
-a inundação é \emph{dependente da topologia}: máxima em redes esparsas ou em cadeia, modesta
-em malhas densas. Conclui-se, portanto, que o roteamento reativo do
-AODV-EN paga um \emph{overhead} de controle aproximadamente constante para garantir a
-entrega multi-hop --- inviável por inundação pura em topologias esparsas ---, tornando-se
-particularmente vantajoso à medida que a malha cresce e que os caminhos se tornam escassos.
+efetivamente entregue é cerca de cinco vezes menor (0,69 contra 3,75~J/pacote): a inundação
+consome energia em transmissões que, em sua maioria, não chegam ao destino. A análise de
+escalabilidade por simulação reforça o quadro, indicando que a desvantagem de custo do
+\emph{flooding} se consolida e cresce com o tamanho e o diâmetro da rede, além do limite
+de alcance imposto pelo TTL fixo. O cenário de malha densa (C3) acrescentou a nuance mais
+importante: com caminhos redundantes (dez nós, cinco saltos), o \emph{flooding} não colapsa
+--- a redundância eleva sua entrega a 77,8\%, contra 13,9\% na cadeia fina ---, de modo que
+a vantagem de entrega do AODV-EN, ainda significativa (91,4\% contra 77,8\%), se estreita,
+embora o roteamento preserve menor ocupação de canal e menor energia por entrega. A
+vantagem do roteamento sobre a inundação revela-se, assim, \emph{dependente da topologia}.
+Conclui-se que o AODV-EN troca uma sobrecarga de controle aproximadamente constante pela
+garantia de entrega multi-hop --- inviável por inundação pura em topologias esparsas ---,
+tornando-se mais vantajoso à medida que a rede cresce e os caminhos se tornam escassos.
 
 O cenário de falha (C4) complementou essa análise ao exercitar a auto-recuperação do
 protocolo: sob a queda cíclica de um relé do caminho (15~s a cada 45~s), o AODV-EN
