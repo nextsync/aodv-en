@@ -50,10 +50,8 @@
 # Local simulation outputs
 /sim/*.out
 
-# Benchmark/experiment heavy artifacts (autopilot results dir)
 /results/
 
-.claude/
 # PDF intermediario (regenerar via docs/build_pdf.py)
 /docs/aodv-en-completo.html
 /docs/tcc-trabalho-completo.html
@@ -77,3 +75,9 @@ tcc_latex/*.toc
 tcc_latex/*.synctex.gz
 tcc_latex/documentos/*.aux
 tcc_latex/_*.png
+
+# Documentacao concatenada gerada (regenerar via docs/build_pdf.py)
+docs/aodv-en-completo.pdf
+
+# Diretorio local de ferramentas (nao versionar)
+.claude/

@@ -367,7 +367,7 @@ e coleta; análise e discussão.
 
 > No hardware as execuções deste relatório usaram janelas de ~60 s por *run* (não 300 s) e
 > 6 *seeds* por algoritmo (não 30), por economia de tempo de bancada; o ledger e os alvos
-> perpétuos do autopilot permitem acumular as 30 repetições incrementalmente. `payload=32 B`,
+> perpétuos da coleta automatizada permitem acumular as 30 repetições incrementalmente. `payload=32 B`,
 > `taxa=1 pkt/s`, `HELLO=2 s` foram aplicados em ambos para comparação justa.
 
 ### 5.4 Métricas (TCC §4.5, Quadro 11)
@@ -726,7 +726,7 @@ desvantajoso) numa rede minúscula e densa.
 
 > Estatística: as conclusões de hardware vêm de **6 *seeds*** num único cenário (C1-3n). Para
 > rigor (média, desvio, IC 95%) o alvo é 30 repetições por cenário e a cobertura de C2/C3/C4 e
-> escala em simulação — acumuláveis via os alvos perpétuos do autopilot.
+> escala em simulação — acumuláveis via os alvos perpétuos da coleta automatizada.
 
 ---
 
@@ -762,7 +762,7 @@ ser "chutadas". Foram registradas em `results/QUESTIONS.md` e decididas pelo aut
    haver mais boards e separação física.
 2. **Amostragem (6 *seeds*, 1 cenário, ~60 s).** Aquém das 30 repetições × 300 s do Quadro 10.
    Os 6 *seeds* já expõem variação (latência do flooding), mas média/desvio/IC95 robustos
-   exigem acumular mais *runs* (alvo perpétuo do autopilot).
+   exigem acumular mais *runs* (alvo perpétuo da coleta automatizada).
 3. **Quantização da latência.** O laço de 100 ms da aplicação grosseiriza o RTT medido. Para
    latência fina, reduzir o laço e/ou marcar *timestamps* mais perto do rádio.
 4. **Energia estimada, não medida.** As constantes são de *datasheet*, rotuladas. Medição real
@@ -782,7 +782,7 @@ ser "chutadas". Foram registradas em `results/QUESTIONS.md` e decididas pelo aut
 ## 14. Trabalho futuro
 
 - **Fechar a estatística do TCC:** 30 repetições por cenário, 300 s, com média/desvio/IC95;
-  automatizável pelos alvos perpétuos do autopilot (cada tick = +1 *seed* AODV+flood).
+  automatizável pelos alvos perpétuos da coleta automatizada (cada tick = +1 *seed* AODV+flood).
 - **Cobrir C2/C3/C4 e escala 5–10 nós** em simulação (novos cenários em `sim/`), e multi-hop
   real ao dispor de mais boards + separação física.
 - **Implementar §3.6 (Q5):** LRU de *peers*, RREQ por unicast sequencial, métrica híbrida
@@ -859,7 +859,7 @@ $IDFPY firmware/tools/tcc_metrics.py --algo aodv-en --scenario C1-3n --seed 1 \
 ### 15.6 Ledger e comparação
 
 ```bash
-ENGINE=~/.claude/skills/autopilot/scripts/autopilot.py
+ENGINE=scripts/coleta-perpetua.py
 python3 $ENGINE experiment add --algo aodv-en --param scenario=C1-3n --param seed=1 \
   --metric pdr=98.57 --metric latency_ms=60 --metric nrl=0.7785 --metric energy_j=12.4147
 python3 $ENGINE experiment compare aodv-en flooding   # medias data-driven + delta + %
@@ -870,7 +870,7 @@ python3 $ENGINE experiment compare aodv-en flooding   # medias data-driven + del
 ## 16. Diário de bordo (cronologia do trabalho)
 
 O trabalho foi conduzido em ciclos disciplinados, boa parte sob um *harness* de automação
-(autopilot) com regras anti-"maionese": **nunca** marcar tarefa concluída sem evidência em
+(coleta automatizada) com regras anti-"maionese": **nunca** marcar tarefa concluída sem evidência em
 disco; **proibido** inventar/estimar métrica (só de log serial real, via ferramenta); **fix de
 firmware só commita com testes verdes mostrados**; dúvida de projeto → registrar em QUESTIONS,
 não chutar; **1 tarefa por iteração**.
@@ -931,9 +931,9 @@ verdes:
 5. `3a1661b` contador `control_tx` (NRL) + `tcc_metrics.py` (PDR/latência/NRL/energia).
 6. `d31b94a` parâmetros do AODV-EN alinhados (32 B, 1 pkt/s, HELLO 2 s) para comparação justa.
 
-### 16.6 Fase F — re-coleta instrumentada e comparação (inc6, via autopilot)
+### 16.6 Fase F — re-coleta instrumentada e comparação (inc6, via coleta automatizada)
 
-Registrada e dirigida como 3 missões no autopilot:
+Registrada e dirigida como 3 missões no coleta automatizada:
 
 - **inc6.A** (`m1`): AODV-EN instrumentado → 3 ESPs → 60 s reais (com `LAT`/`control=`) →
   `tcc_metrics.py` → *ledger* `e1` (PDR 98,57; lat 60; NRL 0,78; E 12,41 J).
@@ -945,7 +945,7 @@ Registrada e dirigida como 3 missões no autopilot:
 
 ### 16.7 Política de versionamento
 
-Trabalho na *branch* isolada `autopilot/2026-05-31-0026`, *pushada*; **nunca** *merge* na
+Trabalho na *branch* isolada `coleta-2026-05-31`, *pushada*; **nunca** *merge* na
 *default*. Artefatos pesados (logs serial crus, *charts*, *builds*) ficam em `results/`
 (no `.gitignore`); versiona-se **código**, o *ledger* (`experiments.json`, snapshot em
 `results/experiments-ledger.json`) e os resumos escritos (`comparison.md`, este relatório).
@@ -1002,7 +1002,7 @@ Mensagens de commit em português, estilo *conventional*, sem *trailers* de atri
   `experiments-ledger.json`, `charts/m10-compare.png`, `charts/sim-tx-per-delivered.png`.
 - auditoria: `m-audit-flood-ack-fix.md`, `m-audit-fix-N{1,2,3}.log`.
 
-### 18.4 Commits-chave (branch `autopilot/2026-05-31-0026`)
+### 18.4 Commits-chave (branch `coleta-2026-05-31`)
 
 `8a2bde3` extrai flood_en · `d3d34eb` fix dedup ACK · `5d3550f` params TCC flood ·
 `687ef0d` latência flood · `65cfe0a` unicast flood · `ed908a9` latência AODV ·
@@ -1537,7 +1537,7 @@ sintéticos sem hardware), `--verbose`/`-vv`. **Gotcha** documentado: com `--ski
 ESPs já bootados (sem linha `node=` recente), o *alias*→MAC não mapeia e o dashboard fica vazio
 mesmo com a serial produzindo logs — rodar sem o *flag* (pré-leitura via esptool) resolve.
 
-## Apêndice N — Linha do tempo dos commits (branch `autopilot/2026-05-31-0026`)
+## Apêndice N — Linha do tempo dos commits (branch `coleta-2026-05-31`)
 
 | Commit | Tipo | Resumo |
 |---|---|---|

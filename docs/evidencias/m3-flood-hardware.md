@@ -1,7 +1,7 @@
 # M3 — Validacao do flooding controlado (sim + hardware)
 
-Data: 2026-05-30 (sessao autopilot)
-Branch: `autopilot/2026-05-30-2129`
+Data: 2026-05-30 (sessao coleta automatizada)
+Branch: `coleta-2026-05-30`
 
 ## Sim
 

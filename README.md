@@ -40,7 +40,7 @@ menos transmissoes por entrega. Metodologia, tabelas, figuras e testes estatisti
 - [docs/aodv-en-estruturas-dados.md](docs/aodv-en-estruturas-dados.md)
 - [docs/plano-desenvolvimento-completo.md](docs/plano-desenvolvimento-completo.md)
 - [docs/fluxos-tcc-aodv-en.md](docs/fluxos-tcc-aodv-en.md)
-- [docs/aodv-en-completo.pdf](docs/aodv-en-completo.pdf) - **toda a documentacao em um PDF unico** (~148 paginas, ordem top-down). Regerar com `python3 docs/build_pdf.py`.
+- **PDF unico com toda a documentacao** (~148 paginas, ordem top-down): gerar com `python3 docs/build_pdf.py` (saida `docs/aodv-en-completo.pdf`, nao versionada).
 - [docs/aodv-en-spec-v1.md](docs/aodv-en-spec-v1.md) - especificacao funcional fechada (`v1`, ativa)
 - [docs/aodv-en-funcionamento.md](docs/aodv-en-funcionamento.md) - guia didatico do funcionamento, com layout de bytes, traces e worked examples
 - [docs/aodv-en-mapa-do-codigo.md](docs/aodv-en-mapa-do-codigo.md) - guia de estudo do codigo: onde cada feature esta implementada, mapa por arquivo

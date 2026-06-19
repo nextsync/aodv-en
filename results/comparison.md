@@ -1,7 +1,7 @@
 # AODV-EN vs Flooding — comparacao (2026-05-31)
 
 > Dados REAIS de hardware (3 ESP32) + simulacao. Numeros do ledger
-> `.claude/autopilot/experiments.json` via `experiment compare` (data-driven, nao
+> `results/experiments.json` via `experiment compare` (data-driven, nao
 > de memoria). Energia = ESTIMATIVA datasheet ESP32-WROOM-32 (rotulada, nao medida).
 
 ## 1. Hardware — C1 reduzido (3 nos, hub ~1 hop, MEDIA de 6 seeds, 60 s, instrumentado)
@@ -57,7 +57,7 @@ enquanto o flooding multiplica copias e esbarra no TTL.
 
 ## Caveats
 - 1 seed, 1 cenario (C1-3n), hub 1-hop (HW so tem 3 boards). Para o TCC: repetir ~30x
-  (alvo perpetuo do autopilot) e rodar C2/C3/C4 + 5-10 nos (sim) p/ media/desvio/IC95.
+  (alvo perpetuo da coleta automatizada) e rodar C2/C3/C4 + 5-10 nos (sim) p/ media/desvio/IC95.
 - Latencia RTT quantizada pelo loop de 100 ms da app (granularidade grosseira).
 - Energia e estimativa de datasheet (V=3.3, I_tx=240mA, I_rx=100mA, I_idle=20mA,
   t_pkt=1ms); para fiel, medir com INA219/shunt.

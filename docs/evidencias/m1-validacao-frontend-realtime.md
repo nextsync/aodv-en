@@ -1,7 +1,7 @@
 # M1 — Validacao do frontend realtime (live_monitor + dashboard)
 
-Data: 2026-05-30 21:35 (sessao autopilot)
-Branch: `autopilot/2026-05-30-2129`
+Data: 2026-05-30 21:35 (sessao coleta automatizada)
+Branch: `coleta-2026-05-30`
 
 ## Objetivo
 
