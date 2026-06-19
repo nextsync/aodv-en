@@ -259,7 +259,9 @@ resultados de 30 repetições por algoritmo.
 Métrica & AODV-EN & Flooding \\
 \midrule
 PDR de entrega (\%) & 91,4 $\pm$ 2,2 & 77,8 $\pm$ 3,7 \\
+PDR confirmação ida-volta (\%) & 87,0 $\pm$ 4,7 & 45,0 $\pm$ 3,4 \\
 Latência one-way (ms) & 34,9 $\pm$ 2,7 & 20,5 $\pm$ 0,6 \\
+NRL (controle de rota/entregue) & 17,7 $\pm$ 1,3 & 0,0 \\
 Transmissões por entrega & 42,6 $\pm$ 2,7 & 33,3 $\pm$ 1,7 \\
 Recepções por entrega (canal) & 55,7 $\pm$ 2,5 & 86,4 $\pm$ 5,4 \\
 Energia por pacote entregue (J) & 0,70 $\pm$ 0,02 & 0,83 $\pm$ 0,05 \\
@@ -305,6 +307,21 @@ entrega e em custo de canal por pacote útil.
 \pandocbounded{\includegraphics[keepaspectratio,alt={AODV-EN vs flooding no cenario C3: PDR, latencia e recepcoes por entrega.}]{figuras/fig_c3_compare.png}}
 \caption{Cenário C3 (malha densa): AODV-EN vs.~Flooding em entrega, latência e
 recepções por pacote entregue (ocupação de canal), com barra de IC95.}\label{fig:c3-compare}
+\end{figure}
+
+Quanto à estabilidade entre repetições, o AODV-EN na malha foi consistente
+(entrega de 76,7\% a 100\%; mediana 93,3\%; coeficiente de variação de 6,6\%),
+com 26 das 30 repetições acima de 85\%. O \emph{flooding} apresentou maior
+dispersão (48,3\% a 95,0\%; mediana 78,7\%; CV de 13,0\%), refletindo a
+sensibilidade da inundação às colisões em cada repetição. A
+Figura~\ref{fig:c3-pdr-rep} mostra a entrega por repetição para os dois
+algoritmos.
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio,alt={Taxa de entrega por repeticao no cenario C3 para AODV-EN e flooding.}]{figuras/fig_c3_pdr_rep.png}}
+\caption{Taxa de entrega por repetição no cenário C3 (malha densa): o AODV-EN é
+mais estável (CV 6,6\%) que o \emph{flooding} (CV 13,0\%).}\label{fig:c3-pdr-rep}
 \end{figure}
 
 \section{Cenário de Falha e Auto-recuperação (C4)}\label{cenario-de-falha-c4}

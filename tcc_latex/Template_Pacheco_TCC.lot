@@ -7,6 +7,6 @@
 \contentsline {table}{\numberline {5.1}{\ignorespaces Comparação AODV-EN vs.~Flooding em hardware --- cenário C1, 10 nós, multi-hop, 30 repetições (média $\pm $ intervalo de confiança de 95\%)}}{62}{table.caption.14}%
 \contentsline {table}{\numberline {5.2}{\ignorespaces Significância estatística das diferenças AODV-EN vs.~Flooding (cenário C1, $n=30$ por grupo)}}{63}{table.caption.16}%
 \contentsline {table}{\numberline {5.3}{\ignorespaces Comparação AODV-EN vs.~Flooding no cenário C3 (malha densa, 10 nós, 5 saltos, 30 repetições; média $\pm $ IC95)}}{66}{table.caption.18}%
-\contentsline {table}{\numberline {5.4}{\ignorespaces Métricas do AODV-EN no cenário C4 (falha induzida, 6 nós, 30 repetições; média $\pm $ IC95)}}{68}{table.caption.21}%
-\contentsline {table}{\numberline {5.5}{\ignorespaces Comparação do AODV-EN com trabalhos correlatos sobre ESP-NOW}}{70}{table.5.5}%
+\contentsline {table}{\numberline {5.4}{\ignorespaces Métricas do AODV-EN no cenário C4 (falha induzida, 6 nós, 30 repetições; média $\pm $ IC95)}}{68}{table.caption.22}%
+\contentsline {table}{\numberline {5.5}{\ignorespaces Comparação do AODV-EN com trabalhos correlatos sobre ESP-NOW}}{72}{table.5.5}%
 \addvspace {10\p@ }
