@@ -4,6 +4,35 @@ Projeto de Trabalho de Conclusao de Curso do Bacharelado em Engenharia de Softwa
 
 Este repositorio concentra a pesquisa, especificacao e implementacao do `AODV-EN`, uma adaptacao do AODV ([RFC 3561](https://datatracker.ietf.org/doc/html/rfc3561)) para redes mesh multi-hop sobre ESP-NOW v2 e ESP32.
 
+> **TCC concluido.** A monografia completa (94 paginas) esta em
+> [tcc_latex/Template_Pacheco_TCC.pdf](tcc_latex/Template_Pacheco_TCC.pdf).
+> Autores: Huakson Lima e Diogo dos Reis Almeida (IFG Campus Inhumas).
+
+## Resultados (avaliacao experimental)
+
+O AODV-EN foi avaliado em **hardware real** (ESP32-WROOM-32, ESP-NOW v2, ESP-IDF v6.0.0)
+contra um baseline de *flooding* controlado (broadcast + TTL + supressao de duplicatas),
+em tres cenarios, 30 repeticoes cada:
+
+| Cenario | Topologia | PDR de entrega (AODV-EN vs flooding) | Achado |
+|---|---|---|---|
+| **C1** | cadeia, 10 nos, 3-4 saltos, 2 dBm | **94,1% vs 13,9%** | o roteamento domina o regime multi-hop |
+| **C3** | malha densa, 10 nos, 5 saltos, 2 dBm | **91,4% vs 77,8%** | vantagem **dependente da topologia**: na malha o flooding recupera via redundancia |
+| **C4** | falha induzida, 6 nos, 4 dBm | **70,6%** sob queda ciclica de rele | **auto-recuperacao** (*self-healing*) por rota alternativa |
+
+Em custo por pacote entregue (razao das medias), no C1 o AODV-EN gasta **0,69 J/pacote**
+contra **3,75 J/pacote** do flooding (~5x menos energia por entrega util) e cerca de 20%
+menos transmissoes por entrega. Metodologia, tabelas, figuras e testes estatisticos
+(Welch, Cohen, Mann-Whitney) no Capitulo 5 da monografia.
+
+### Reproduzir os resultados
+
+- dados brutos por repeticao: `results/campaign-{C1,C3,C4}-{aodv-en,flooding}.json`
+- metricas (delta no host): [firmware/tools/tcc_metrics.py](firmware/tools/tcc_metrics.py)
+- coleta da campanha: [firmware/tools/campaign.py](firmware/tools/campaign.py)
+- figuras da tese (deterministas dos JSONs): [plot_c1_figures.py](firmware/tools/plot_c1_figures.py), [plot_c3_figures.py](firmware/tools/plot_c3_figures.py), [plot_c4_extra.py](firmware/tools/plot_c4_extra.py), [plot_c4_selfheal.py](firmware/tools/plot_c4_selfheal.py)
+- *toolchain*: ESP-IDF v6.0.0 sobre ESP-NOW v2, em modulos ESP32-WROOM-32
+
 ## Documentos base
 
 - [docs/aodv-base-invariantes.md](docs/aodv-base-invariantes.md)
@@ -124,4 +153,10 @@ Baseline comparativo ao AODV-EN: flooding controlado (broadcast com TTL + supres
 
 ## Status atual
 
-Em uma frase: `AODV-EN v1` esta funcionalmente fechado e o baseline de flooding ja esta implementado, validado (sim + hardware) e comparado ao AODV-EN. O caminho critico restante e fechar `TC-002`/`TC-003`/`TC-004` em hardware com captura completa, ampliar os experimentos e escrever o TCC. Detalhes em [docs/plano-desenvolvimento-completo.md](docs/plano-desenvolvimento-completo.md).
+`AODV-EN v1` esta funcionalmente fechado; o baseline de flooding foi implementado, validado
+(sim + hardware) e comparado ao AODV-EN; e a campanha experimental em hardware (cenarios C1,
+C3 e C4, 30 repeticoes cada) foi concluida e consolidada na monografia
+([tcc_latex/Template_Pacheco_TCC.pdf](tcc_latex/Template_Pacheco_TCC.pdf)). Como trabalho
+futuro declarado: medicao fisica de energia (INA219), o cenario C2 (arvore), o flooding sob
+falha (C4) e a avaliacao isolada da metrica hibrida e da politica LRU de peers. Roadmap e
+historico em [docs/plano-desenvolvimento-completo.md](docs/plano-desenvolvimento-completo.md).
